@@ -30,8 +30,6 @@ const TabNavigator = () => {
       headerShadowVisible: false,  
       tabBarStyle: {
         backgroundColor: colors.background,
-        borderTopLeftRadius:15,
-        borderTopRightRadius:15,
     },
     }}>
       <Tab.Screen
@@ -39,7 +37,7 @@ const TabNavigator = () => {
         component={ChatListScreen}
         options={{
           headerTitle: "Chats",
-          tabBarLabel: "",
+          tabBarLabel: "Chats",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubble-outline" size={size} color={color} />
           ),
@@ -50,7 +48,7 @@ const TabNavigator = () => {
         component={SettingsScreen}
         options={{
           headerTitle: "Settings",
-          tabBarLabel: "",
+          tabBarLabel: "Settings",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-outline" size={size} color={color} />
           ),
@@ -212,7 +210,6 @@ const MainNavigator = (props) => {
       <ActivityIndicator size={'large'} color={colors.primary} />
     </View>
   }
-
 
   return (
     <KeyboardAvoidingView

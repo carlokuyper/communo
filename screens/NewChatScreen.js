@@ -241,13 +241,14 @@ const styles = StyleSheet.create({
     searchBox: {
         marginLeft: 8,
         fontSize: 15,
-        width: '100%'
+        width: '100%',
+   
     },
     noResultsIcon: {
         marginBottom: 20
     },
     noResultsText: {
-        color: colors.textColor,
+        color: colors.white,
         fontFamily: 'regular',
         letterSpacing: 0.3
     },
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
         borderRadius: 2
     },
     textbox: {
-        color: colors.textColor,
+        color: colors.white,
         width: '100%',
         fontFamily: 'regular',
         letterSpacing: 0.3

@@ -4,7 +4,7 @@ import colors from '../constants/colors';
 import ProfileImage from './ProfileImage';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 
-const imageSize = 40;
+const imageSize = 55;
 
 const DataItem = props => {
 
@@ -36,7 +36,7 @@ const DataItem = props => {
 
                     <Text
                         numberOfLines={1}
-                        style={{ ...styles.title, ...{ color: type === "button" ? colors.blue : colors.textColor } }}>
+                        style={{ ...styles.title, ...{ color: type === "button" ? colors.blue : colors.white } }}>
                         {title}
                     </Text>
 
@@ -62,7 +62,7 @@ const DataItem = props => {
                 {
                     type === "link" &&
                     <View>
-                        <Ionicons name="chevron-forward-outline" size={18} color={colors.grey} />
+                        <Ionicons name="chevron-forward-outline" size={18} color={colors.blue} />
                     </View>
                 }
 
@@ -75,10 +75,27 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         paddingVertical: 7,
-        borderBottomColor: colors.extraLightGrey,
+        borderBottomColor: "black",
         borderBottomWidth: 1,
+
+        margin:15,
+
+        color:'white',
+        backgroundColor:'#212328',
         alignItems: 'center',
-        minHeight: 50
+        minHeight: 60,
+        padding:10,
+        borderRadius:15,
+
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+
+        elevation: 4,
     },
     textContainer: {
         marginLeft: 14,
@@ -86,12 +103,13 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'medium',
-        fontSize: 16,
+        fontSize: 18,
         letterSpacing: 0.3
     },
     subTitle: {
         fontFamily: 'regular',
-        color: colors.grey,
+        fontSize: 16,
+        color: colors.white,
         letterSpacing: 0.3
     },
     iconContainer: {

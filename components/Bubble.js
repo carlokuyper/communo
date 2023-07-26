@@ -32,7 +32,7 @@ const MenuItem = props => {
 }
 
 const Bubble = props => {
-    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name, imageUrl } = props;
+    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name, imageUrl, toneColor } = props;
 
     const starredMessages = useSelector(state => state.messages.starredMessages[chatId] ?? {});
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -62,13 +62,24 @@ const Bubble = props => {
             break;
         case "myMessage":
             wrapperStyle.justifyContent = 'flex-end';
-            bubbleStyle.backgroundColor = '#E7FED6';
+            bubbleStyle.backgroundColor = 'white';
+
+            bubbleStyle.borderWidth= 2;
+            bubbleStyle.borderColor= toneColor;
+            bubbleStyle.borderRadius=15;
+
             bubbleStyle.maxWidth = '90%';
             Container = TouchableWithoutFeedback;
             isUserMessage = true;
             break;
         case "theirMessage":
-            wrapperStyle.justifyContent = 'flex-start';
+            wrapperStyle.justifyContent = 'flex-end';
+            bubbleStyle.backgroundColor = 'white';
+
+            bubbleStyle.borderWidth= 2;
+            bubbleStyle.borderColor= toneColor;
+            bubbleStyle.borderRadius=15;
+
             bubbleStyle.maxWidth = '90%';
             Container = TouchableWithoutFeedback;
             isUserMessage = true;

@@ -16,7 +16,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 
-import backgroundImage from "../assets/images/droplet.jpeg";
+import backgroundImage from "../assets/images/chatScreen.png";
+import robot from "../assets/images/robot.png";
+
 import colors from "../constants/colors";
 import { useSelector } from "react-redux";
 import PageContainer from "../components/PageContainer";
@@ -27,6 +29,8 @@ import { launchImagePicker, openCamera, uploadImageAsync } from "../utils/imageP
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/CustomHeaderButton";
+import axios from "axios";
+import Tone from "../components/Tone";
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -36,6 +40,8 @@ const ChatScreen = (props) => {
   const [replyingTo, setReplyingTo] = useState();
   const [tempImageUri, setTempImageUri] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [toneColor, setToneColor] = useState()
 
   const flatList = useRef();
 
@@ -107,7 +113,7 @@ const ChatScreen = (props) => {
         setChatId(id);
       }
 
-      await sendTextMessage(id, userData.userId, messageText, replyingTo && replyingTo.key);
+      await sendTextMessage(id, userData.userId, messageText, toneColor, replyingTo && replyingTo.key);
 
       setMessageText("");
       setReplyingTo(null);
@@ -116,7 +122,7 @@ const ChatScreen = (props) => {
       setErrorBannerText("Message failed to send");
       setTimeout(() => setErrorBannerText(""), 5000);
     }
-  }, [messageText, chatId]);
+  }, [messageText, chatId, toneColor]);
 
 
   const pickImage = useCallback(async () => {
@@ -166,6 +172,114 @@ const ChatScreen = (props) => {
       
     }
   }, [isLoading, tempImageUri, chatId])
+
+  
+  const [timer, setTimer] = useState(null)
+
+  const [toneColor1, setToneColor1] = useState();
+  const [toneColor2, setToneColor2] = useState();
+  const [toneColor3, setToneColor3] = useState();
+
+  let [activeTone1, setActiveTone1] = useState();
+  let [activeTone2, setActiveTone2] = useState();
+  let [activeTone3, setActiveTone3] = useState();
+  let [currentExplain, setCurrentExplain] = useState();
+  
+  const runNLP = e => {
+    // console.log("test nlpRequest");  
+    
+    setActiveTone1();
+    setActiveTone2();
+    setActiveTone3();
+    setCurrentExplain();
+
+    setMessageText(e.target.value)
+
+    clearTimeout(timer)
+
+    // API config 
+    const config = {
+      headers:{
+          Authorization: "Bearer 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",
+      }
+    };
+
+    const newTimer = setTimeout (()=> {
+
+      let msg = props.msg
+      
+      //Explain the tone of the message
+      let msgTone = "Identify the three tones in the message. \nTone:" + "\nGive the associated color in hex value using Plutchik’s Psycho-evolutionary Theory of Emotion" + "\nMessage:" + messageText 
+      let tonesPayload = {
+        model: "text-davinci-003",
+        prompt: msgTone,
+        temperature: 0,
+        max_tokens: 60,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0
+      }
+
+      axios.post('https://api.openai.com/v1/completions', tonesPayload, config)
+      .then((res)=> {
+        // console.log(res);
+
+        let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
+        console.log(tone);  
+
+        let stringColor = tone.filter((colour) => colour.startsWith("#"));
+        console.log(stringColor);
+
+        //Main Tone
+        let myTone = tone[3]
+        let msgColor = myTone.toString()
+        console.log(msgColor);
+        setToneColor(msgColor)
+
+        setActiveTone1(tone[2])                
+        setToneColor1(stringColor[0])
+        setActiveTone2(tone[5])                
+        setToneColor2(stringColor[1])
+        setActiveTone3(tone[8])                
+        setToneColor3(stringColor[2])
+        
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+
+      //Explain the user message
+      let explainInput = " Explain how the message will be understood \n\nMessage:" + messageText + "\nTone:\n"
+      let explainPayload = {
+        model: "text-davinci-003",
+        prompt: explainInput,
+        temperature: 0,
+        max_tokens: 60,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0
+      }
+
+      axios.post('https://api.openai.com/v1/completions', explainPayload, config)
+      .then((res)=> {
+          // console.log(res);
+          
+          let tone = res.data.choices[0].text 
+          console.log(tone);           
+          let newText = tone.replace('\n', '');   
+          setCurrentExplain(newText)  
+          console.log(newText);  
+
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+
+      
+    }, 1000)
+    setTimer(newTimer)
+  }
+
 
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
@@ -217,8 +331,9 @@ const ChatScreen = (props) => {
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
 
                   return <Bubble
-                            type={messageType}
+                              type={messageType}
                             text={message.text}
+                            toneColor={message.toneColor}
                             messageId={message.key}
                             userId={userData.userId}
                             chatId={chatId}
@@ -244,6 +359,19 @@ const ChatScreen = (props) => {
             />
           }
 
+
+        <View style={styles.toneMainContainer}>
+            <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
+            {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
+              <Image source={robot} style={styles.robot}/>
+            </View>
+            {messageText && activeTone1 &&<View style={styles.toneContainer}>
+              <Tone text={activeTone1} color={toneColor1} />
+              <Tone text={activeTone2} color={toneColor2} />
+              <Tone text={activeTone3} color={toneColor3} />
+            </View>}
+          </View>
+
         </ImageBackground>
 
         <View style={styles.inputContainer}>
@@ -256,9 +384,12 @@ const ChatScreen = (props) => {
 
           <TextInput
             style={styles.textbox}
+            placeholderTextColor="white"
+            placeholder="start typin here ........."
             value={messageText}
             onChangeText={(text) => setMessageText(text)}
             onSubmitEditing={sendMessage}
+            onChange={runNLP}
           />
 
           {messageText === "" && (
@@ -353,6 +484,35 @@ const styles = StyleSheet.create({
     fontFamily: 'medium',
     letterSpacing: 0.3,
     color: colors.textColor
+  },
+  toneMainContainer:{
+    width:'100%',
+    // height:60,
+    // backgroundColor: 'rgba(52, 52, 52, alpha)'
+    marginBottom:'1%',
+  },
+  toneContainer:{
+    flexDirection: 'row'
+  },
+  explainText: {
+    backgroundColor: "white",
+    borderRadius:20,
+    padding:10,
+    marginBottom:'2%',
+    width:'82%'
+  },
+  robot:{
+    flex:1,
+    width: '15%',
+    height: 60, 
+    position: 'absolute',
+    bottom:'1%',
+    marginBottom:'2%',
+    right:'1.5%',
+    alignItems:'center',
+    backgroundColor:'#393B3C',
+    padding:5,
+    borderRadius:10
   }
 });
 

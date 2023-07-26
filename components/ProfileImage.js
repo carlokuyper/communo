@@ -94,7 +94,7 @@ const ProfileImage = props => {
 
 const styles = StyleSheet.create({
     image: {
-        borderRadius: 50,
+        borderRadius: 10,
         borderColor: colors.grey,
         borderWidth: 1
     },
