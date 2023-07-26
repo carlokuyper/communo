@@ -48,14 +48,14 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         fontFamily: 'bold',
         letterSpacing: 0.3,
-        color: colors.textColor
+        color: colors.white
     },
     inputContainer: {
         width: '100%',
         backgroundColor: 'red',
         paddingHorizontal: 10,
         paddingVertical: 15,
-        borderRadius: 2,
+        borderRadius: 15,
         backgroundColor: colors.nearlyWhite,
         flexDirection: 'row',
         alignItems: 'center'

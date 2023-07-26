@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import DataItem from '../components/DataItem';
 import PageContainer from '../components/PageContainer';
-import PageTitle from '../components/PageTitle';
 import colors from '../constants/colors';
 
 const ChatListScreen = props => {
@@ -74,13 +73,11 @@ const ChatListScreen = props => {
     
     return <PageContainer>
 
-        <PageTitle text="Chats" />
-
-            <View>
-                <TouchableOpacity onPress={() => props.navigation.navigate("NewChat", { isGroupChat: true })}>
-                    <Text style={styles.newGroupText}>New Group</Text>
-                </TouchableOpacity>
-            </View>
+        {/* <View>
+            <TouchableOpacity onPress={() => props.navigation.navigate("NewChat", { isGroupChat: true })}>
+                <Text style={styles.newGroupText}>New Group</Text>
+            </TouchableOpacity>
+        </View> */}
 
             <FlatList
                 data={userChats}
@@ -113,7 +110,7 @@ const ChatListScreen = props => {
                                 image={image}
                                 onPress={() => props.navigation.navigate("ChatScreen", { chatId })}
                             />
-                }}
+                }}  
             />
         </PageContainer>
 };

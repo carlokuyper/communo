@@ -27,13 +27,19 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={{
       headerTitle: "",
-      headerShadowVisible: false  
+      headerShadowVisible: false,  
+      tabBarStyle: {
+        backgroundColor: colors.background,
+        borderTopLeftRadius:15,
+        borderTopRightRadius:15,
+    },
     }}>
       <Tab.Screen
         name="ChatList"
         component={ChatListScreen}
         options={{
-          tabBarLabel: "Chats",
+          headerTitle: "Chats",
+          tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubble-outline" size={size} color={color} />
           ),
@@ -43,7 +49,8 @@ const TabNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarLabel: "Settings",
+          headerTitle: "Settings",
+          tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-outline" size={size} color={color} />
           ),

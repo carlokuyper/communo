@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         marginVertical: 15
     },
     link: {
-        color: colors.blue,
+        color: colors.white,
         fontFamily: 'medium',
         letterSpacing: 0.3
     },
@@ -65,7 +65,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     image: {
-        width: '50%'
+        width: '65%',
+        resizeMode:'contain',
+        height:225,
+        marginTop:50,
     },
     keyboardAvoidingView: {
         flex: 1,

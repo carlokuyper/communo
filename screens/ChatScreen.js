@@ -76,6 +76,9 @@ const ChatScreen = (props) => {
     
     props.navigation.setOptions({
       headerTitle: chatData.chatName ?? getChatTitleFromName(),
+      headerStyle: {
+        backgroundColor: colors.white
+      },
       headerRight: () => {
         return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
           {
@@ -185,11 +188,11 @@ const ChatScreen = (props) => {
               chatId && 
               <FlatList
                 ref={(ref) => flatList.current = ref}
-                // onContentSizeChange={() => flatList.current.scrollToEnd({ animated: false })}
-                // onLayout={() => flatList.current.scrollToEnd({ animated: false })}
+                onContentSizeChange={() => flatList.current.scrollToEnd({ animated: false })}
+                onLayout={() => flatList.current.scrollToEnd({ animated: false })}
 
-                onContentSizeChange={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
-                onLayout={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
+                // onContentSizeChange={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
+                // onLayout={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
 
                 // onContentSizeChange={() => selectedUsers.length > 0 && selectedUsersFlatList.current.scrollToEnd() }
 

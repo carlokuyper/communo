@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import DataItem from '../components/DataItem';
 import Input from '../components/Input';
 import PageContainer from '../components/PageContainer';
-import PageTitle from '../components/PageTitle';
 import ProfileImage from '../components/ProfileImage';
 import SubmitButton from '../components/SubmitButton';
 import colors from '../constants/colors';
@@ -101,7 +100,6 @@ const ChatSettingsScreen = props => {
     if (!chatData.users) return null;
 
     return <PageContainer>
-        <PageTitle text="Chat Settings" />
 
         <ScrollView contentContainerStyle={styles.scrollView}>
             <ProfileImage
