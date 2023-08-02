@@ -209,7 +209,7 @@ const ChatScreen = (props) => {
       let msg = props.msg
       
       //Explain the tone of the message
-      let msgTone = "Identify the three tones in the message. \nTone:" + "\nGive the associated color in hex value using Plutchik’s Psycho-evolutionary Theory of Emotion" + "\nMessage:" + messageText 
+      let msgTone = "Identify the three tones in the message but add a * add the beginning of to the tone. \nTone:" + "\nGive the associated color in hex value using Plutchik’s Psycho-evolutionary Theory of Emotion" + "\nMessage:" + messageText 
       let tonesPayload = {
         model: "text-davinci-003",
         prompt: msgTone,
@@ -229,6 +229,12 @@ const ChatScreen = (props) => {
 
         let stringColor = tone.filter((colour) => colour.startsWith("#"));
         console.log(stringColor);
+
+        let tones = tone.filter((tone) => tone.startsWith("*"));
+        str = 'Hello cy Adele';
+
+        newStr = str.replace('e', '');
+        console.log(newStr);
 
         //Main Tone
         let myTone = tone[3]
@@ -384,8 +390,8 @@ const ChatScreen = (props) => {
 
           <TextInput
             style={styles.textbox}
-            placeholderTextColor="white"
-            placeholder="start typin here ........."
+            placeholderTextColor="grey"
+            placeholder="Type here..."
             value={messageText}
             onChangeText={(text) => setMessageText(text)}
             onSubmitEditing={sendMessage}
@@ -461,6 +467,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 10,
     height: 50,
+    backgroundColor: colors.background,
+    
   },
   textbox: {
     flex: 1,
@@ -469,6 +477,7 @@ const styles = StyleSheet.create({
     borderColor: colors.lightGrey,
     marginHorizontal: 15,
     paddingHorizontal: 12,
+    color:"white"
   },
   mediaButton: {
     alignItems: "center",
