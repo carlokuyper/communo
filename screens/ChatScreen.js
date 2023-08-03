@@ -209,7 +209,8 @@ const ChatScreen = (props) => {
       let msg = props.msg
       
       //Explain the tone of the message
-      let msgTone = "Identify the three tones in the message but add a * add the beginning of to the tone. \nTone:" + "\nGive the associated color in hex value using Plutchik’s Psycho-evolutionary Theory of Emotion" + "\nMessage:" + messageText 
+      // let msgTone = "Identify the three tones in the message but add a * add the beginning of to the tone. \nTone:" + "\nGive the associated color in hex value using Plutchik’s Psycho-evolutionary Theory of Emotion" + "\nMessage:" + messageText 
+      let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
       let tonesPayload = {
         model: "text-davinci-003",
         prompt: msgTone,
@@ -225,16 +226,20 @@ const ChatScreen = (props) => {
         // console.log(res);
 
         let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
+        // let tone = res.data.choices[0].text.toLowerCase().replace('e', '')
         console.log(tone);  
 
-        let stringColor = tone.filter((colour) => colour.startsWith("#"));
+        let stringColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
         console.log(stringColor);
 
-        let tones = tone.filter((tone) => tone.startsWith("*"));
-        str = 'Hello cy Adele';
+        let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+        console.log(stringColor);
 
-        newStr = str.replace('e', '');
-        console.log(newStr);
+        str = 'Hello cy Adele', 'baa7f3b17ffc-4216-bfbc-8e9f70f26984';
+
+        var sssss = stringColor.map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+
+        console.log("sssss " + sssss)
 
         //Main Tone
         let myTone = tone[3]
@@ -242,11 +247,11 @@ const ChatScreen = (props) => {
         console.log(msgColor);
         setToneColor(msgColor)
 
-        setActiveTone1(tone[2])                
+        setActiveTone1(activeMsgTone[0])                
         setToneColor1(stringColor[0])
-        setActiveTone2(tone[5])                
+        setActiveTone2(activeMsgTone[1])                
         setToneColor2(stringColor[1])
-        setActiveTone3(tone[8])                
+        setActiveTone3(activeMsgTone[2])                
         setToneColor3(stringColor[2])
         
       })
@@ -378,7 +383,7 @@ const ChatScreen = (props) => {
             </View>}
           </View>
 
-        </ImageBackground>
+        
 
         <View style={styles.inputContainer}>
           <TouchableOpacity
@@ -447,6 +452,7 @@ const ChatScreen = (props) => {
 
 
         </View>
+        </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -497,7 +503,7 @@ const styles = StyleSheet.create({
   toneMainContainer:{
     width:'100%',
     // height:60,
-    // backgroundColor: 'rgba(52, 52, 52, alpha)'
+    // backgroundColor: 'rgba(250, 52, 52, 0.)',
     marginBottom:'1%',
   },
   toneContainer:{
