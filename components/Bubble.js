@@ -73,16 +73,18 @@ const Bubble = props => {
             isUserMessage = true;
             break;
         case "theirMessage":
-            wrapperStyle.justifyContent = 'flex-end';
+            wrapperStyle.justifyContent = 'flex-start';
             bubbleStyle.backgroundColor = 'white';
 
             bubbleStyle.borderWidth= 2;
             bubbleStyle.borderColor= toneColor;
             bubbleStyle.borderRadius=15;
 
-            bubbleStyle.maxWidth = '90%';
+            bubbleStyle.width = '90%';
             Container = TouchableWithoutFeedback;
             isUserMessage = true;
+
+            textStyle.color='red';
             break;
         case "reply":
             bubbleStyle.backgroundColor = '#F2F2F2';
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontFamily: 'regular',
-        letterSpacing: 0.3
+        letterSpacing: 0.3,
     },
     menuItemContainer: {
         flexDirection: 'row',
@@ -202,7 +204,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontFamily: 'medium',
-        letterSpacing: 0.3
+        letterSpacing: 0.3,
     },
     image: {
         width: 300,
