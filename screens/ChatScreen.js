@@ -229,30 +229,24 @@ const ChatScreen = (props) => {
         // let tone = res.data.choices[0].text.toLowerCase().replace('e', '')
         console.log(tone);  
 
-        let stringColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-        console.log(stringColor);
+        let msgColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+        console.log(msgColor);
 
         let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-        console.log(stringColor);
-
-        str = 'Hello cy Adele', 'baa7f3b17ffc-4216-bfbc-8e9f70f26984';
-
-        var sssss = stringColor.map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-
-        console.log("sssss " + sssss)
+        console.log(activeMsgTone);
 
         //Main Tone
-        let myTone = tone[3]
-        let msgColor = myTone.toString()
+        // let myTone = tone[3]
+        // let msgColor = myTone.toString()
         console.log(msgColor);
-        setToneColor(msgColor)
+        setToneColor(msgColor[0])
 
         setActiveTone1(activeMsgTone[0])                
-        setToneColor1(stringColor[0])
+        setToneColor1(msgColor[0])
         setActiveTone2(activeMsgTone[1])                
-        setToneColor2(stringColor[1])
+        setToneColor2(msgColor[1])
         setActiveTone3(activeMsgTone[2])                
-        setToneColor3(stringColor[2])
+        setToneColor3(msgColor[2])
         
       })
       .catch(function (error) {
@@ -260,7 +254,7 @@ const ChatScreen = (props) => {
       });
 
       //Explain the user message
-      let explainInput = " Explain how the message will be understood \n\nMessage:" + messageText + "\nTone:\n"
+      let explainInput = " Explain how the message will be understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
       let explainPayload = {
         model: "text-davinci-003",
         prompt: explainInput,
@@ -287,7 +281,7 @@ const ChatScreen = (props) => {
       });
 
       
-    }, 1000)
+    }, 2000)
     setTimer(newTimer)
   }
 
@@ -342,7 +336,7 @@ const ChatScreen = (props) => {
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
 
                   return <Bubble
-                              type={messageType}
+                            type={messageType}
                             text={message.text}
                             toneColor={message.toneColor}
                             messageId={message.key}
