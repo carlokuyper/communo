@@ -9,6 +9,7 @@ import SignUpForm from '../components/SignUpForm';
 import colors from '../constants/colors';
 
 import logo from '../assets/images/logo.png';
+import OnboardingScreen from './OnboardingScreen';
 
 const AuthScreen = props => {
 
@@ -17,7 +18,7 @@ const AuthScreen = props => {
     return <SafeAreaView style={{ flex: 1}}>
         <PageContainer>
             <ScrollView>
-
+                {/* <OnboardingScreen/> */}
                 <KeyboardAvoidingView
                     style={styles.keyboardAvoidingView}
                     behavior={Platform.OS === "ios" ? "height" : undefined}
@@ -43,7 +44,6 @@ const AuthScreen = props => {
                     </TouchableOpacity>
 
                 </KeyboardAvoidingView>
-
             </ScrollView>
         </PageContainer>
     </SafeAreaView>

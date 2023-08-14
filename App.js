@@ -9,8 +9,8 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { MenuProvider } from 'react-native-popup-menu';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import OnBoarding from './screens/OnBoarding';
 import colors from './constants/colors';
+import OnboardingScreen from './screens/OnboardingScreen';
 
 LogBox.ignoreLogs(['AsyncStorage has been extracted']);
 // AsyncStorage.clear();
@@ -63,14 +63,14 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      {/* <OnBoarding/> */}
+      {/* <OnboardingScreen/> */}
       <SafeAreaProvider
         style={styles.container}
         onLayout={onLayout}>
 
           <MenuProvider>
             <AppNavigator />
-            {/* <OnBoarding/>  */}
+            {/* <OnboardingScreen/> */}
           </MenuProvider>
 
       </SafeAreaProvider>
