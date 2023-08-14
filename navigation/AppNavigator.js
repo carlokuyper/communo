@@ -5,7 +5,6 @@ import MainNavigator from "./MainNavigator";
 import AuthScreen from "../screens/AuthScreen";
 import { useSelector } from "react-redux";
 import StartUpScreen from "../screens/StartUpScreen";
-import OnBoarding from "../screens/OnBoarding";
 
 const AppNavigator = (props) => {
 
@@ -14,7 +13,6 @@ const AppNavigator = (props) => {
 
   return (
     <NavigationContainer>
-      {/* <OnBoarding/> */}
       {isAuth && <MainNavigator/>}
       {!isAuth && didTryAutoLogin && <AuthScreen />}
       {!isAuth && !didTryAutoLogin && <StartUpScreen />}

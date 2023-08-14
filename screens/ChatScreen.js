@@ -377,7 +377,7 @@ const ChatScreen = (props) => {
             </View>}
           </View>
 
-        <View style={{width:'100%', height:100, borderRadius:10, backgroundColor:'grey', borderColor:'red', borderWidth:3}}>
+        {/* <View style={{width:'100%', height:100, borderRadius:10, backgroundColor:'grey', borderColor:'red', borderWidth:3}}>
           
           <View style={{width:'15%', height:'100%', backgroundColor:'green', }}>
             <View style={{width:'10%', height:'10%', borderRadius:50, backgroundColor:'red', position: 'absolute', bottom:0, marginBottom:50, marginLeft:10}}></View>
@@ -387,8 +387,9 @@ const ChatScreen = (props) => {
             <View style={{width:'100%', height:'120%', borderRadius:100, backgroundColor:'red', position: 'absolute', bottom:0, marginBottom:-20, marginLeft:0}}></View>
       
           </View>
-          {/* <Text style={{marginLeft:50, marginTop:20,}}>sadasdasdasdasd</Text> */}
-        </View>
+          
+        </View> */}
+        
 
         <View style={styles.inputContainer}>
           <TouchableOpacity
