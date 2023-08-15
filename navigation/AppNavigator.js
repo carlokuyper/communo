@@ -17,34 +17,13 @@ const AppNavigator = (props) => {
   const isAuth = useSelector(state => state.auth.token !== null && state.auth.token !== "");
   const didTryAutoLogin = useSelector(state => state.auth.didTryAutoLogin);
 
-  const [isFirstLaunch, setIsFirstLaunch] = useState(null)
-
-  useEffect(() => {
-    AsyncStorage.getItem("alreadyLaunched").then(value=>{
-      if(value = null){
-        AsyncStorage.setItem("alreadyLaunched", 'true');
-        setIsFirstLaunch(true)
-      } else{
-        setIsFirstLaunch(false)
-      }
-    });
-
-  }, []);
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false)
 
   const Simple = () => (
+
     <Onboarding
-      // onDone={() =>  setIsFirstLaunch(true)+  console.log('done: ' + isFirstLaunch)}
-      onDone={() =>    
-        AsyncStorage.getItem("alreadyLaunched").then(value=>{
-          if(value = null){
-            AsyncStorage.setItem("alreadyLaunched", 'true');
-            setIsFirstLaunch(true)
-          } else{
-            setIsFirstLaunch(false)
-          }
-      }) 
-      
-      +  console.log('done: ' + isFirstLaunch)}
+      onDone={() =>  setIsFirstLaunch(true) + console.log('done')}
+  
       pages={[
         {
           backgroundColor: '#fff',
@@ -54,7 +33,7 @@ const AppNavigator = (props) => {
         },
         {
           backgroundColor: '#fe6e58',
-          image: <Image source={require('../assets/images/logo.png')} />,
+          image: <Image  source={require('../assets/images/logo.png')} />,
           title: 'The Title',
           subtitle: 'This is the subtitle that sumplements the title.',
         },
