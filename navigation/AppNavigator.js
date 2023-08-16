@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import OnboardingScreen from "../screens/OnboardingScreen";
 import Onboarding from "react-native-onboarding-swiper";
 import { Image } from "react-native";
+import LottieView from "lottie-react-native";
 
 const AppNavigator = (props) => {
 
@@ -27,9 +28,9 @@ const AppNavigator = (props) => {
       pages={[
         {
           backgroundColor: '#fff',
-          image: <Image source={require('../assets/images/logo.png')} />,
-          title: 'Onboarding',
-          subtitle: 'Done with React Native Onboarding Swiper',
+          image: <LottieView source={require('../assets/lottie/animation_llcdd350.json')} autoPlay loop />,
+          title: 'Welcome To Comuno',
+          subtitle: 'Comuno is a realtime chat app, designed to help you communicate more efficiently. Comuno utiluzes AI to breakdown a message to explain how a user will interperate it, as well as assiging an emotion to the message.',
         },
         {
           backgroundColor: '#fe6e58',
