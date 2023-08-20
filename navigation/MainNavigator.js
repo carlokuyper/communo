@@ -19,6 +19,7 @@ import { setStoredUsers } from "../store/userSlice";
 import { setChatMessages, setStarredMessages } from "../store/messagesSlice";
 import ContactScreen from "../screens/ContactScreen";
 import DataListScreen from "../screens/DataListScreen";
+import OnboardingScreen from "../screens/OnboardingScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,7 +33,18 @@ const TabNavigator = () => {
         backgroundColor: colors.background,
     },
     }}>
-      <Tab.Screen
+      {/* <Tab.Screen
+        name="OnboardingScreen"
+        component={OnboardingScreen}
+        options={{
+          headerTitle: "Chats",
+          tabBarLabel: "Chats",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
+          ),
+        }}
+      /> */}
+       <Tab.Screen
         name="ChatList"
         component={ChatListScreen}
         options={{
@@ -62,6 +74,7 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Group>
+        
         <Stack.Screen
           name="Home"
           component={TabNavigator}

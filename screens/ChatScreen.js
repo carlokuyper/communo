@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 
-import backgroundImage from "../assets/images/chatScreen.png";
+import backgroundImage from "../assets/images/chatBackground.png";
 import robot from "../assets/images/robot.png";
 
 import colors from "../constants/colors";
@@ -31,6 +31,7 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/CustomHeaderButton";
 import axios from "axios";
 import Tone from "../components/Tone";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -318,19 +319,22 @@ const ChatScreen = (props) => {
                 data={chatMessages}
                 renderItem={(itemData) => {
                   const message = itemData.item;
+                  // console.log(message);
 
                   const isOwnMessage = message.sentBy === userData.userId;
 
                   let messageType;
                   if (message.type && message.type === "info") {
                     messageType = "info";
-                  }
+                  } 
+                  
                   else if (isOwnMessage) {
                     messageType = "myMessage";
                   }
                   else {
                     messageType = "theirMessage";
-                  }
+                  } 
+                  
 
                   const sender = message.sentBy && storedUsers[message.sentBy];
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
@@ -367,7 +371,7 @@ const ChatScreen = (props) => {
 
         <View style={styles.toneMainContainer}>
             <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
-            {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
+              {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
               <Image source={robot} style={styles.robot}/>
             </View>
             {messageText && activeTone1 &&<View style={styles.toneContainer}>
@@ -377,18 +381,7 @@ const ChatScreen = (props) => {
             </View>}
           </View>
 
-        {/* <View style={{width:'100%', height:100, borderRadius:10, backgroundColor:'grey', borderColor:'red', borderWidth:3}}>
-          
-          <View style={{width:'15%', height:'100%', backgroundColor:'green', }}>
-            <View style={{width:'10%', height:'10%', borderRadius:50, backgroundColor:'red', position: 'absolute', bottom:0, marginBottom:50, marginLeft:10}}></View>
-            <View style={{width:'50%', height:'50%', borderRadius:50, backgroundColor:'red', position: 'absolute', bottom:0, marginBottom:45, marginLeft:40}}></View>
-            <View style={{width:'30%', height:'50%', borderRadius:50, backgroundColor:'red', position: 'absolute', bottom:0, marginBottom:10, marginLeft:70}}></View>
-            
-            <View style={{width:'100%', height:'120%', borderRadius:100, backgroundColor:'red', position: 'absolute', bottom:0, marginBottom:-20, marginLeft:0}}></View>
-      
-          </View>
-          
-        </View> */}
+        
         
 
         <View style={styles.inputContainer}>
@@ -467,6 +460,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
+    backgroundColor:"#181A20"
   },
   screen: {
     flex: 1

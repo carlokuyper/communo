@@ -13,7 +13,7 @@ import colors from './constants/colors';
 import OnboardingScreen from './screens/OnboardingScreen';
 
 LogBox.ignoreLogs(['AsyncStorage has been extracted']);
-// AsyncStorage.clear();
+AsyncStorage.clear();
 
 SplashScreen.preventAutoHideAsync();
 

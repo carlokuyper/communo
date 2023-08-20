@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 
 import MainNavigator from "./MainNavigator";
@@ -6,54 +6,107 @@ import AuthScreen from "../screens/AuthScreen";
 import { useSelector } from "react-redux";
 import StartUpScreen from "../screens/StartUpScreen";
 import { useState } from "react";
-import { useEffect } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import OnboardingScreen from "../screens/OnboardingScreen";
 import Onboarding from "react-native-onboarding-swiper";
-import { Image } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import LottieView from "lottie-react-native";
+import OnboardingScreen from "../screens/OnboardingScreen";
+import { getItem, setItem } from "../utils/async";
 
 const AppNavigator = (props) => {
 
   const isAuth = useSelector(state => state.auth.token !== null && state.auth.token !== "");
+  const doneOnboarding = useSelector(state => state.auth.token !== null && state.auth.token !== "");
   const didTryAutoLogin = useSelector(state => state.auth.didTryAutoLogin);
 
-  const [isFirstLaunch, setIsFirstLaunch] = useState(false)
+  
 
+  const StartBtn = ({...props}) => (
+    <TouchableOpacity {...props}>
+    <Text style={{ width:200, paddingTop:10, paddingBottom:10, borderRadius:20, marginHorizontal:20, marginTop:100, marginRight:'50%', textAlign:'center', color:'#001454', backgroundColor:"white", fontSize:16,}}>Finish</Text>
+    </TouchableOpacity>
+  )
+  
+  const nxtBtn = ({...props}) => (
+    <TouchableOpacity {...props}>
+    <Text style={{ width:100, paddingTop:10, paddingBottom:10, borderRadius:20, marginHorizontal:20, marginTop:100, marginRight:'10%', textAlign:'center', color:'#001454', backgroundColor:"white", fontSize:16,}}>Next</Text>
+    </TouchableOpacity>
+  )
+  const skipBtn = ({...props}) => (
+    <TouchableOpacity {...props}>
+    <Text style={{ width:100, paddingTop:10, paddingBottom:10, borderRadius:20, marginHorizontal:20, marginTop:100, marginLeft:'10%', textAlign:'center', color:'white', fontSize:16,}}>Skip</Text>
+    </TouchableOpacity>
+  )
+
+  const Dots = ({selected}) => {
+    let backgroundColor;
+    backgroundColor = selected ? '#EFEFEF' : 'rgba(217,217,217,0.5)';
+    
+    let width;
+    width = selected ? 20 : 10;
+
+    return (
+    <View
+      style={{
+          width,
+          height: 10,
+          marginHorizontal:2,
+          backgroundColor,
+          borderRadius:5,
+      }}
+    />
+    )
+  }
+
+  setItem('onboard', 'true')
+
+  // const [isFirstLaunch, setIsFirstLaunch] = useState(getItem('onboard'))
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false)
+  console.log(isFirstLaunch);
   const Simple = () => (
 
     <Onboarding
-      onDone={() =>  setIsFirstLaunch(true) + console.log('done')}
+
+      DoneButtonComponent={StartBtn}
+      NextButtonComponent={nxtBtn}
+      SkipButtonComponent={skipBtn}
+      DotComponent={Dots}
+
+      bottomBarHighlight ={false}
+      bottomBarHeight={height=200}
+      
+      skipToPage={2}
+    
+      onDone={() => setIsFirstLaunch(false) + setItem('onboard', 'false') + console.log('done ' + isFirstLaunch)}
   
       pages={[
         {
-          backgroundColor: '#fff',
+          backgroundColor: '#181A20',
           image: <LottieView source={require('../assets/lottie/animation_llcdd350.json')} autoPlay loop />,
           title: 'Welcome To Comuno',
-          subtitle: 'Comuno is a realtime chat app, designed to help you communicate more efficiently. Comuno utiluzes AI to breakdown a message to explain how a user will interperate it, as well as assiging an emotion to the message.',
+          subtitle: 'Comuno is more than just a messaging application; it facilitates seamless and effective communication. Whether youre communicating with friends, family, or coworkers, Comuno equips you with the means to convey yourself eloquently and connect in a meaningful way.',
         },
         {
-          backgroundColor: '#fe6e58',
-          image: <Image  source={require('../assets/images/logo.png')} />,
-          title: 'The Title',
-          subtitle: 'This is the subtitle that sumplements the title.',
+          backgroundColor: '#181A20',
+          image: <LottieView  source={require('../assets/lottie/animation_llcdd350.json')} />,
+          title: 'AI-Powered Clarity',
+          subtitle: 'Comuno leverages the power of artificial intelligence to enhance your communication experience. Our advanced technology breaks down your messages, providing insights into how your words will be interpreted by the recipient. This feature ensures that your intentions are crystal plain, thereby reducing the likelihood of misunderstanding.',
         },
         {
-          backgroundColor: '#999',
-          image: <Image source={require('../assets/images/logo.png')} />,
-          title: 'Triangle',
-          subtitle: "Beautiful, isn't it?",
+          backgroundColor: '#181A20',
+          image: <LottieView source={require('../assets/lottie/animation_llcdd350.json')} />,
+          title: 'Enriched Conversations',
+          subtitle: "Comuno generates an affective context for each message. Comuno adds substance to your interactions by identifying the underlying emotions in a conversation. By acknowledging and addressing the emotions behind the words, you will not only communicate effectively, but also cultivate deeper connections.",
         },
       ]}
     />
   );
-
+ 
   return (
     <NavigationContainer>
-      {!isFirstLaunch && <Simple/>}
-      {isFirstLaunch && isAuth && <MainNavigator/>}
-      {isFirstLaunch && !isAuth && didTryAutoLogin && <AuthScreen />}
-      {isFirstLaunch && !isAuth && !didTryAutoLogin && <StartUpScreen />}
+      {isFirstLaunch && <Simple/>}
+      {!isFirstLaunch && isAuth && <MainNavigator/>}
+      {!isFirstLaunch && !isAuth && didTryAutoLogin && <AuthScreen />}
+      {!isFirstLaunch && !isAuth && !didTryAutoLogin && <StartUpScreen />}
     </NavigationContainer>
   );
 };

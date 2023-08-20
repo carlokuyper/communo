@@ -70,6 +70,10 @@ const sendMessage = async (chatId, senderId, messageText, toneColor, imageUrl, r
         messageData.imageUrl = imageUrl;
     }
 
+    // if (toneColor) {
+    //     messageData.toneColor = toneColor;
+    // }
+
     if (type) {
         messageData.type = type;
     }
