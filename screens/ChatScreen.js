@@ -32,6 +32,8 @@ import CustomHeaderButton from "../components/CustomHeaderButton";
 import axios from "axios";
 import Tone from "../components/Tone";
 import MaskedView from "@react-native-masked-view/masked-view";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Swipeable } from "react-native-gesture-handler";
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -43,6 +45,7 @@ const ChatScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [toneColor, setToneColor] = useState()
+  const [activeTone, setActiveTone] = useState()
 
   const flatList = useRef();
 
@@ -114,7 +117,7 @@ const ChatScreen = (props) => {
         setChatId(id);
       }
 
-      await sendTextMessage(id, userData.userId, messageText, toneColor, replyingTo && replyingTo.key);
+      await sendTextMessage(id, userData.userId, messageText, toneColor, activeTone, replyingTo && replyingTo.key);
 
       setMessageText("");
       setReplyingTo(null);
@@ -123,7 +126,7 @@ const ChatScreen = (props) => {
       setErrorBannerText("Message failed to send");
       setTimeout(() => setErrorBannerText(""), 5000);
     }
-  }, [messageText, chatId, toneColor]);
+  }, [messageText, chatId, toneColor, activeTone]);
 
 
   const pickImage = useCallback(async () => {
@@ -241,6 +244,7 @@ const ChatScreen = (props) => {
         // let msgColor = myTone.toString()
         console.log(msgColor);
         setToneColor(msgColor[0])
+        setActiveTone(activeMsgTone[0])
 
         setActiveTone1(activeMsgTone[0])                
         setToneColor1(msgColor[0])
@@ -286,7 +290,13 @@ const ChatScreen = (props) => {
     setTimer(newTimer)
   }
 
-
+  const LeftActions = () => {
+    return(
+        <View>
+            <Text>dasdad</Text>
+        </View>
+    )
+}
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
       
@@ -319,7 +329,8 @@ const ChatScreen = (props) => {
                 data={chatMessages}
                 renderItem={(itemData) => {
                   const message = itemData.item;
-                  // console.log(message);
+                  // console.log(message.text);
+                  // AsyncStorage.setItem("testing", message.text)
 
                   const isOwnMessage = message.sentBy === userData.userId;
 
@@ -339,19 +350,24 @@ const ChatScreen = (props) => {
                   const sender = message.sentBy && storedUsers[message.sentBy];
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
 
-                  return <Bubble
-                            type={messageType}
-                            text={message.text}
-                            toneColor={message.toneColor}
-                            messageId={message.key}
-                            userId={userData.userId}
-                            chatId={chatId}
-                            date={message.sentAt}
-                            name={!chatData.isGroupChat || isOwnMessage ? undefined : name}
-                            setReply={() => setReplyingTo(message)}
-                            replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
-                            imageUrl={message.imageUrl}
-                          />
+                  return <Swipeable renderLeftActions={LeftActions}>
+                          <Bubble
+                                  type={messageType}
+                                  text={message.text}
+                                  toneColor={message.toneColor}
+                                  activeTone={message.activeTone}
+                                  messageId={message.key}
+                                  userId={userData.userId}
+                                  chatId={chatId}
+                                  date={message.sentAt}
+                                  name={!chatData.isGroupChat || isOwnMessage ? undefined : name}
+                                  setReply={() => setReplyingTo(message)}
+                                  replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
+                                  imageUrl={message.imageUrl}
+                                />
+                        </Swipeable> 
+                          
+                          
                 }}
               />
             }

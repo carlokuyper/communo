@@ -9,6 +9,7 @@ import SubmitButton from '../components/SubmitButton';
 import colors from '../constants/colors';
 import { removeUserFromChat } from '../utils/actions/chatActions';
 import { getUserChats } from '../utils/actions/userActions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ContactScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
@@ -21,8 +22,12 @@ const ContactScreen = props => {
 
     const chatId = props.route.params.chatId;
     const chatData = chatId && storedChats[chatId];
+    
 
     useEffect(() => {
+
+       
+        console.log(AsyncStorage.getItem('testing'));
 
         const getCommonUserChats = async () => {
             const currentUserChats = await getUserChats(currentUser.userId);

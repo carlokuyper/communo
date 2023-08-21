@@ -25,16 +25,16 @@ export const createChat = async (loggedInUserId, chatData) => {
     return newChat.key;
 }
 
-export const sendTextMessage = async (chatId, senderId, messageText, toneColor, replyTo) => {
-    await sendMessage(chatId, senderId, messageText, toneColor, null, replyTo, null);
+export const sendTextMessage = async (chatId, senderId, messageText, toneColor, activeTone, replyTo) => {
+    await sendMessage(chatId, senderId, messageText, toneColor, activeTone, null, replyTo, null);
 }
 
-export const sendInfoMessage = async (chatId, senderId, messageText, toneColor,) => {
-    await sendMessage(chatId, senderId, messageText, toneColor, null, null, "info");
+export const sendInfoMessage = async (chatId, senderId, messageText, toneColor, activeTone,) => {
+    await sendMessage(chatId, senderId, messageText, toneColor, activeTone, null, null, "info");
 }
 
 export const sendImage = async (chatId, senderId, imageUrl, replyTo) => {
-    await sendMessage(chatId, senderId, 'Image', imageUrl, replyTo, null);
+    await sendMessage(chatId, senderId, 'Image', 'Image', 'Image', imageUrl, replyTo, null);
 }
 
 export const updateChatData = async (chatId, userId, chatData) => {
@@ -49,17 +49,16 @@ export const updateChatData = async (chatId, userId, chatData) => {
     })
 }
 
-const sendMessage = async (chatId, senderId, messageText, toneColor, imageUrl, replyTo, type) => {
+const sendMessage = async (chatId, senderId, messageText, toneColor, activeTone, imageUrl, replyTo, type) => {
     const app = getFirebaseApp();
     const dbRef = ref(getDatabase());
     const messagesRef = child(dbRef, `messages/${chatId}`);
-    console.log(toneColor);
+    console.log(toneColor + activeTone);
 
     const messageData = {
         sentBy: senderId,
         sentAt: new Date().toISOString(),
         text: messageText,
-        toneColor: toneColor
     };
 
     if (replyTo) {
@@ -70,9 +69,13 @@ const sendMessage = async (chatId, senderId, messageText, toneColor, imageUrl, r
         messageData.imageUrl = imageUrl;
     }
 
-    // if (toneColor) {
-    //     messageData.toneColor = toneColor;
-    // }
+    if (toneColor) {
+        messageData.toneColor = toneColor;
+    }
+
+    if (activeTone) {
+        messageData.activeTone = activeTone;
+    }
 
     if (type) {
         messageData.type = type;
@@ -164,6 +167,6 @@ export const addUsersToChat = async (userLoggedInData, usersToAddData, chatData)
 
     const moreUsersMessage = newUsers.length > 1 ? `and ${newUsers.length - 1} others ` : '';
     const messageText = `${userLoggedInData.firstName} ${userLoggedInData.lastName} added ${userAddedName} ${moreUsersMessage}to the chat`;
-    await sendInfoMessage(chatData.key, userLoggedInData.userId, messageText, toneColor);
+    await sendInfoMessage(chatData.key, userLoggedInData.userId, messageText, toneColor, activeTone);
 
 }
