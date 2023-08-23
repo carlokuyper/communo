@@ -12,6 +12,8 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  TouchableWithoutFeedback,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -43,9 +45,6 @@ const ChatScreen = (props) => {
   const [replyingTo, setReplyingTo] = useState();
   const [tempImageUri, setTempImageUri] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const [toneColor, setToneColor] = useState()
-  const [activeTone, setActiveTone] = useState()
 
   const flatList = useRef();
 
@@ -117,7 +116,7 @@ const ChatScreen = (props) => {
         setChatId(id);
       }
 
-      await sendTextMessage(id, userData.userId, messageText, toneColor, activeTone, replyingTo && replyingTo.key);
+      await sendTextMessage(id, userData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, intendedExplain, replyingTo && replyingTo.key);
 
       setMessageText("");
       setReplyingTo(null);
@@ -126,7 +125,7 @@ const ChatScreen = (props) => {
       setErrorBannerText("Message failed to send");
       setTimeout(() => setErrorBannerText(""), 5000);
     }
-  }, [messageText, chatId, toneColor, activeTone]);
+  }, [messageText, chatId, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, intendedExplain,]);
 
 
   const pickImage = useCallback(async () => {
@@ -188,15 +187,11 @@ const ChatScreen = (props) => {
   let [activeTone2, setActiveTone2] = useState();
   let [activeTone3, setActiveTone3] = useState();
   let [currentExplain, setCurrentExplain] = useState();
+  let [intendedExplain, setIntendedExplain] = useState();
   
   const runNLP = e => {
     // console.log("test nlpRequest");  
     
-    setActiveTone1();
-    setActiveTone2();
-    setActiveTone3();
-    setCurrentExplain();
-
     setMessageText(e.target.value)
 
     clearTimeout(timer)
@@ -230,7 +225,6 @@ const ChatScreen = (props) => {
         // console.log(res);
 
         let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
-        // let tone = res.data.choices[0].text.toLowerCase().replace('e', '')
         console.log(tone);  
 
         let msgColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
@@ -239,13 +233,7 @@ const ChatScreen = (props) => {
         let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
         console.log(activeMsgTone);
 
-        //Main Tone
-        // let myTone = tone[3]
-        // let msgColor = myTone.toString()
-        console.log(msgColor);
-        setToneColor(msgColor[0])
-        setActiveTone(activeMsgTone[0])
-
+        //Main Tone  
         setActiveTone1(activeMsgTone[0])                
         setToneColor1(msgColor[0])
         setActiveTone2(activeMsgTone[1])                
@@ -259,7 +247,7 @@ const ChatScreen = (props) => {
       });
 
       //Explain the user message
-      let explainInput = " Explain how the message will be understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
+      let explainInput = "Explain how the message will be understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
       let explainPayload = {
         model: "text-davinci-003",
         prompt: explainInput,
@@ -275,28 +263,65 @@ const ChatScreen = (props) => {
           // console.log(res);
           
           let tone = res.data.choices[0].text 
-          console.log(tone);           
+          // console.log(tone);           
           let newText = tone.replace('\n', '');   
           setCurrentExplain(newText)  
           console.log(newText);  
-
       })
       .catch(function (error) {
           console.log(error);
       });
 
+      //Explain the user message
+      let explainIntended = " Explain how the message was intended to be understood understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
+      let intendedPayload = {
+        model: "text-davinci-003",
+        prompt: explainIntended,
+        temperature: 0,
+        max_tokens: 60,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0
+      }
+
+      axios.post('https://api.openai.com/v1/completions', intendedPayload, config)
+      .then((res)=> {
+          // console.log(res);
+          
+          let intended = res.data.choices[0].text 
+          // console.log(intended);           
+          let newIntended = intended.replace('\n', '');   
+          setIntendedExplain(newIntended)  
+          console.log(newIntended); 
+
+      })
+      .catch(function (error) {
+          console.log(error);
+      });     
       
     }, 2000)
     setTimer(newTimer)
   }
 
-  const LeftActions = () => {
-    return(
-        <View>
-            <Text>dasdad</Text>
-        </View>
-    )
-}
+  let lastPress = 0;
+
+    const onDoublePress = () => {
+        const time = new Date().getTime();
+        const delta = time - lastPress;
+
+        const DOUBLE_PRESS_DELAY = 400;
+        if (delta < DOUBLE_PRESS_DELAY) {
+            // Success double press
+            console.log('double press onDoublePress');
+            // if(selectedTone == false){
+            //     setSelectedTone(true)
+            // } else if(selectedTone == true){
+            //     setSelectedTone(false)
+            // }
+        }
+        lastPress = time;
+    };
+  
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
       
@@ -338,7 +363,7 @@ const ChatScreen = (props) => {
                   if (message.type && message.type === "info") {
                     messageType = "info";
                   } 
-                  
+                   
                   else if (isOwnMessage) {
                     messageType = "myMessage";
                   }
@@ -350,29 +375,32 @@ const ChatScreen = (props) => {
                   const sender = message.sentBy && storedUsers[message.sentBy];
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
 
-                  return <Swipeable renderLeftActions={LeftActions}>
-                          <Bubble
-                                  type={messageType}
-                                  text={message.text}
-                                  toneColor={message.toneColor}
-                                  activeTone={message.activeTone}
-                                  messageId={message.key}
-                                  userId={userData.userId}
-                                  chatId={chatId}
-                                  date={message.sentAt}
-                                  name={!chatData.isGroupChat || isOwnMessage ? undefined : name}
-                                  setReply={() => setReplyingTo(message)}
-                                  replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
-                                  imageUrl={message.imageUrl}
-                                />
-                        </Swipeable> 
-                          
-                          
+                  return <View >
+                <Bubble onStartShouldSetResponder = {(evt) => onDoublePress()}
+                    type={messageType}
+                    text={message.text}
+                    toneColor1={message.toneColor1}
+                    toneColor2={message.toneColor2}
+                    toneColor3={message.toneColor3}
+                    activeTone1={message.activeTone1} 
+                    activeTone2={message.activeTone2}
+                    activeTone3={message.activeTone3}
+                    currentExplain={message.currentExplain}
+                    intendedExplain={message.intendedExplain}
+                    messageId={message.key}
+                    userId={userData.userId}
+                    chatId={chatId}
+                    date={message.sentAt}
+                    name={!chatData.isGroupChat || isOwnMessage ? undefined : name}
+                    setReply={() => setReplyingTo(message)}
+                    replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
+                    imageUrl={message.imageUrl}
+                  />
+                  </View>
+                 
                 }}
               />
             }
-
-
           </PageContainer>
 
           {
@@ -390,14 +418,12 @@ const ChatScreen = (props) => {
               {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
               <Image source={robot} style={styles.robot}/>
             </View>
-            {messageText && activeTone1 &&<View style={styles.toneContainer}>
+              {messageText && activeTone1 &&<View style={styles.toneContainer}>
               <Tone text={activeTone1} color={toneColor1} />
               <Tone text={activeTone2} color={toneColor2} />
               <Tone text={activeTone3} color={toneColor3} />
             </View>}
           </View>
-
-        
         
 
         <View style={styles.inputContainer}>
@@ -466,7 +492,13 @@ const ChatScreen = (props) => {
             />
 
 
+
+
         </View>
+
+      
+
+        
         </ImageBackground>
     </SafeAreaView>
   );

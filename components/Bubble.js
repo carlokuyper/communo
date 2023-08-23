@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useRef, useState, useEffect, PropsWithChildren } from 'react';
+import { Animated, Image, StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import colors from '../constants/colors';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import uuid from 'react-native-uuid';
@@ -7,9 +7,6 @@ import * as Clipboard from 'expo-clipboard';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { starMessage } from '../utils/actions/chatActions';
 import { useSelector } from 'react-redux';
-import MaskedView from '@react-native-masked-view/masked-view';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Swipeable } from 'react-native-gesture-handler';
 
 function formatAmPm(dateString) {
     const date = new Date(dateString);
@@ -34,13 +31,40 @@ const MenuItem = props => {
     </MenuOption>
 }
 
+// type FadeInViewProps = PropsWithChildren<{style: ViewStyle}>;
 
+const FadeInView = props => {
+    const startValue = useRef(new Animated.Value(0)).current;
+    const endValue = 150;
+    const duration = 5000;
+
+  useEffect(() => {
+    Animated.timing(startValue, {
+        toValue: endValue,
+        duration: duration,
+        useNativeDriver: true,
+      }).start();
+    }, [startValue]);
+
+  return (
+    <Animated.View // Special animatable View
+      style={{
+        ...props.style,
+        transform: [
+            {
+              translateX: startValue,
+            },
+          ], // Bind opacity to animated value
+      }}>
+      {/* {props.children} */}
+      <Text>sadasdasd</Text>
+    </Animated.View>
+  );
+};
 
 const Bubble = props => {
 
-    
-
-    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name,  imageUrl, toneColor,activeTone,} = props;
+    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name,  imageUrl, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3,  currentExplain, intendedExplain,} = props;
 
     const starredMessages = useSelector(state => state.messages.starredMessages[chatId] ?? {});
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -48,12 +72,6 @@ const Bubble = props => {
     const bubbleStyle = { ...styles.container };
     const textStyle = { ...styles.text };
     const toneView = { ...styles.container };
-    const timeContainer = { ...styles.container };
-    const maskStyle = { ...styles.container };
-    const circleTop = { ...styles.container };
-    const bigCircle = { ...styles.container };
-    const circleRight = { ...styles.container };
-    const circleLeft = { ...styles.container };
     const wrapperStyle = { ...styles.wrapperStyle }
 
     const menuRef = useRef(null);
@@ -85,7 +103,7 @@ const Bubble = props => {
             bubbleStyle.elevation= 8,
             bubbleStyle.backgroundColor = 'white';
             bubbleStyle.borderWidth= 2;
-            bubbleStyle.borderColor= toneColor;
+            bubbleStyle.borderColor= toneColor1;
             bubbleStyle.borderRadius=15;
             bubbleStyle.borderBottomRightRadius=1;
             bubbleStyle.minWidth = '60%';
@@ -99,7 +117,7 @@ const Bubble = props => {
             toneView.shadowRadius=4.65,
             toneView.elevation= 8,
             toneView.alignSelf='flex-end',
-            toneView.backgroundColor=toneColor,
+            toneView.backgroundColor=toneColor1,
             toneView.right=0,
             toneView.borderRadius=15,
             toneView.marginRight=10,
@@ -119,7 +137,7 @@ const Bubble = props => {
             bubbleStyle.elevation= 8,
             bubbleStyle.backgroundColor = 'white';
             bubbleStyle.borderWidth= 2;
-            bubbleStyle.borderColor= toneColor;
+            bubbleStyle.borderColor= toneColor1;
             bubbleStyle.borderRadius=15;
             bubbleStyle.minWidth = '60%';
             bubbleStyle.maxWidth = '90%';
@@ -132,7 +150,7 @@ const Bubble = props => {
             toneView.shadowRadius=4.65,
             toneView.elevation= 8,
             toneView.alignSelf='flex-start',
-            toneView.backgroundColor=toneColor,
+            toneView.backgroundColor=toneColor1,
             toneView.left=0,
             toneView.borderRadius=15,
             toneView.marginLeft=10,
@@ -166,18 +184,31 @@ const Bubble = props => {
     const isStarred = isUserMessage && starredMessages[messageId] !== undefined;
     const replyingToUser = replyingTo && storedUsers[replyingTo.sentBy];
 
-    const LeftActions = () => {
-        return(
-            <View>
-                <Text>dasdad</Text>
-            </View>
-        )
-    }
+    
+    let [selectedTone, setSelectedTone] = useState(false);
+    let lastPress = 0;
+
+    const onDoublePress = () => {
+        const time = new Date().getTime();
+        const delta = time - lastPress;
+
+        const DOUBLE_PRESS_DELAY = 400;
+        if (delta < DOUBLE_PRESS_DELAY) {
+            // Success double press
+            console.log('double press onDoublePress');
+            if(selectedTone == false){
+                setSelectedTone(true)
+            } else if(selectedTone == true){
+                setSelectedTone(false)
+            }
+        }
+        lastPress = time;
+    };
 
     return (
-        <View style={wrapperStyle}>
+        <View style={wrapperStyle} onStartShouldSetResponder = {(evt) => onDoublePress()}>
             <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
-                <View style={bubbleStyle}>
+                <FadeInView style={bubbleStyle}>
                     {
                         name && type !== "info" &&
                         <Text style={styles.name}>{name}</Text>
@@ -193,37 +224,66 @@ const Bubble = props => {
                     }
 
                     {
-                        !imageUrl && (type == 'theirMessage') &&
-                        <>
-                            <View style={toneView} >
-                                <Text style={{backgroundColor:'rgba(52, 52, 52, 0.2)', color:'white', alignSelf:'flex-start', padding:5, paddingRight:15, paddingLeft:15, borderRadius:15}}>{activeTone}</Text>
-                            </View>
-                            <Text style={textStyle}>
-                                {text}
-                            </Text>
-                        </>
-                        ||
-                        !imageUrl && (type == 'myMessage') &&
-                        <Swipeable 
-                        renderLeftActions={LeftActions}>
-                            <View style={toneView} >
-                                <Text style={{backgroundColor:'rgba(52, 52, 52, 0.2)', color:'white', alignSelf:'flex-start', padding:5, paddingRight:15, paddingLeft:15, borderRadius:15}}>{activeTone}</Text>
-                            </View>
-                            <Text style={textStyle}>
-                                {text}
-                            </Text>
-                        </Swipeable>
+                        !imageUrl && selectedTone && type =='myMessage' &&
+                        <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                            <View>
+                                <Text style={textStyle}>
+                                The message will be understood as:
+                                </Text>
+                                <Text style={textStyle}>
+                                    {currentExplain}
+                                </Text>
+                                <Text style={textStyle}>
+                                The tone of the message is: 
+                                </Text>
 
-                    
-                        || !imageUrl &&
-                        <Text style={textStyle}>
-                            {text}
-                        </Text>
+                                <Text style={textStyle}>
+                                    {activeTone1}
+                                </Text>
+                                <Text style={textStyle}>
+                                    {activeTone2}
+                                </Text>
+                                <Text style={textStyle}>
+                                    {activeTone3}
+                                </Text> 
+                            </View>
+                           
+                        </View>
                     }
-                    
+
                     {
-                        
+                        !imageUrl && selectedTone && type =='theirMessage' &&
+                        <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                            <Text style={textStyle}>
+                              The message intended as:
+                            </Text>
+                            <Text style={textStyle}>
+                                {intendedExplain}
+                            </Text>
+                            <Text style={textStyle}>
+                               The tone of the message is: 
+                            </Text>
+
+                            <Text style={textStyle}>
+                                {activeTone1}
+                            </Text>
+                            <Text style={textStyle}>
+                                {activeTone2}
+                            </Text>
+                            <Text style={textStyle}>
+                                {activeTone3}
+                            </Text>
+                        </View>
                     }
+
+                    {
+                        !imageUrl && !selectedTone &&
+                        <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                           <Text style={textStyle}>
+                                {text}
+                            </Text>
+                        </View>
+                    }                  
 
                     {
                         imageUrl &&
@@ -246,7 +306,7 @@ const Bubble = props => {
                             <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
                         </MenuOptions>
                     </Menu>
-                </View>
+                </FadeInView>
             </Container>
         </View>
     )
