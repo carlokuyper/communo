@@ -20,25 +20,75 @@ const ContactScreen = props => {
     const storedChats = useSelector(state => state.chats.chatsData);
     const [commonChats, setCommonChats] = useState([]);
 
-    const chatId = props.route.params.chatId;
+    const chatId = useSelector(state => state.auth.userData.userId)
+    // const [chatId, setChatId] = useState(props.route?.params?.chatId);
+
     const chatData = chatId && storedChats[chatId];
     
+    // const chatMessagesData = state.messages.messagesData[chatId];
 
-    useEffect(() => {
+    console.log('chatId');
+    console.log(chatData);
+    const chatKey = useSelector(state => {
+        if (!chatId) return [];
+    
+        const testt = state.chats.chatsData;
+        // console.log(testt);
 
-       
-        console.log(AsyncStorage.getItem('testing'));
+        if (!testt) return [];
+    
+        const messageList = [];
+        for (const key in testt) {
 
-        const getCommonUserChats = async () => {
-            const currentUserChats = await getUserChats(currentUser.userId);
-            setCommonChats(
-                Object.values(currentUserChats).filter(cid => storedChats[cid] && storedChats[cid].isGroupChat)
-            )
+            const message = testt[key];
+          
+          messageList.push({
+            key,
+            ...message
+          });
         }
-
-        getCommonUserChats();
+        // console.log('message');
         
-    }, [])
+        return messageList;
+    });
+
+
+    //   console.log("chatKey");
+    //   console.log(chatKey[0]);
+
+      const msgData = chatKey[0].key
+      
+      const chatMessages = useSelector(state => {
+        if (!chatId) return [];
+        // console.log('chatId');
+        // console.log(chatId);
+    
+        const newData = state.messages.messagesData[msgData];
+        console.log('newData');
+        console.log(newData);
+        
+        if (!newData) return [];
+    
+        const messageList = [];
+        for (const key in newData) {
+          // console.log(key);
+          const message = msgData[key];
+    
+          messageList.push({
+            key,
+            ...message
+          });
+        }
+    
+        return messageList;
+      });
+
+      for (const key in chatMessages) {
+        // console.log(key);
+        const message = chatMessages[key].key;
+  
+        console.log(message);;
+      }
 
     const removeFromChat = useCallback(async () => {
         try {

@@ -41,10 +41,8 @@ import { Swipeable } from "react-native-gesture-handler";
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
   const [messageText, setMessageText] = useState("");
-  const [chatId, setChatId] = useState(props.route?.params?.chatId);
-  const [chatIda, setChatIda] = useState(props.route.params);
-  // console.log('chatIda');
-  // console.log(chatIda);
+  const [chatId, setChatId] = useState(props.route.params.chatId);
+  // const chatId = props.route.params.chatId;
   const [errorBannerText, setErrorBannerText] = useState("");
   const [replyingTo, setReplyingTo] = useState();
   const [tempImageUri, setTempImageUri] = useState("");
@@ -55,19 +53,15 @@ const ChatScreen = (props) => {
   const userData = useSelector(state => state.auth.userData);
   const storedUsers = useSelector(state => state.users.storedUsers);
   const storedChats = useSelector(state => state.chats.chatsData);
-  
   const chatMessages = useSelector(state => {
     if (!chatId) return [];
-    // console.log('chatId');
-    // console.log(chatId);
 
     const chatMessagesData = state.messages.messagesData[chatId];
-    
+
     if (!chatMessagesData) return [];
 
     const messageList = [];
     for (const key in chatMessagesData) {
-      console.log(key);
       const message = chatMessagesData[key];
 
       messageList.push({
@@ -337,14 +331,32 @@ const ChatScreen = (props) => {
 
     // }
     // const data = {msgExplan: chatMessages}
+    asdsetStringValue = async (value) => {
+      try {
+        await AsyncStorage.setItem('msgData', JSON.stringify.data)
+      } catch(e) {
+        // save error
+      }
     
+      console.log('Done.')
+    }
 
-    console.log(chatMessages[2]);
+    const data = {msgExplan: chatMessages}
+    _setStringValue = async () => {
+      try {
+        await AsyncStorage.setItem(
+          'msgData', "asdasdasdasdasdasd")
+      } catch (error) {
+        // Error saving data
+      }
+    };
+    
+    // AsyncStorage.setItem('msgData', data)
 
-
+    // console.log(chatMessages);
 
   return (
-    <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
+    <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container} onStartShouldSetResponder = {(evt) => onDoublePress()}>
   
         <ImageBackground
           source={backgroundImage}
@@ -352,7 +364,7 @@ const ChatScreen = (props) => {
         >
           
           <View style={{ paddingLeft: 20, flex: 1,}}>
-          {/* <MSGInfo/> */}
+          {/* <MSGInfo data={data}/> */}
             {
               !chatId && <Bubble text='This is a new chat. Say hi!' type="system" />
             }
@@ -398,7 +410,7 @@ const ChatScreen = (props) => {
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
 
                   return <View >
-                <Bubble 
+                <Bubble onStartShouldSetResponder = {(evt) => onDoublePress() + setActiveMsg('asddas')}
                   // {setActiveMsg('asddas')}
                     type={messageType}
                     text={message.text}

@@ -35,13 +35,12 @@ const MenuItem = props => {
 
 const FadeInView = props => {
     const startValue = useRef(new Animated.Value(0)).current;
-    const endValue = 150;
-    const duration = 5000;
+    const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(startValue, {
-        toValue: endValue,
-        duration: duration,
+    Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 5000,
         useNativeDriver: true,
       }).start();
     }, [startValue]);
@@ -56,8 +55,8 @@ const FadeInView = props => {
             },
           ], // Bind opacity to animated value
       }}>
-      {/* {props.children} */}
-      <Text>sadasdasd</Text>
+      {props.children}
+      
     </Animated.View>
   );
 };
@@ -101,9 +100,9 @@ const Bubble = props => {
             bubbleStyle.shadowOpacity=0.30,
             bubbleStyle.shadowRadius=4.65,
             bubbleStyle.elevation= 8,
-            bubbleStyle.backgroundColor = 'white';
-            bubbleStyle.borderWidth= 2;
-            bubbleStyle.borderColor= toneColor1;
+            bubbleStyle.backgroundColor = '#303030';
+            // bubbleStyle.borderWidth= 2;
+            // bubbleStyle.borderColor= toneColor1;
             bubbleStyle.borderRadius=15;
             bubbleStyle.borderBottomRightRadius=1;
             bubbleStyle.minWidth = '60%';
@@ -135,9 +134,9 @@ const Bubble = props => {
             bubbleStyle.shadowOpacity=0.30,
             bubbleStyle.shadowRadius=4.65,
             bubbleStyle.elevation= 8,
-            bubbleStyle.backgroundColor = 'white';
-            bubbleStyle.borderWidth= 2;
-            bubbleStyle.borderColor= toneColor1;
+            bubbleStyle.backgroundColor = '#E7E7E7';
+            // bubbleStyle.borderWidth= 2;
+            // bubbleStyle.borderColor= toneColor1;
             bubbleStyle.borderRadius=15;
             bubbleStyle.minWidth = '60%';
             bubbleStyle.maxWidth = '90%';
@@ -208,7 +207,7 @@ const Bubble = props => {
     return (
         <View style={wrapperStyle} onStartShouldSetResponder = {(evt) => onDoublePress()}>
             <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
-                <FadeInView style={bubbleStyle}>
+                <View style={bubbleStyle}>
                     {
                         name && type !== "info" &&
                         <Text style={styles.name}>{name}</Text>
@@ -224,8 +223,8 @@ const Bubble = props => {
                     }
 
                     {
-                        !imageUrl && selectedTone && type =='myMessage' &&
-                        <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                        !imageUrl && selectedTone &&
+                        <FadeInView style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
                             <View>
                                 <Text style={textStyle}>
                                 The message will be understood as:
@@ -248,32 +247,7 @@ const Bubble = props => {
                                 </Text> 
                             </View>
                            
-                        </View>
-                    }
-
-                    {
-                        !imageUrl && selectedTone && type =='theirMessage' &&
-                        <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
-                            <Text style={textStyle}>
-                              The message intended as:
-                            </Text>
-                            <Text style={textStyle}>
-                                {intendedExplain}
-                            </Text>
-                            <Text style={textStyle}>
-                               The tone of the message is: 
-                            </Text>
-
-                            <Text style={textStyle}>
-                                {activeTone1}
-                            </Text>
-                            <Text style={textStyle}>
-                                {activeTone2}
-                            </Text>
-                            <Text style={textStyle}>
-                                {activeTone3}
-                            </Text>
-                        </View>
+                        </FadeInView>
                     }
 
                     {
@@ -306,7 +280,7 @@ const Bubble = props => {
                             <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
                         </MenuOptions>
                     </Menu>
-                </FadeInView>
+                </View>
             </Container>
         </View>
     )
