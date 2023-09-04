@@ -60,7 +60,7 @@ const AppNavigator = (props) => {
   setItem('onboard', 'true')
 
   // const [isFirstLaunch, setIsFirstLaunch] = useState(getItem('onboard'))
-  const [isFirstLaunch, setIsFirstLaunch] = useState(true)
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false)
   console.log(isFirstLaunch);
   const Simple = () => (
 

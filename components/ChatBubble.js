@@ -205,56 +205,104 @@ const Bubble = props => {
     };
 
     return (
-        <View style={wrapperStyle} onStartShouldSetResponder = {(evt) => onDoublePress()}>
-            <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
-                <View style={bubbleStyle}>
-                    {
-                        name && type !== "info" &&
-                        <Text style={styles.name}>{name}</Text>
-                           
-                    }
+        <View>
+            {
+                selectedTone &&
+                <View style={wrapperStyle} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
+                    <View style={{shadowColor:'#000', shadowOffset:{width:0, height:4}, shadowRadius:4.65, elevation:8, backgroundColor: 'white', padding:10, minWidth:'60%', maxWidth: '90%', marginTop: 15}}>
+                       
+             
+                      
+                            
+                                <View style={{backgroundColor: '#303030', borderWidth:2, borderColor:toneColor1, minWidth:'60%', maxWidth: '90%', marginTop: 15}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                                    <Text style={textStyle}>
+                                        {text}
+                                    </Text>
+                                </View>
+                                <View>
+                                    <Text style={textStyle}>
+                                    The message will be understood as:
+                                    </Text>
+                                    <Text style={textStyle}>
+                                        {currentExplain}
+                                    </Text>
+                                    <Text style={textStyle}>
+                                    The tone of the message is: 
+                                    </Text>
 
-                    {
-                        replyingToUser &&
-                        <Bubble
-                            type='reply'
-                            text={replyingTo.text}
-                            name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
-                        />
-                    }
+                                    <Text style={textStyle}>
+                                        {activeTone1}
+                                    </Text>
+                                    <Text style={textStyle}>
+                                        {activeTone2}
+                                    </Text>
+                                    <Text style={textStyle}>
+                                        {activeTone3}
+                                    </Text> 
+                                </View>
+                            
+                        
 
-                    {
-                        !imageUrl &&
-                        <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
-                           <Text style={textStyle}>
-                                {text}
-                            </Text>
-                        </View>
-                    }                  
+                        {
+                            dateString && type !== "info" && <View style={styles.timeContainer}>
+                                { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
+                                <Text style={styles.time}>{dateString}</Text>
+                            </View>
+                        }
 
-                    {
-                        imageUrl &&
-                        <Image source={{ uri: imageUrl }} style={styles.image} />
-                    }
+                        <Menu name={id.current} ref={menuRef}>
+                            <MenuTrigger />
 
-                    {
-                        dateString && type !== "info" && <View style={styles.timeContainer}>
-                            { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
-                            <Text style={styles.time}>{dateString}</Text>
-                        </View>
-                    }
+                            <MenuOptions>
+                                <MenuItem text='Copy to clipboard' icon={'copy'} onSelect={() => copyToClipboard(text)} />
+                                <MenuItem text={`${isStarred ? 'Unstar' : 'Star'} message`} icon={isStarred ? 'star-o' : 'star'} iconPack={FontAwesome} onSelect={() => starMessage(messageId, chatId, userId)} />
+                                <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
+                            </MenuOptions>
+                        </Menu>
+                    </View>
+                </Container>
+            </View>
+            }
+            {
+                !selectedTone &&
+                <View style={wrapperStyle} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
+                    <View style={bubbleStyle}>
+                                               
+                            
+                            <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
+                            <Text style={textStyle}>
+                                    {text}
+                                </Text>
+                            </View>
+                                  
 
-                    <Menu name={id.current} ref={menuRef}>
-                        <MenuTrigger />
+                        {
+                            imageUrl &&
+                            <Image source={{ uri: imageUrl }} style={styles.image} />
+                        }
 
-                        <MenuOptions>
-                            <MenuItem text='Copy to clipboard' icon={'copy'} onSelect={() => copyToClipboard(text)} />
-                            <MenuItem text={`${isStarred ? 'Unstar' : 'Star'} message`} icon={isStarred ? 'star-o' : 'star'} iconPack={FontAwesome} onSelect={() => starMessage(messageId, chatId, userId)} />
-                            <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
-                        </MenuOptions>
-                    </Menu>
-                </View>
-            </Container>
+                        {
+                            dateString && type !== "info" && <View style={styles.timeContainer}>
+                                { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
+                                <Text style={styles.time}>{dateString}</Text>
+                            </View>
+                        }
+
+                        <Menu name={id.current} ref={menuRef}>
+                            <MenuTrigger />
+
+                            <MenuOptions>
+                                <MenuItem text='Copy to clipboard' icon={'copy'} onSelect={() => copyToClipboard(text)} />
+                                <MenuItem text={`${isStarred ? 'Unstar' : 'Star'} message`} icon={isStarred ? 'star-o' : 'star'} iconPack={FontAwesome} onSelect={() => starMessage(messageId, chatId, userId)} />
+                                <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
+                            </MenuOptions>
+                        </Menu>
+                    </View>
+                </Container>
+            </View>
+            }
         </View>
     )
 }

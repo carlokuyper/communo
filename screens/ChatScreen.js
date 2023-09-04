@@ -25,6 +25,7 @@ import colors from "../constants/colors";
 import { useSelector } from "react-redux";
 import PageContainer from "../components/PageContainer";
 import Bubble from "../components/Bubble";
+import ChatBubble from "../components/ChatBubble";
 import MSGInfo from "../components/MSGInfo";
 import { createChat, sendImage, sendTextMessage } from "../utils/actions/chatActions";
 import ReplyTo from "../components/ReplyTo";
@@ -398,7 +399,7 @@ const ChatScreen = (props) => {
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
 
                   return <View >
-                <Bubble 
+                <ChatBubble 
                   // {setActiveMsg('asddas')}
                     type={messageType}
                     text={message.text}
