@@ -11,6 +11,7 @@ import { removeUserFromChat } from '../utils/actions/chatActions';
 import { getUserChats } from '../utils/actions/userActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Tone from '../components/Tone';
 
 const ContactScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
@@ -22,122 +23,150 @@ const ContactScreen = props => {
     const [commonChats, setCommonChats] = useState([]);
 
     const chatId = useSelector(state => state.auth.userData.userId)
-    // const [chatId, setChatId] = useState(props.route?.params?.chatId);
 
     const chatData = chatId && storedChats[chatId];
     
-    // const chatMessagesData = state.messages.messagesData[chatId];
-
-    // console.log('chatId');
-    // console.log(chatData);
     const chatKey = useSelector(state => {
         if (!chatId) return [];
     
-        const testt = state.chats.chatsData;
-        // console.log(testt);
+        const newKey = state.chats.chatsData;
 
-        if (!testt) return [];
+        if (!newKey) return [];
     
         const messageList = [];
-        for (const key in testt) {
+        for (const key in newKey) {
 
-            const message = testt[key];
+            const message = newKey[key];
           
           messageList.push({
             key,
             ...message
           });
         }
-        // console.log('message');
         
         return messageList;
     });
 
+    const msgData = chatKey[0].key
 
-    //   console.log("chatKey");
-    //   console.log(chatKey[0]);
-
-      const msgData = chatKey[0].key
-      
-      let messageTonesArray1 = []
     const chatMessages = useSelector(state => {
         if (!chatId) return [];
-        // console.log('chatId');
-        // console.log(chatId);
     
         const chatMessages = state.messages.messagesData[msgData];
-        // console.log('newData');
-        // console.log(newData);
         
         if (!chatMessages) return [];
     
         const messageList = [];
         for (const key in chatMessages) {
-            // console.log(key);
-            const message = chatMessages[key];
-        
-            // console.log('message'); 
-            // console.log(message.activeTone1);
 
-            let messageTonesArray1 = message.text
-            // let messageTonesArray1 = message.activeTone1
-            // let messageTonesArray2 = message.activeTone2
-            // let messageTonesArray3 = message.activeTone3
+            const message = chatMessages[key];
+
+            let msgSentBy = message.sentBy
+            let msgText = message.text
 
             messageList.push({
-                messageTonesArray1,
-                // messageTonesArray2,
-                // messageTonesArray3
+                msgSentBy,
+                msgText,
             });
         }
-        // console.log('messageList');
-        // console.log(messageList);
-
         return messageList;
         
     });
-    console.log('chatMessages');
-    console.log(chatMessages);
 
     let toneArray = JSON.stringify(chatMessages) 
         
-    console.log('toneArray');
-    console.log(toneArray);
+    const [toneColor1, setToneColor1] = useState();
+    const [toneColor2, setToneColor2] = useState();
+    const [toneColor3, setToneColor3] = useState();
 
+    let [activeTone1, setActiveTone1] = useState();
+    let [activeTone2, setActiveTone2] = useState();
+    let [activeTone3, setActiveTone3] = useState();
 
-    
-    const config = {
-        headers:{
-            Authorization: "Bearer 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",
+    useEffect(() => {
+        const configTone = {
+            headers:{
+                Authorization: "Bearer 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",
+            }
+          };
+
+        //Explain the user message
+        let explainInputTone = "Go through this conversation between individuals, and Use Plutchik's Psycho-evolutionary Theory of Emotion to summarize the overall emotions in this array of tones down to three tones and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values " + "\ToneArray:" + toneArray
+        let explainPayloadTone = {
+            model: "text-davinci-003",
+            prompt: explainInputTone,
+            temperature: 0,
+            max_tokens: 60,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
         }
-      };
+    
+        axios.post('https://api.openai.com/v1/completions', explainPayloadTone, configTone)
+        .then((res)=> {
+            // console.log(res);
+         
+            let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
+            // console.log(tone);  
+    
+            let msgColour = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+            console.log(msgColour);
+    
+            let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+            console.log(activeMsgTone);
+    
+            // //Main Tone  
+            setActiveTone1(activeMsgTone[0])
+            setToneColor1(msgColour[0])
+            setActiveTone2(activeMsgTone[1])                
+            setToneColor2(msgColour[1])
+            setActiveTone3(activeMsgTone[2])                
+            setToneColor3(msgColour[2]) 
+    
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 
-    //Explain the user message
-    let explainInput = "Go through this conversation between individuals, and Use Plutchik's Psycho-evolutionary Theory of Emotion to summarize the overall emotions in this array of tones down to three tones and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values " + "\ToneArray:" + toneArray
-    let explainPayload = {
-        model: "text-davinci-003",
-        prompt: explainInput,
-        temperature: 0,
-        max_tokens: 60,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0
-    }
+        const configExplain = {
+            headers:{
+                Authorization: "Bearer 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",
+            }
+          };
+    
+        //Explain the user message
+        let explainInputExplain = "Go through this conversation between individuals, and explain the overall emotion and tone of the conversation, however start the conversation with Your conversation with " + currentUser.firstName + " " + currentUser.lastName + " has been" + "\ToneArray:" + toneArray
+        let explainPayloadExplain = {
+            model: "text-davinci-003",
+            prompt: explainInputExplain,
+            temperature: 0,
+            max_tokens: 60,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+        }
+    
+        axios.post('https://api.openai.com/v1/completions', explainPayloadExplain, configExplain)
+        .then((res)=> {
+            // console.log(res);
 
-    axios.post('https://api.openai.com/v1/completions', explainPayload, config)
-    .then((res)=> {
-        // console.log(res);
-        
-        let tone = res.data.choices[0].text 
-        // console.log(tone);           
-        let newText = tone.replace('\n', '');   
-        
-        console.log(newText);  
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
-
+            //Main Tone
+            let tone = res.data.choices[0].text 
+            // console.log(tone);           
+            let newText = tone.replace('\n', '');   
+            setExplainTone(newText)  
+            console.log(newText); 
+    
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    
+    
+    }, [])
+  
+    
+    let [explainTone, setExplainTone] = useState();
  
     const removeFromChat = useCallback(async () => {
         try {
@@ -155,21 +184,33 @@ const ContactScreen = props => {
     }, [props.navigation, isLoading])
 
     return <PageContainer>
-        <View style={styles.topContainer}>
-            <ProfileImage
-                uri={currentUser.profilePicture}
-                size={80}
-                style={{ marginBottom: 20 }}
-            />
+        <View>
+            <View style={styles.topContainer}>
+                <ProfileImage
+                    uri={currentUser.profilePicture}
+                    size={125}
+                    style={{ marginBottom: 20 }}
+                />
 
-            <PageTitle text={`${currentUser.firstName} ${currentUser.lastName}`} />
+                <Text style={styles.titleText} >{currentUser.firstName} {currentUser.lastName}</Text>
+            </View>
+           
+            <View >
+                <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
+                <Text style={styles.explainResponse}>{explainTone}</Text>
+                <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
+                
+                <View style={styles.toneContainer}>
+                    <Tone text={activeTone1} color={toneColor1} />
+                    <Tone text={activeTone2} color={toneColor2} />
+                    <Tone text={activeTone3} color={toneColor3} />
+                </View>
+                
+            </View>
             {/* <Text  style={{color:'white'}}>{chatMessages}</Text> */}
             {
                 currentUser.about &&
-                
-                
                     <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>
-            
             }
         </View>
 
@@ -210,6 +251,12 @@ const ContactScreen = props => {
 }
 
 const styles = StyleSheet.create({
+    titleText: {
+        fontSize: 28,
+        color: 'white',
+        fontFamily: 'bold',
+        letterSpacing: 0.3
+    },
     topContainer: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -226,7 +273,27 @@ const styles = StyleSheet.create({
         letterSpacing: 0.3,
         color: colors.textColor,
         marginVertical: 8
-    }
+    },
+    explainTitle1: {
+        color:'white',
+        fontFamily: 'bold',
+        textAlign:'left',
+    },
+    explainTitle2: {
+        color:'white',
+        fontFamily: 'bold',
+        textAlign:'left',
+        marginTop:'2%',
+        marginBottom:'2%'
+    },
+    explainResponse: {
+        color: 'white', 
+    },
+    toneContainer:{
+        flexDirection: 'row',
+        width:'100%',
+    },
+    
 });
 
 export default ContactScreen;
