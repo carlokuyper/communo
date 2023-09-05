@@ -68,7 +68,8 @@ const ChatScreen = (props) => {
 
     const messageList = [];
     for (const key in chatMessagesData) {
-      console.log(key);
+      // console.log('key');
+      // console.log(key);
       const message = chatMessagesData[key];
 
       messageList.push({
@@ -79,6 +80,8 @@ const ChatScreen = (props) => {
 
     return messageList;
   });
+
+
 
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData || {};
 
@@ -334,14 +337,8 @@ const ChatScreen = (props) => {
         lastPress = time;
     };
 
-    // const MSGInfoPull = (props){
 
-    // }
-    // const data = {msgExplan: chatMessages}
-    
-
-    console.log(chatMessages[2]);
-
+    // console.log(chatMessages[2]);
 
 
   return (
@@ -398,30 +395,29 @@ const ChatScreen = (props) => {
                   const sender = message.sentBy && storedUsers[message.sentBy];
                   const name = sender && `${sender.firstName} ${sender.lastName}`;
 
-                  return <View >
-                <ChatBubble 
-                  // {setActiveMsg('asddas')}
-                    type={messageType}
-                    text={message.text}
-                    toneColor1={message.toneColor1}
-                    toneColor2={message.toneColor2}
-                    toneColor3={message.toneColor3}
-                    activeTone1={message.activeTone1} 
-                    activeTone2={message.activeTone2}
-                    activeTone3={message.activeTone3}
-                    currentExplain={message.currentExplain}
-                    intendedExplain={message.intendedExplain}
-                    messageId={message.key}
-                    userId={userData.userId}
-                    chatId={chatId}
-                    date={message.sentAt}
-                    name={!chatData.isGroupChat || isOwnMessage ? undefined : name}
-                    setReply={() => setReplyingTo(message)}
-                    replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
-                    imageUrl={message.imageUrl}
-                  />
-                  </View>
-                 
+                  return <ChatBubble 
+                    onClick={(e) => handleClick(e)}
+
+                    // {setActiveMsg('asddas')}
+                      type={messageType}
+                      text={message.text}
+                      toneColor1={message.toneColor1}
+                      toneColor2={message.toneColor2}
+                      toneColor3={message.toneColor3}
+                      activeTone1={message.activeTone1} 
+                      activeTone2={message.activeTone2}
+                      activeTone3={message.activeTone3}
+                      currentExplain={message.currentExplain}
+                      intendedExplain={message.intendedExplain}
+                      messageId={message.key}
+                      userId={userData.userId}
+                      chatId={chatId}
+                      date={message.sentAt}
+                      name={!chatData.isGroupChat || isOwnMessage ? undefined : name}
+                      setReply={() => setReplyingTo(message)}
+                      replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
+                      imageUrl={message.imageUrl}
+                    />
                 }}
               />
             }
