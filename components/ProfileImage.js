@@ -95,8 +95,8 @@ const ProfileImage = props => {
 const styles = StyleSheet.create({
     image: {
         borderRadius: 10,
-        borderColor: colors.grey,
-        borderWidth: 1
+        borderColor: colors.lightGrey,
+        borderWidth: 0.25
     },
     editIconContainer: {
         position: 'absolute',

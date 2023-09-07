@@ -58,25 +58,34 @@ const SignInForm = props => {
         }
     }, [dispatch, formState]);
 
+    const marVerticalSize = 0
+
     return (
             <>
                 <Input
                     id="email"
-                    label="Email"
+                    // label="Email"
                     icon="mail"
                     iconPack={Feather}
+                    iconSize={20}
+                    marVertical={marVerticalSize}
                     autoCapitalize="none"
-                    keyboardType="email-address"
+                    placeholder="name@mail.com"
+                    keyboardType="Email-address"
                     onInputChanged={inputChangedHandler}
                     initialValue={formState.inputValues.email}
                     errorText={formState.inputValidities["email"]} />
 
                 <Input
                     id="password"
-                    label="Password"
+                    // label="Password"
+                    marginVertical={0}
                     icon="lock"
                     iconPack={Feather}
+                    iconSize={20}
+                    marVertical={marVerticalSize}
                     autoCapitalize="none"
+                    placeholder="Password"
                     secureTextEntry
                     onInputChanged={inputChangedHandler}
                     initialValue={formState.inputValues.password}
@@ -86,10 +95,12 @@ const SignInForm = props => {
                     isLoading ? 
                     <ActivityIndicator size={'small'} color={colors.blue} style={{ marginTop: 10 }} /> :
                     <SubmitButton
+                        color={colors.darkBlue}
                         title="Sign in"
                         onPress={authHandler}
-                        style={{ marginTop: 20 }}
-                        disabled={!formState.formIsValid}/>
+                        style={{ marginTop: 20, backgroundColor:colors.darkBlue}}
+                        disabled={!formState.formIsValid}
+                        />
                 }
             </>
     )

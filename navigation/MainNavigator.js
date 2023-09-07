@@ -220,7 +220,7 @@ const MainNavigator = (props) => {
 
   if (isLoading) {
     <View style={commonStyles.center}>
-      <ActivityIndicator size={'large'} color={colors.primary} />
+      <ActivityIndicator size={'large'} color={colors.white} />
     </View>
   }
 

@@ -347,6 +347,8 @@ const ChatScreen = (props) => {
         <ImageBackground
           source={backgroundImage}
           style={styles.backgroundImage}
+          imageStyle={{resizeMode: "contain",  marginLeft: -120, marginTop:-200, width:'120%',
+          height:'120%'}}
         >
           
           <View style={{ paddingLeft: 20, flex: 1,}}>
@@ -528,13 +530,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    backgroundColor:"#181A20"
+    backgroundColor:"white"
   },
   screen: {
     flex: 1
   },
   backgroundImage: {
     flex: 1,
+
   },
   inputContainer: {
     flexDirection: "row",
@@ -547,7 +550,7 @@ const styles = StyleSheet.create({
   textbox: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 50,
+    borderRadius: 5,
     borderColor: colors.lightGrey,
     marginHorizontal: 15,
     paddingHorizontal: 12,

@@ -63,41 +63,55 @@ const SignUpForm = props => {
         }
     }, [dispatch, formState]);
 
+    const marVerticalSize = 4
+
     return (
             <>
                 <Input
                     id="firstName"
-                    label="First name"
+                    // label="First name"
                     icon="user-o"
+                    iconSize={20}
+                    marVertical={marVerticalSize}
                     iconPack={FontAwesome}
+                    placeholder="First Name"
                     onInputChanged={inputChangedHandler}
                     autoCapitalize="none"
                     errorText={formState.inputValidities["firstName"]} />
 
                 <Input
                     id="lastName"
-                    label="Last name"
+                    // label="Last name"
                     icon="user-o"
+                    iconSize={20}
+                    marVertical={marVerticalSize}
                     iconPack={FontAwesome}
+                    placeholder="Last Name"
                     onInputChanged={inputChangedHandler}
                     autoCapitalize="none"
                     errorText={formState.inputValidities["lastName"]} />
 
                 <Input
                     id="email"
-                    label="Email"
+                    // label="Email"
                     icon="mail"
+                    iconSize={20}
+                    marVertical={marVerticalSize}
                     iconPack={Feather}
+                    placeholder="name@mail.com"
                     onInputChanged={inputChangedHandler}
-                    keyboardType="email-address"
+                    keyboardType="Email-address"
                     autoCapitalize="none"
                     errorText={formState.inputValidities["email"]} />
 
                 <Input
                     id="password"
-                    label="Password"
+                    // label="Password"
                     icon="lock"
+                    iconSize={20}
+                    marVertical={marVerticalSize}
                     autoCapitalize="none"
+                    placeholder="Password"
                     secureTextEntry
                     iconPack={Feather}
                     onInputChanged={inputChangedHandler}
@@ -107,9 +121,10 @@ const SignUpForm = props => {
                     isLoading ? 
                     <ActivityIndicator size={'small'} color={colors.blue} style={{ marginTop: 10 }} /> :
                     <SubmitButton
+                        color={colors.darkBlue}
                         title="Sign up"
                         onPress={authHandler}
-                        style={{ marginTop: 20 }}
+                        style={{ marginTop: 40 }}
                         disabled={!formState.formIsValid}/>
                 }
             </>

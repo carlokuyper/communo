@@ -36,7 +36,7 @@ const DataItem = props => {
 
                     <Text
                         numberOfLines={1}
-                        style={{ ...styles.title, ...{ color: type === "button" ? colors.blue : colors.white } }}>
+                        style={{ ...styles.title, ...{ color: type === "button" ? colors.blue : colors.darkBlue } }}>
                         {title}
                     </Text>
 
@@ -75,13 +75,11 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         paddingVertical: 7,
-        borderBottomColor: "black",
-        borderBottomWidth: 1,
 
         margin:15,
 
         color:'white',
-        backgroundColor:'#212328',
+        backgroundColor:colors.white,
         alignItems: 'center',
         minHeight: 60,
         padding:10,
@@ -90,12 +88,12 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 1,
         },
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
+        shadowOpacity: 0.18,
+        shadowRadius: 1.00,
 
-        elevation: 4,
+        elevation: 1,
     },
     textContainer: {
         marginLeft: 14,
@@ -109,13 +107,11 @@ const styles = StyleSheet.create({
     subTitle: {
         fontFamily: 'regular',
         fontSize: 16,
-        color: colors.white,
+        color: colors.darkBlue,
         letterSpacing: 0.3
     },
     iconContainer: {
-        borderWidth: 1,
         borderRadius: 50,
-        borderColor: colors.lightGrey,
         backgroundColor: 'white'
     },
     checkedStyle: {

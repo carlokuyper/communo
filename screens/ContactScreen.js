@@ -23,14 +23,17 @@ const ContactScreen = props => {
     const [commonChats, setCommonChats] = useState([]);
 
     const chatId = useSelector(state => state.auth.userData.userId)
-
+    console.log('chatId');
+    console.log(chatId);
     const chatData = chatId && storedChats[chatId];
+    console.log('currentUser');
+    console.log(userData.firstLast);
     
     const chatKey = useSelector(state => {
         if (!chatId) return [];
     
         const newKey = state.chats.chatsData;
-
+        
         if (!newKey) return [];
     
         const messageList = [];
@@ -91,7 +94,7 @@ const ContactScreen = props => {
           };
 
         //Explain the user message
-        let explainInputTone = "Go through this conversation between individuals, and Use Plutchik's Psycho-evolutionary Theory of Emotion to summarize the overall emotions in this array of tones down to three tones and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values " + "\ToneArray:" + toneArray
+        let explainInputTone = "Go through this conversation between individuals, and Use Plutchik's Psycho-evolutionary Theory of Emotion to summarize the overall emotions in this array of tones down to three tones add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values " + "\ToneArray:" + toneArray
         let explainPayloadTone = {
             model: "text-davinci-003",
             prompt: explainInputTone,
@@ -110,10 +113,10 @@ const ContactScreen = props => {
             // console.log(tone);  
     
             let msgColour = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-            console.log(msgColour);
+            // console.log(msgColour);
     
             let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-            console.log(activeMsgTone);
+            // console.log(activeMsgTone);
     
             // //Main Tone  
             setActiveTone1(activeMsgTone[0])
@@ -135,7 +138,7 @@ const ContactScreen = props => {
           };
     
         //Explain the user message
-        let explainInputExplain = "Go through this conversation between individuals, and explain the overall emotion and tone of the conversation, however start the conversation with Your conversation with " + currentUser.firstName + " " + currentUser.lastName + " has been" + "\ToneArray:" + toneArray
+        let explainInputExplain = "Go through this conversation between individuals, and explain the overall emotion and tone of the conversation, between the current user" + userData.firstLast + " and " + currentUser.firstName + " " + currentUser.lastName + " has been" + "\ToneArray:" + toneArray
         let explainPayloadExplain = {
             model: "text-davinci-003",
             prompt: explainInputExplain,
@@ -253,7 +256,7 @@ const ContactScreen = props => {
 const styles = StyleSheet.create({
     titleText: {
         fontSize: 28,
-        color: 'white',
+        color: colors.darkBlue,
         fontFamily: 'bold',
         letterSpacing: 0.3
     },
@@ -275,19 +278,19 @@ const styles = StyleSheet.create({
         marginVertical: 8
     },
     explainTitle1: {
-        color:'white',
+        color: colors.darkBlue,
         fontFamily: 'bold',
         textAlign:'left',
     },
     explainTitle2: {
-        color:'white',
+        color: colors.darkBlue,
         fontFamily: 'bold',
         textAlign:'left',
         marginTop:'2%',
         marginBottom:'2%'
     },
     explainResponse: {
-        color: 'white', 
+        color: colors.darkBlue, 
     },
     toneContainer:{
         flexDirection: 'row',

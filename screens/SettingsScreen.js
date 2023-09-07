@@ -93,7 +93,9 @@ const SettingsScreen = props => {
             currentValues.email != email ||
             currentValues.about != about;
     }
-    
+
+    const marVerticalSize = 10
+
     return <PageContainer>
 
         <ScrollView contentContainerStyle={styles.formContainer}>
@@ -108,6 +110,7 @@ const SettingsScreen = props => {
                 id="firstName"
                 label="First name"
                 icon="user-o"
+                marVertical={marVerticalSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
@@ -128,6 +131,7 @@ const SettingsScreen = props => {
                 id="email"
                 label="Email"
                 icon="mail"
+                marVertical={marVerticalSize}
                 iconPack={Feather}
                 onInputChanged={inputChangedHandler}
                 keyboardType="email-address"
@@ -139,6 +143,7 @@ const SettingsScreen = props => {
                 id="about"
                 label="About"
                 icon="user-o"
+                marVertical={marVerticalSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
@@ -175,12 +180,12 @@ const SettingsScreen = props => {
                 color={colors.red}
             />
             
-            <SubmitButton
+            {/* <SubmitButton
                 title="Reset"
                 onPress={() => dispatch(reset()) }
                 style={{ marginTop: 20 }}
                 color={colors.red}
-            />
+            /> */}
 
         </ScrollView>   
     </PageContainer>
@@ -189,10 +194,13 @@ const SettingsScreen = props => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor:'white'
     },
     formContainer: { 
         alignItems: 'center',
-        marginTop:20
+        marginTop:20,
+        marginBottom:20,
+        paddingBottom:50
     }
 })
 

@@ -18,28 +18,26 @@ const AppNavigator = (props) => {
   const doneOnboarding = useSelector(state => state.auth.token !== null && state.auth.token !== "");
   const didTryAutoLogin = useSelector(state => state.auth.didTryAutoLogin);
 
-  
-
   const StartBtn = ({...props}) => (
     <TouchableOpacity {...props}>
-    <Text style={{ width:200, paddingTop:10, paddingBottom:10, borderRadius:20, marginHorizontal:20, marginTop:100, marginRight:'50%', textAlign:'center', color:'#001454', backgroundColor:"white", fontSize:16,}}>Finish</Text>
+    <Text style={{ width:200, paddingTop:10, paddingBottom:10, borderRadius:10, marginHorizontal:20, marginTop:100, marginRight:'50%', textAlign:'center', color:'white', backgroundColor:"#181A20", fontSize:16,}}>Finish</Text>
     </TouchableOpacity>
   )
   
   const nxtBtn = ({...props}) => (
     <TouchableOpacity {...props}>
-    <Text style={{ width:100, paddingTop:10, paddingBottom:10, borderRadius:20, marginHorizontal:20, marginTop:100, marginRight:'10%', textAlign:'center', color:'#001454', backgroundColor:"white", fontSize:16,}}>Next</Text>
+    <Text style={{ width:100, paddingTop:10, paddingBottom:10, borderRadius:10, marginHorizontal:20, marginTop:100, marginRight:'10%', textAlign:'center', color:'white', backgroundColor:"#181A20", fontSize:16,}}>Next</Text>
     </TouchableOpacity>
   )
   const skipBtn = ({...props}) => (
     <TouchableOpacity {...props}>
-    <Text style={{ width:100, paddingTop:10, paddingBottom:10, borderRadius:20, marginHorizontal:20, marginTop:100, marginLeft:'10%', textAlign:'center', color:'white', fontSize:16,}}>Skip</Text>
+    <Text style={{ width:100, paddingTop:10, paddingBottom:10, borderRadius:10, marginHorizontal:20, marginTop:100, marginLeft:'10%', textAlign:'center', color:'#181A20', fontSize:16,}}>Skip</Text>
     </TouchableOpacity>
   )
 
   const Dots = ({selected}) => {
     let backgroundColor;
-    backgroundColor = selected ? '#EFEFEF' : 'rgba(217,217,217,0.5)';
+    backgroundColor = selected ? '#181A20' : 'rgba(24,26,32,0.6)';
     
     let width;
     width = selected ? 20 : 10;
@@ -60,7 +58,7 @@ const AppNavigator = (props) => {
   setItem('onboard', 'true')
 
   // const [isFirstLaunch, setIsFirstLaunch] = useState(getItem('onboard'))
-  const [isFirstLaunch, setIsFirstLaunch] = useState(false)
+  const [isFirstLaunch, setIsFirstLaunch] = useState(true)
   console.log(isFirstLaunch);
   const Simple = () => (
 
@@ -80,20 +78,22 @@ const AppNavigator = (props) => {
   
       pages={[
         {
-          backgroundColor: '#181A20',
-          image: <LottieView source={require('../assets/lottie/animation_llcdd350.json')} autoPlay loop />,
+          
+          
+          backgroundColor: 'white',
+          image: <LottieView style={{height: 200, marginBottom:-100, marginTop:-50}} source={require('../assets/lottie/animation_llcdd350.json')} autoPlay loop />,
           title: 'Welcome To Comuno',
-          subtitle: 'Comuno is more than just a messaging application; it facilitates seamless and effective communication. Whether youre communicating with friends, family, or coworkers, Comuno equips you with the means to convey yourself eloquently and connect in a meaningful way.',
+          subtitle: 'Comuno is more than just a messaging application; it facilitates seamless and effective communication. Whether youre communicating with friends, family, or coworkers, Comuno equips you with the means to convey yourself eloquently and connect in a meaningful way.'
         },
         {
-          backgroundColor: '#181A20',
-          image: <LottieView  source={require('../assets/lottie/animation_llcdd350.json')} />,
+          backgroundColor: 'white',
+          image: <LottieView style={{height: 200, marginBottom:-100, marginTop:-50}} source={require('../assets/lottie/animation_llcdd350.json')} />,
           title: 'AI-Powered Clarity',
           subtitle: 'Comuno leverages the power of artificial intelligence to enhance your communication experience. Our advanced technology breaks down your messages, providing insights into how your words will be interpreted by the recipient. This feature ensures that your intentions are crystal plain, thereby reducing the likelihood of misunderstanding.',
         },
         {
-          backgroundColor: '#181A20',
-          image: <LottieView source={require('../assets/lottie/animation_llcdd350.json')} />,
+          backgroundColor: 'white',
+          image: <LottieView style={{height: 200, marginBottom:-100, marginTop:-50}} source={require('../assets/lottie/animation_llcdd350.json')} />,
           title: 'Enriched Conversations',
           subtitle: "Comuno generates an affective context for each message. Comuno adds substance to your interactions by identifying the underlying emotions in a conversation. By acknowledging and addressing the emotions behind the words, you will not only communicate effectively, but also cultivate deeper connections.",
         },

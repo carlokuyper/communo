@@ -14,7 +14,7 @@ const Input = props => {
     }
 
     return <View style={styles.container}>
-        <Text style={styles.label}>{props.label}</Text>
+        <Text  marginVertical={props.marVertical} style={styles.label}>{props.label}</Text>
 
         <View style={styles.inputContainer}>
             {
@@ -42,13 +42,13 @@ const Input = props => {
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%'
+        width: '100%',
     },
     label: {
-        marginVertical: 8,
+        marginVertical: 4,
         fontFamily: 'bold',
         letterSpacing: 0.3,
-        color: colors.white
+        color: colors.backgroundColor
     },
     inputContainer: {
         width: '100%',
@@ -58,14 +58,22 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         backgroundColor: colors.nearlyWhite,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.18,
+        shadowRadius: 1.00,
+
+        elevation: 1,
     },
     icon: {
         marginRight: 10,
         color: colors.grey
     },
     input: {
-        
         color: colors.textColor,
         flex: 1,
         fontFamily: 'regular',
