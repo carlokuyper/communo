@@ -29,7 +29,6 @@ const Input = props => {
                 onChangeText={onChangeText}
                 value={value}/>
         </View>
-
         {
             props.errorText &&
             <View style={styles.errorContainer}>

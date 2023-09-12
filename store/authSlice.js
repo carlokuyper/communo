@@ -5,7 +5,8 @@ const authSlice = createSlice({
     initialState: {
         token: null,
         userData: null,
-        didTryAutoLogin: false
+        didTryAutoLogin: false,
+        firstLaunch: true
     },
     reducers: {
         authenticate: (state, action) => {
@@ -17,10 +18,14 @@ const authSlice = createSlice({
         setDidTryAutoLogin: (state, action) => {
             state.didTryAutoLogin = true;
         },
+        setFirstLaunch: (state, action) => {
+            state.firstLaunch= true;
+        },
         logout: (state, action) => {
             state.token = null;
             state.userData = null;
             state.didTryAutoLogin = false;
+            // state.firstLaunch= false;
         },
         updateLoggedInUserData: (state, action) => {
             state.userData = { ...state.userData, ...action.payload.newData }
@@ -28,6 +33,7 @@ const authSlice = createSlice({
     }
 });
 export const setDidTryAutoLogin = authSlice.actions.setDidTryAutoLogin;
+export const setFirstLaunch = authSlice.actions.setFirstLaunch;
 export const authenticate = authSlice.actions.authenticate;
 export const updateLoggedInUserData = authSlice.actions.updateLoggedInUserData;
 export const logout = authSlice.actions.logout;

@@ -23,23 +23,41 @@ const ContactScreen = props => {
     const [commonChats, setCommonChats] = useState([]);
 
     const chatId = useSelector(state => state.auth.userData.userId)
-    console.log('chatId');
-    console.log(chatId);
+    // console.log('chatId');
+    // console.log(chatId);
     const chatData = chatId && storedChats[chatId];
-    console.log('currentUser');
-    console.log(userData.firstLast);
+    // console.log('currentUser');
+    // console.log(userData.firstLast);
+
+    const user1Chats = useSelector(state => state.analysis.user1Chats);
+    const user2Chats = useSelector(state => state.analysis.user2Chats);
+
+
+    console.log('user1Chats');
+    user1Chats.forEach(message => {
+      console.log(message.text);
+    });
+    
+    console.log('user2Chats');
+    user2Chats.forEach(message => {
+      console.log(message.text);
+    });
     
     const chatKey = useSelector(state => {
         if (!chatId) return [];
     
         const newKey = state.chats.chatsData;
-        
+        // console.log('newKey');
+        // console.log(newKey);
         if (!newKey) return [];
     
         const messageList = [];
         for (const key in newKey) {
 
             const message = newKey[key];
+
+            // console.log('message');
+            // console.log(message);
           
           messageList.push({
             key,
@@ -76,6 +94,9 @@ const ContactScreen = props => {
         
     });
 
+    // console.log('chatMessages');
+    // console.log(chatMessages);
+
     let toneArray = JSON.stringify(chatMessages) 
         
     const [toneColor1, setToneColor1] = useState();
@@ -86,87 +107,86 @@ const ContactScreen = props => {
     let [activeTone2, setActiveTone2] = useState();
     let [activeTone3, setActiveTone3] = useState();
 
-    useEffect(() => {
-        const configTone = {
-            headers:{
-                Authorization: "Bearer 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",
-            }
-          };
+    // useEffect(() => {
+    //     const configTone = {
+    //         headers:{
+    //             Authorization: "Bearer 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",
+    //         }
+    //       };
 
-        //Explain the user message
-        let explainInputTone = "Go through this conversation between individuals, and Use Plutchik's Psycho-evolutionary Theory of Emotion to summarize the overall emotions in this array of tones down to three tones add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values " + "\ToneArray:" + toneArray
-        let explainPayloadTone = {
-            model: "text-davinci-003",
-            prompt: explainInputTone,
-            temperature: 0,
-            max_tokens: 60,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0
-        }
+    //     //Explain the user message
+    //     let explainInputTone = "Go through this conversation between individuals, and Use Plutchik's Psycho-evolutionary Theory of Emotion to summarize the overall emotions in this array of tones down to three tones add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values " + "\ToneArray:" + toneArray
+    //     let explainPayloadTone = {
+    //         model: "text-davinci-003",
+    //         prompt: explainInputTone,
+    //         temperature: 0,
+    //         max_tokens: 60,
+    //         top_p: 1,
+    //         frequency_penalty: 0,
+    //         presence_penalty: 0
+    //     }
     
-        axios.post('https://api.openai.com/v1/completions', explainPayloadTone, configTone)
-        .then((res)=> {
-            // console.log(res);
+    //     axios.post('https://api.openai.com/v1/completions', explainPayloadTone, configTone)
+    //     .then((res)=> {
+    //         // console.log(res);
          
-            let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
-            // console.log(tone);  
+    //         let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
+    //         // console.log(tone);  
     
-            let msgColour = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-            // console.log(msgColour);
+    //         let msgColour = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+    //         // console.log(msgColour);
     
-            let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-            // console.log(activeMsgTone);
+    //         let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+    //         // console.log(activeMsgTone);
     
-            // //Main Tone  
-            setActiveTone1(activeMsgTone[0])
-            setToneColor1(msgColour[0])
-            setActiveTone2(activeMsgTone[1])                
-            setToneColor2(msgColour[1])
-            setActiveTone3(activeMsgTone[2])                
-            setToneColor3(msgColour[2]) 
+    //         // //Main Tone  
+    //         setActiveTone1(activeMsgTone[0])
+    //         setToneColor1(msgColour[0])
+    //         setActiveTone2(activeMsgTone[1])                
+    //         setToneColor2(msgColour[1])
+    //         setActiveTone3(activeMsgTone[2])                
+    //         setToneColor3(msgColour[2]) 
     
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     });
 
-        const configExplain = {
-            headers:{
-                Authorization: "Bearer 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",
-            }
-          };
+    //     const configExplain = {
+    //         headers:{
+    //             Authorization: "Bearer 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",
+    //         }
+    //       };
     
-        //Explain the user message
-        let explainInputExplain = "Go through this conversation between individuals, and explain the overall emotion and tone of the conversation, between the current user" + userData.firstLast + " and " + currentUser.firstName + " " + currentUser.lastName + " has been" + "\ToneArray:" + toneArray
-        let explainPayloadExplain = {
-            model: "text-davinci-003",
-            prompt: explainInputExplain,
-            temperature: 0,
-            max_tokens: 60,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0
-        }
+    //     //Explain the user message
+    //     let explainInputExplain = "Go through this conversation between individuals, and explain the overall emotion and tone of the conversation, between the current user" + userData.firstLast + " and " + currentUser.firstName + " " + currentUser.lastName + " has been. Keep it short" + "\ToneArray:" + toneArray
+    //     let explainPayloadExplain = {
+    //         model: "text-davinci-003",
+    //         prompt: explainInputExplain,
+    //         temperature: 0,
+    //         max_tokens: 60,
+    //         top_p: 1,
+    //         frequency_penalty: 0,
+    //         presence_penalty: 0
+    //     }
     
-        axios.post('https://api.openai.com/v1/completions', explainPayloadExplain, configExplain)
-        .then((res)=> {
-            // console.log(res);
+    //     axios.post('https://api.openai.com/v1/completions', explainPayloadExplain, configExplain)
+    //     .then((res)=> {
+    //         // console.log(res);
 
-            //Main Tone
-            let tone = res.data.choices[0].text 
-            // console.log(tone);           
-            let newText = tone.replace('\n', '');   
-            setExplainTone(newText)  
-            console.log(newText); 
+    //         //Main Tone
+    //         let tone = res.data.choices[0].text 
+    //         // console.log(tone);           
+    //         let newText = tone.replace('\n', '');   
+    //         setExplainTone(newText)  
+    //         // console.log(newText); 
     
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     });
     
-    
-    }, [])
+    // }, [])
   
     
     let [explainTone, setExplainTone] = useState();

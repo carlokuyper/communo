@@ -98,9 +98,9 @@ const SignUpForm = props => {
                     iconSize={20}
                     marVertical={marVerticalSize}
                     iconPack={Feather}
-                    placeholder="name@mail.com"
+                    placeholder="Name@mail.com"
                     onInputChanged={inputChangedHandler}
-                    keyboardType="Email-address"
+                    keyboardType="email-address"
                     autoCapitalize="none"
                     errorText={formState.inputValidities["email"]} />
 

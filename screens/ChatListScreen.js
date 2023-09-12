@@ -17,6 +17,9 @@ const ChatListScreen = props => {
     const chatName = props.route?.params?.chatName;
 
     const userData = useSelector(state => state.auth.userData);
+    const dasdas = useSelector(state => state.auth);
+    // console.log('userData');
+    // console.log(userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
     const userChats = useSelector(state => {
         const chatsData = state.chats.chatsData;
@@ -24,6 +27,9 @@ const ChatListScreen = props => {
             return new Date(b.updatedAt) - new Date(a.updatedAt);
         });
     });
+
+    // console.log('userChats');
+    // console.log(userChats);
 
     useEffect(() => {
         props.navigation.setOptions({

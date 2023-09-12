@@ -70,8 +70,8 @@ const SignInForm = props => {
                     iconSize={20}
                     marVertical={marVerticalSize}
                     autoCapitalize="none"
-                    placeholder="name@mail.com"
-                    keyboardType="Email-address"
+                    placeholder="Name@mail.com"
+                    keyboardType="email-address"
                     onInputChanged={inputChangedHandler}
                     initialValue={formState.inputValues.email}
                     errorText={formState.inputValidities["email"]} />

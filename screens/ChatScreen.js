@@ -22,7 +22,7 @@ import backgroundImage from "../assets/images/chatBackground.png";
 import robot from "../assets/images/robot.png";
 
 import colors from "../constants/colors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../components/PageContainer";
 import Bubble from "../components/Bubble";
 import ChatBubble from "../components/ChatBubble";
@@ -38,14 +38,12 @@ import Tone from "../components/Tone";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { AsyncStorage } from 'react-native';
 import { Swipeable } from "react-native-gesture-handler";
+import { setUser1Chats, setUser2Chats } from "../store/analysisSlice";
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
   const [messageText, setMessageText] = useState("");
   const [chatId, setChatId] = useState(props.route?.params?.chatId);
-  const [chatIda, setChatIda] = useState(props.route.params);
-  // console.log('chatIda');
-  // console.log(chatIda);
   const [errorBannerText, setErrorBannerText] = useState("");
   const [replyingTo, setReplyingTo] = useState();
   const [tempImageUri, setTempImageUri] = useState("");
@@ -56,6 +54,8 @@ const ChatScreen = (props) => {
   const userData = useSelector(state => state.auth.userData);
   const storedUsers = useSelector(state => state.users.storedUsers);
   const storedChats = useSelector(state => state.chats.chatsData);
+
+  const dispatch = useDispatch();
   
   const chatMessages = useSelector(state => {
     if (!chatId) return [];
@@ -63,6 +63,8 @@ const ChatScreen = (props) => {
     // console.log(chatId);
 
     const chatMessagesData = state.messages.messagesData[chatId];
+    console.log(chatMessagesData);
+
     
     if (!chatMessagesData) return [];
 
@@ -92,7 +94,19 @@ const ChatScreen = (props) => {
     return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
   }
 
+  // let user1Chats  = ['test1', 'test2', 'test3'];
+  // let user1Chats = {chatMessages}
+  // let user2Chats = {chatMessages}
+
+  const user1Chats = chatMessages.filter(message => message.sentBy === userData.userId);
+  const user2Chats = chatMessages.filter(message => message.sentBy !== userData.userId);
+
   useEffect(() => {
+    console.log('User Chats');
+    dispatch(setUser1Chats(user1Chats));
+    dispatch(setUser2Chats(user2Chats));
+
+
     if (!chatData) return;
     
     props.navigation.setOptions({
