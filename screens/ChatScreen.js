@@ -59,19 +59,13 @@ const ChatScreen = (props) => {
   
   const chatMessages = useSelector(state => {
     if (!chatId) return [];
-    // console.log('chatId');
-    // console.log(chatId);
 
     const chatMessagesData = state.messages.messagesData[chatId];
-    console.log(chatMessagesData);
 
-    
     if (!chatMessagesData) return [];
 
     const messageList = [];
     for (const key in chatMessagesData) {
-      // console.log('key');
-      // console.log(key);
       const message = chatMessagesData[key];
 
       messageList.push({
@@ -83,8 +77,6 @@ const ChatScreen = (props) => {
     return messageList;
   });
 
-
-
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData || {};
 
   const getChatTitleFromName = () => {
@@ -94,18 +86,12 @@ const ChatScreen = (props) => {
     return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
   }
 
-  // let user1Chats  = ['test1', 'test2', 'test3'];
-  // let user1Chats = {chatMessages}
-  // let user2Chats = {chatMessages}
-
   const user1Chats = chatMessages.filter(message => message.sentBy === userData.userId);
   const user2Chats = chatMessages.filter(message => message.sentBy !== userData.userId);
 
   useEffect(() => {
-    console.log('User Chats');
     dispatch(setUser1Chats(user1Chats));
     dispatch(setUser2Chats(user2Chats));
-
 
     if (!chatData) return;
     
@@ -131,77 +117,6 @@ const ChatScreen = (props) => {
     })
     setChatUsers(chatData.users)
   }, [chatUsers])
-
-  const sendMessage = useCallback(async () => {
-
-    try {
-      let id = chatId;
-      if (!id) {
-        // No chat Id. Create the chat
-        id = await createChat(userData.userId, props.route.params.newChatData);
-        setChatId(id);
-      }
-
-      await sendTextMessage(id, userData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, intendedExplain, replyingTo && replyingTo.key);
-
-      setMessageText("");
-      setReplyingTo(null);
-    } catch (error) {
-      console.log(error);
-      setErrorBannerText("Message failed to send");
-      setTimeout(() => setErrorBannerText(""), 5000);
-    }
-  }, [messageText, chatId, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, intendedExplain,]);
-
-
-  const pickImage = useCallback(async () => {
-    try {
-      const tempUri = await launchImagePicker();
-      if (!tempUri) return;
-
-      setTempImageUri(tempUri);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [tempImageUri]);
-
-  const takePhoto = useCallback(async () => {
-    try {
-      const tempUri = await openCamera();
-      if (!tempUri) return;
-
-      setTempImageUri(tempUri);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [tempImageUri]);
-
-  const uploadImage = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-
-      let id = chatId;
-      if (!id) {
-        // No chat Id. Create the chat
-        id = await createChat(userData.userId, props.route.params.newChatData);
-        setChatId(id);
-      }
-
-      const uploadUrl = await uploadImageAsync(tempImageUri, true);
-      setIsLoading(false);
-
-      await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key)
-      setReplyingTo(null);
-      
-      setTimeout(() => setTempImageUri(""), 500);
-      
-    } catch (error) {
-      console.log(error);
-      
-    }
-  }, [isLoading, tempImageUri, chatId])
-
   
   const [timer, setTimer] = useState(null)
 
@@ -213,7 +128,6 @@ const ChatScreen = (props) => {
   let [activeTone2, setActiveTone2] = useState();
   let [activeTone3, setActiveTone3] = useState();
   let [currentExplain, setCurrentExplain] = useState();
-  let [intendedExplain, setIntendedExplain] = useState();
   
   const runNLP = e => {
     // console.log("test nlpRequest");  
@@ -230,11 +144,9 @@ const ChatScreen = (props) => {
     };
 
     const newTimer = setTimeout (()=> {
-
       let msg = props.msg
       
       //Explain the tone of the message
-      // let msgTone = "Identify the three tones in the message but add a * add the beginning of to the tone. \nTone:" + "\nGive the associated color in hex value using Plutchik’s Psycho-evolutionary Theory of Emotion" + "\nMessage:" + messageText 
       let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
       let tonesPayload = {
         model: "text-davinci-003",
@@ -297,33 +209,6 @@ const ChatScreen = (props) => {
       .catch(function (error) {
           console.log(error);
       });
-
-      //Explain the user message
-      let explainIntended = " Explain how the message was intended to be understood understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
-      let intendedPayload = {
-        model: "text-davinci-003",
-        prompt: explainIntended,
-        temperature: 0,
-        max_tokens: 60,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0
-      }
-
-      axios.post('https://api.openai.com/v1/completions', intendedPayload, config)
-      .then((res)=> {
-          // console.log(res);
-          
-          let intended = res.data.choices[0].text 
-          // console.log(intended);           
-          let newIntended = intended.replace('\n', '');   
-          setIntendedExplain(newIntended)  
-          console.log(newIntended); 
-
-      })
-      .catch(function (error) {
-          console.log(error);
-      });     
       
     }, 2000)
     setTimer(newTimer)
@@ -352,7 +237,75 @@ const ChatScreen = (props) => {
     };
 
 
-    // console.log(chatMessages[2]);
+    const sendMessage = useCallback(async () => {
+
+      try {
+        let id = chatId;
+        if (!id) {
+          // No chat Id. Create the chat
+          id = await createChat(userData.userId, props.route.params.newChatData);
+          setChatId(id);
+        }
+  
+        await sendTextMessage(id, userData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, replyingTo && replyingTo.key);
+  
+        setMessageText("");
+        setReplyingTo(null);
+      } catch (error) {
+        console.log(error);
+        setErrorBannerText("Message failed to send");
+        setTimeout(() => setErrorBannerText(""), 5000);
+      }
+    }, [messageText, chatId, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain,]);
+  
+  
+    const pickImage = useCallback(async () => {
+      try {
+        const tempUri = await launchImagePicker();
+        if (!tempUri) return;
+  
+        setTempImageUri(tempUri);
+      } catch (error) {
+        console.log(error);
+      }
+    }, [tempImageUri]);
+  
+    const takePhoto = useCallback(async () => {
+      try {
+        const tempUri = await openCamera();
+        if (!tempUri) return;
+  
+        setTempImageUri(tempUri);
+      } catch (error) {
+        console.log(error);
+      }
+    }, [tempImageUri]);
+  
+    const uploadImage = useCallback(async () => {
+      setIsLoading(true);
+  
+      try {
+  
+        let id = chatId;
+        if (!id) {
+          // No chat Id. Create the chat
+          id = await createChat(userData.userId, props.route.params.newChatData);
+          setChatId(id);
+        }
+  
+        const uploadUrl = await uploadImageAsync(tempImageUri, true);
+        setIsLoading(false);
+  
+        await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key)
+        setReplyingTo(null);
+        
+        setTimeout(() => setTempImageUri(""), 500);
+        
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }, [isLoading, tempImageUri, chatId])
 
 
   return (
@@ -424,7 +377,6 @@ const ChatScreen = (props) => {
                       activeTone2={message.activeTone2}
                       activeTone3={message.activeTone3}
                       currentExplain={message.currentExplain}
-                      intendedExplain={message.intendedExplain}
                       messageId={message.key}
                       userId={userData.userId}
                       chatId={chatId}

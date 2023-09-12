@@ -4,7 +4,8 @@ const analysisSlice = createSlice({
     name: "analysis",
     initialState: {
         user1Chats: [],
-        user2Chats: []
+        user2Chats: [],
+        selectedMessage: null,
     },
     reducers: {
         setUser1Chats: (state, action) => {
@@ -13,7 +14,10 @@ const analysisSlice = createSlice({
         setUser2Chats: (state, action) => {
             state.user2Chats = action.payload;
         },
+        setSelectedMessage: (state, action) => { // new action for selected message
+            state.selectedMessage = action.payload;
+        },
     }
 });
-export const { setUser1Chats, setUser2Chats } = analysisSlice.actions;
+export const { setUser1Chats, setUser2Chats, setSelectedMessage } = analysisSlice.actions;
 export default analysisSlice.reducer;
