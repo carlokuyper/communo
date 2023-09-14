@@ -17,7 +17,10 @@ const analysisSlice = createSlice({
         setSelectedMessage: (state, action) => { // new action for selected message
             state.selectedMessage = action.payload;
         },
+        clearAnalysis: (state, action) => { // new action for selected message
+            state.selectedMessage = null
+        },
     }
 });
-export const { setUser1Chats, setUser2Chats, setSelectedMessage } = analysisSlice.actions;
+export const { setUser1Chats, setUser2Chats, setSelectedMessage, clearAnalysis } = analysisSlice.actions;
 export default analysisSlice.reducer;

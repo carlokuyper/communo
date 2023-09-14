@@ -38,7 +38,7 @@ import Tone from "../components/Tone";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { AsyncStorage } from 'react-native';
 import { Swipeable } from "react-native-gesture-handler";
-import { setUser1Chats, setUser2Chats } from "../store/analysisSlice";
+import { clearAnalysis, setSelectedMessage, setUser1Chats, setUser2Chats } from "../store/analysisSlice";
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -214,157 +214,172 @@ const ChatScreen = (props) => {
     setTimer(newTimer)
   }
 
+  const sendMessage = useCallback(async () => {
+
+    try {
+      let id = chatId;
+      if (!id) {
+        // No chat Id. Create the chat
+        id = await createChat(userData.userId, props.route.params.newChatData);
+        setChatId(id);
+      }
+
+      await sendTextMessage(id, userData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, replyingTo && replyingTo.key);
+
+      setMessageText("");
+      setReplyingTo(null);
+    } catch (error) {
+      console.log(error);
+      setErrorBannerText("Message failed to send");
+      setTimeout(() => setErrorBannerText(""), 5000);
+    }
+  }, [messageText, chatId, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain,]);
+
+
+  const pickImage = useCallback(async () => {
+    try {
+      const tempUri = await launchImagePicker();
+      if (!tempUri) return;
+
+      setTempImageUri(tempUri);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [tempImageUri]);
+
+  const takePhoto = useCallback(async () => {
+    try {
+      const tempUri = await openCamera();
+      if (!tempUri) return;
+
+      setTempImageUri(tempUri);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [tempImageUri]);
+
+  const uploadImage = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+
+      let id = chatId;
+      if (!id) {
+        // No chat Id. Create the chat
+        id = await createChat(userData.userId, props.route.params.newChatData);
+        setChatId(id);
+      }
+
+      const uploadUrl = await uploadImageAsync(tempImageUri, true);
+      setIsLoading(false);
+
+      await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key)
+      setReplyingTo(null);
+      
+      setTimeout(() => setTempImageUri(""), 500);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }, [isLoading, tempImageUri, chatId])
+
   let lastPress = 0;
-  let [activeMsg, setActiveMsg] = useState(null);
+  let [activeMsg, setActiveMsg] = useState(false);
 
-    const onDoublePress = () => {
-        const time = new Date().getTime();
-        const delta = time - lastPress;
+  const onDoublePress = () => {
+    const time = new Date().getTime();
+    const delta = time - lastPress;
+    const DOUBLE_PRESS_DELAY = 400;
 
-        const DOUBLE_PRESS_DELAY = 400;
-        if (delta < DOUBLE_PRESS_DELAY) {
-            // Success double press
-            console.log('double press onDoublePress chatScreen');
-            console.log(activeMsg);
-            // if(selectedTone == false){
-            //     setSelectedTone(true)
-            // } else if(selectedTone == true){
-            //     setSelectedTone(false)
-            // }
-            setStringValue()
-        }
-        lastPress = time;
-    };
-
-
-    const sendMessage = useCallback(async () => {
-
-      try {
-        let id = chatId;
-        if (!id) {
-          // No chat Id. Create the chat
-          id = await createChat(userData.userId, props.route.params.newChatData);
-          setChatId(id);
-        }
-  
-        await sendTextMessage(id, userData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, replyingTo && replyingTo.key);
-  
-        setMessageText("");
-        setReplyingTo(null);
-      } catch (error) {
-        console.log(error);
-        setErrorBannerText("Message failed to send");
-        setTimeout(() => setErrorBannerText(""), 5000);
+    if (delta < DOUBLE_PRESS_DELAY) {
+      // Success double press
+      if (activeMsg == true) {
+        console.log("double press from chatScreen: " + activeMsg); 
+        setActiveMsg(false)          
       }
-    }, [messageText, chatId, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain,]);
-  
-  
-    const pickImage = useCallback(async () => {
-      try {
-        const tempUri = await launchImagePicker();
-        if (!tempUri) return;
-  
-        setTempImageUri(tempUri);
-      } catch (error) {
-        console.log(error);
+      if (activeMsg == false) {
+        console.log("double press from chatScreen: " + activeMsg); 
+        setActiveMsg(true)
       }
-    }, [tempImageUri]);
-  
-    const takePhoto = useCallback(async () => {
-      try {
-        const tempUri = await openCamera();
-        if (!tempUri) return;
-  
-        setTempImageUri(tempUri);
-      } catch (error) {
-        console.log(error);
-      }
-    }, [tempImageUri]);
-  
-    const uploadImage = useCallback(async () => {
-      setIsLoading(true);
-  
-      try {
-  
-        let id = chatId;
-        if (!id) {
-          // No chat Id. Create the chat
-          id = await createChat(userData.userId, props.route.params.newChatData);
-          setChatId(id);
-        }
-  
-        const uploadUrl = await uploadImageAsync(tempImageUri, true);
-        setIsLoading(false);
-  
-        await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key)
-        setReplyingTo(null);
-        
-        setTimeout(() => setTempImageUri(""), 500);
-        
-      } catch (error) {
-        console.log(error);
-        
-      }
-    }, [isLoading, tempImageUri, chatId])
+    }
+    lastPress = time;
+  };
 
+  const onDoublePressChat = () => {
+    if (activeMsg == true) {
+      console.log("double press from other components: " + activeMsg);
+      setActiveMsg(false)
+    }
+    if (activeMsg == false) {
+      console.log("double press from other components: " + activeMsg);
+      dispatch(clearAnalysis());
+      setActiveMsg(true)
+    }
+  }
 
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
   
-        <ImageBackground
-          source={backgroundImage}
-          style={styles.backgroundImage}
-          imageStyle={{resizeMode: "contain",  marginLeft: -120, marginTop:-200, width:'120%',
-          height:'120%'}}
-        >
+      <ImageBackground
+        source={backgroundImage}
+        style={styles.backgroundImage}
+        imageStyle={{resizeMode: "contain",  marginLeft: -120, marginTop:-200, width:'120%',
+        height:'120%'}}
+      >
+        {activeMsg && 
+          <MSGInfo onDoublePress={onDoublePressChat} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)',}}/>
+        }
+
+        <View style={{ paddingLeft: 20, flex: 1,}}>
           
-          <View style={{ paddingLeft: 20, flex: 1,}}>
-          {/* <MSGInfo/> */}
-            {
-              !chatId && <Bubble text='This is a new chat. Say hi!' type="system" />
-            }
+          {
+            !chatId && <Bubble text='This is a new chat. Say hi!' type="system" />
+          }
 
-            {
-              errorBannerText !== "" && <Bubble text={errorBannerText} type="error" />
-            }
+          {
+            errorBannerText !== "" && <Bubble text={errorBannerText} type="error" />
+          }
 
-            {
-              chatId && 
-              <FlatList style={{width:'100%'}}
-                ref={(ref) => flatList.current = ref}
-                onContentSizeChange={() => flatList.current.scrollToEnd({ animated: false })}
-                onLayout={() => flatList.current.scrollToEnd({ animated: false })}
+          {
+            chatId && 
+            <FlatList style={{width:'100%'}}
+              ref={(ref) => flatList.current = ref}
+              onContentSizeChange={() => flatList.current.scrollToEnd({ animated: false })}
+              onLayout={() => flatList.current.scrollToEnd({ animated: false })}
 
-                // onContentSizeChange={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
-                // onLayout={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
+              // onContentSizeChange={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
+              // onLayout={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
 
-                // onContentSizeChange={() => selectedUsers.length > 0 && selectedUsersFlatList.current.scrollToEnd() }
+              // onContentSizeChange={() => selectedUsers.length > 0 && selectedUsersFlatList.current.scrollToEnd() }
 
-                data={chatMessages}
-                renderItem={(itemData) => {
-                  const message = itemData.item;
-                  // console.log(message.text);
-                  // AsyncStorage.setItem("testing", message.text)
+              data={chatMessages}
+              renderItem={(itemData) => {
+                const message = itemData.item;
+                // console.log(message.text);
+                // AsyncStorage.setItem("testing", message.text)
 
-                  const isOwnMessage = message.sentBy === userData.userId;
+                const isOwnMessage = message.sentBy === userData.userId;
 
-                  let messageType;
-                  if (message.type && message.type === "info") {
-                    messageType = "info";
-                  } 
-                   
-                  else if (isOwnMessage) {
-                    messageType = "myMessage";
-                  }
-                  else {
-                    messageType = "theirMessage";
-                  } 
+                let messageType;
+                if (message.type && message.type === "info") {
+                  messageType = "info";
+                } 
                   
+                else if (isOwnMessage) {
+                  messageType = "myMessage";
+                }
+                else {
+                  messageType = "theirMessage";
+                } 
+                
 
-                  const sender = message.sentBy && storedUsers[message.sentBy];
-                  const name = sender && `${sender.firstName} ${sender.lastName}`;
+                const sender = message.sentBy && storedUsers[message.sentBy];
+                const name = sender && `${sender.firstName} ${sender.lastName}`;
 
-                  return <ChatBubble 
+                return <View onStartShouldSetResponder={() => onDoublePress()}  dispatch={dispatch}>
+                  <ChatBubble 
+                    onDoublePress={() => onDoublePressChat()}
                     onClick={(e) => handleClick(e)}
 
                     // {setActiveMsg('asddas')}
@@ -386,108 +401,102 @@ const ChatScreen = (props) => {
                       replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
                       imageUrl={message.imageUrl}
                     />
-                }}
-              />
-            }
-          </View>
-
-          {
-            replyingTo &&
-            <ReplyTo
-              text={replyingTo.text}
-              user={storedUsers[replyingTo.sentBy]}
-              onCancel={() => setReplyingTo(null)}
+                  </View>
+              }}
             />
-          }
+          } 
 
-
-        <View style={styles.toneMainContainer}>
-            <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
-              {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
-              <Image source={robot} style={styles.robot}/>
-            </View>
-              {messageText && activeTone1 &&<View style={styles.toneContainer}>
-              <Tone text={activeTone1} color={toneColor1} />
-              <Tone text={activeTone2} color={toneColor2} />
-              <Tone text={activeTone3} color={toneColor3} />
-            </View>}
-          </View>
-        
-
-        <View style={styles.inputContainer}>
-          <TouchableOpacity
-            style={styles.mediaButton}
-            onPress={pickImage}
-          >
-            <Feather name="plus" size={24} color={colors.blue} />
-          </TouchableOpacity>
-
-          <TextInput
-            style={styles.textbox}
-            placeholderTextColor="grey"
-            placeholder="Type here..."
-            value={messageText}
-            onChangeText={(text) => setMessageText(text)}
-            onSubmitEditing={sendMessage}
-            onChange={runNLP}
-          />
-
-          {messageText === "" && (
-            <TouchableOpacity
-              style={styles.mediaButton}
-              onPress={takePhoto}
-            >
-              <Feather name="camera" size={24} color={colors.blue} />
-            </TouchableOpacity>
-          )}
-
-          {messageText !== "" && (
-            <TouchableOpacity
-              style={{ ...styles.mediaButton, ...styles.sendButton }}
-              onPress={sendMessage}
-            >
-              <Feather name="send" size={20} color={"white"} />
-            </TouchableOpacity>
-          )}
-
-            <AwesomeAlert
-              show={tempImageUri !== ""}
-              title='Send image?'
-              closeOnTouchOutside={true}
-              closeOnHardwareBackPress={false}
-              showCancelButton={true}
-              showConfirmButton={true}
-              cancelText='Cancel'
-              confirmText="Send image"
-              confirmButtonColor={colors.primary}
-              cancelButtonColor={colors.red}
-              titleStyle={styles.popupTitleStyle}
-              onCancelPressed={() => setTempImageUri("")}
-              onConfirmPressed={uploadImage}
-              onDismiss={() => setTempImageUri("")}
-              customView={(
-                <View>
-                  {
-                    isLoading &&
-                    <ActivityIndicator size='small' color={colors.primary} />
-                  }
-                  {
-                    !isLoading && tempImageUri !== "" &&
-                    <Image source={{ uri: tempImageUri }} style={{ width: 200, height: 200 }} />
-                  }
-                </View>
-              )}
-            />
-
-
-
-
+          
         </View>
 
+        {
+          replyingTo &&
+          <ReplyTo
+            text={replyingTo.text}
+            user={storedUsers[replyingTo.sentBy]}
+            onCancel={() => setReplyingTo(null)}
+          />
+        }
+
+
+      <View style={styles.toneMainContainer}>
+          <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
+            {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
+            <Image source={robot} style={styles.robot}/>
+          </View>
+            {messageText && activeTone1 &&<View style={styles.toneContainer}>
+            <Tone text={activeTone1} color={toneColor1} />
+            <Tone text={activeTone2} color={toneColor2} />
+            <Tone text={activeTone3} color={toneColor3} />
+          </View>}
+        </View>
       
 
-        
-        </ImageBackground>
+      <View style={styles.inputContainer}>
+        <TouchableOpacity
+          style={styles.mediaButton}
+          onPress={pickImage}
+        >
+          <Feather name="plus" size={24} color={colors.blue} />
+        </TouchableOpacity>
+
+        <TextInput
+          style={styles.textbox}
+          placeholderTextColor="grey"
+          placeholder="Type here..."
+          value={messageText}
+          onChangeText={(text) => setMessageText(text)}
+          onSubmitEditing={sendMessage}
+          onChange={runNLP}
+        />
+
+        {messageText === "" && (
+          <TouchableOpacity
+            style={styles.mediaButton}
+            onPress={takePhoto}
+          >
+            <Feather name="camera" size={24} color={colors.blue} />
+          </TouchableOpacity>
+        )}
+
+        {messageText !== "" && (
+          <TouchableOpacity
+            style={{ ...styles.mediaButton, ...styles.sendButton }}
+            onPress={sendMessage}
+          >
+            <Feather name="send" size={20} color={"white"} />
+          </TouchableOpacity>
+        )}
+          <AwesomeAlert
+            show={tempImageUri !== ""}
+            title='Send image?'
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showCancelButton={true}
+            showConfirmButton={true}
+            cancelText='Cancel'
+            confirmText="Send image"
+            confirmButtonColor={colors.primary}
+            cancelButtonColor={colors.red}
+            titleStyle={styles.popupTitleStyle}
+            onCancelPressed={() => setTempImageUri("")}
+            onConfirmPressed={uploadImage}
+            onDismiss={() => setTempImageUri("")}
+            customView={(
+              <View>
+                {
+                  isLoading &&
+                  <ActivityIndicator size='small' color={colors.primary} />
+                }
+                {
+                  !isLoading && tempImageUri !== "" &&
+                  <Image source={{ uri: tempImageUri }} style={{ width: 200, height: 200 }} />
+                }
+              </View>
+            )}
+          />
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -503,7 +512,6 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-
   },
   inputContainer: {
     flexDirection: "row",

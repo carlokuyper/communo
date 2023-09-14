@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect, PropsWithChildren } from 'react';
-import { Animated, Image, StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import colors from '../constants/colors';
 import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import uuid from 'react-native-uuid';
 import * as Clipboard from 'expo-clipboard';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { starMessage } from '../utils/actions/chatActions';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedMessage } from '../store/analysisSlice';
 
 function formatAmPm(dateString) {
     const date = new Date(dateString);
@@ -61,16 +62,15 @@ const FadeInView = props => {
   );
 };
 
-const Bubble = props => {
+const ChatBubble = props => {
 
-    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name,  imageUrl, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3,  currentExplain, intendedExplain,} = props;
+    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name,  imageUrl, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3,  currentExplain, intendedExplain, isActiveMsg} = props;
 
     const starredMessages = useSelector(state => state.messages.starredMessages[chatId] ?? {});
     const storedUsers = useSelector(state => state.users.storedUsers);
 
     const bubbleStyle = { ...styles.container };
     const textStyle = { ...styles.text };
-    const toneView = { ...styles.container };
     const wrapperStyle = { ...styles.wrapperStyle }
 
     const menuRef = useRef(null);
@@ -96,33 +96,19 @@ const Bubble = props => {
             wrapperStyle.justifyContent = 'flex-end';
 
             bubbleStyle.shadowColor= "#000",
-            bubbleStyle.shadowOffset= { width: 0, height: 4, }
-            bubbleStyle.shadowOpacity=0.30,
+            bubbleStyle.shadowOffset= { width: 0, height: 1, }
+            bubbleStyle.shadowOpacity=0.22,
             
-            bubbleStyle.shadowRadius=4.65,
-            bubbleStyle.elevation= 8,
+            bubbleStyle.shadowRadius=2.22,
+            bubbleStyle.elevation= 3,
             bubbleStyle.backgroundColor = '#303030';
-            // bubbleStyle.borderWidth= 2;
-            // bubbleStyle.borderColor= toneColor1;
             bubbleStyle.borderRadius=15;
-            bubbleStyle.borderBottomRightRadius=1;
             bubbleStyle.minWidth = '60%';
             bubbleStyle.maxWidth = '90%';
             bubbleStyle.marginTop = 15;
 
-            // Tone indecenter on message bubble
-            toneView.shadowColor= "#000",
-            toneView.shadowOffset= { width: 0, height: 4, }
-            toneView.shadowOpacity=0.30,
-            toneView.shadowRadius=4.65,
-            toneView.elevation= 8,
-            toneView.alignSelf='flex-end',
-            toneView.backgroundColor=toneColor1,
-            toneView.right=0,
-            toneView.borderRadius=15,
-            toneView.marginRight=10,
-            toneView.marginTop=-22,
-            toneView.padding=-5,
+            textStyle.color = 'white';
+            textStyle.marginLeft = 5;
 
             Container = TouchableWithoutFeedback;
             isUserMessage = true;
@@ -131,31 +117,17 @@ const Bubble = props => {
             wrapperStyle.justifyContent = 'flex-start';
             
             bubbleStyle.shadowColor= "#000",
-            bubbleStyle.shadowOffset= { width: 0, height: 4, }
-            bubbleStyle.shadowOpacity=0.30,
-            bubbleStyle.shadowRadius=4.65,
-            bubbleStyle.elevation= 8,
+            bubbleStyle.shadowOffset= { width: 0, height: 1, }
+            bubbleStyle.shadowOpacity=0.22,
+            bubbleStyle.shadowRadius=2.2,
+            bubbleStyle.elevation= 3,
             bubbleStyle.backgroundColor = '#E7E7E7';
-            // bubbleStyle.borderWidth= 2;
-            // bubbleStyle.borderColor= toneColor1;
             bubbleStyle.borderRadius=15;
             bubbleStyle.minWidth = '60%';
             bubbleStyle.maxWidth = '90%';
             bubbleStyle.marginTop = 15;
 
-            // Tone indecenter on message bubble
-            toneView.shadowColor= "#000",
-            toneView.shadowOffset= { width: 0, height: 4, }
-            toneView.shadowOpacity=0.30,
-            toneView.shadowRadius=4.65,
-            toneView.elevation= 8,
-            toneView.alignSelf='flex-start',
-            toneView.backgroundColor=toneColor1,
-            toneView.left=0,
-            toneView.borderRadius=15,
-            toneView.marginLeft=10,
-            toneView.marginTop=-22,
-            toneView.padding=-5,
+            textStyle.marginLeft = 5;
 
             Container = TouchableWithoutFeedback;
             isUserMessage = true;
@@ -184,94 +156,37 @@ const Bubble = props => {
     const isStarred = isUserMessage && starredMessages[messageId] !== undefined;
     const replyingToUser = replyingTo && storedUsers[replyingTo.sentBy];
 
+    const lastPress = useRef(null);
+    const dispatch = useDispatch();
+
+    let selectedMessage = {type: type, toneColor1: toneColor1, toneColor2: toneColor2, toneColor3: toneColor3, activeTone1: activeTone1, activeTone2: activeTone2, activeTone3: activeTone3, currentExplain: currentExplain, text: text, userId: userId, date: date}
+    // let selectedMessage = [ type, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2,  activeTone3, currentExplain, text, ]
     
-    let [selectedTone, setSelectedTone] = useState(false);
-    let lastPress = 0;
-
-    const onDoublePress = () => {
+    const handleDoublePress = () => {
         const time = new Date().getTime();
-        const delta = time - lastPress;
+        const delta = time - (lastPress.current || 0);
 
-        const DOUBLE_PRESS_DELAY = 400;
-        if (delta < DOUBLE_PRESS_DELAY) {
-            // Success double press
-            console.log('double press onDoublePress');
-            if(selectedTone == false){
-                setSelectedTone(true)
-            } else if(selectedTone == true){
-                setSelectedTone(false)
-            }
+        if (delta < 200) {
+            // Double press detected
+            props.onDoublePress && props.onDoublePress();
+            dispatch(setSelectedMessage(selectedMessage));
         }
-        lastPress = time;
-    };
+        lastPress.current = time;
+    };    const handleClick = (e) => {
+        e.stopPropagation();
+        setActiveMsg(true);
+    }
 
     return (
-        <View>
-            {
-                selectedTone &&
-                <View style={wrapperStyle} onStartShouldSetResponder = {(evt) => onDoublePress()}>
-                <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
-                    <View style={{shadowColor:'#000', shadowOffset:{width:0, height:4}, shadowRadius:4.65, elevation:8, backgroundColor: 'white', padding:10, minWidth:'60%', maxWidth: '90%', marginTop: 15}}>
-                                <View style={{backgroundColor: '#303030', borderWidth:2, borderColor:toneColor1, minWidth:'60%', maxWidth: '90%', marginTop: 15}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
-                                    <Text style={textStyle}>
-                                        {text}
-                                    </Text>
-                                </View>
-                                <View>
-                                    <Text style={textStyle}>
-                                    The message will be understood as:
-                                    </Text>
-                                    <Text style={textStyle}>
-                                        {currentExplain}
-                                    </Text>
-                                    <Text style={textStyle}>
-                                    The tone of the message is: 
-                                    </Text>
 
-                                    <Text style={textStyle}>
-                                        {activeTone1}
-                                    </Text>
-                                    <Text style={textStyle}>
-                                        {activeTone2}
-                                    </Text>
-                                    <Text style={textStyle}>
-                                        {activeTone3}
-                                    </Text> 
-                                </View>
-                        {
-                            dateString && type !== "info" && <View style={styles.timeContainer}>
-                                { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
-                                <Text style={styles.time}>{dateString}</Text>
-                            </View>
-                        }
-
-                        <Menu name={id.current} ref={menuRef}>
-                            <MenuTrigger />
-
-                            <MenuOptions>
-                                <MenuItem text='Copy to clipboard' icon={'copy'} onSelect={() => copyToClipboard(text)} />
-                                <MenuItem text={`${isStarred ? 'Unstar' : 'Star'} message`} icon={isStarred ? 'star-o' : 'star'} iconPack={FontAwesome} onSelect={() => starMessage(messageId, chatId, userId)} />
-                                <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
-                            </MenuOptions>
-                        </Menu>
-                    </View>
-                </Container>
-            </View>
-            }
-            {
-                !selectedTone &&
-                <View style={wrapperStyle} onStartShouldSetResponder = {(evt) => onDoublePress()}>
-                <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
+        <View style={wrapperStyle} >
+                <Container onPress={handleDoublePress} onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
                     <View style={bubbleStyle}>
-                                               
-                            
-                            <View style={{width:'100%'}} onStartShouldSetResponder = {(evt) => onDoublePress()}>
-                            <Text style={textStyle}>
+                            <View style={{width:'100%'}} >
+                                <Text style={textStyle}>
                                     {text}
                                 </Text>
                             </View>
-                                  
-
                         {
                             imageUrl &&
                             <Image source={{ uri: imageUrl }} style={styles.image} />
@@ -296,8 +211,7 @@ const Bubble = props => {
                     </View>
                 </Container>
             </View>
-            }
-        </View>
+       
     )
 }
 
@@ -334,6 +248,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.3,
         color: colors.grey,
         fontSize: 12,
+        marginLeft: 5,
     },
     name: {
         fontFamily: 'medium',
@@ -349,4 +264,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Bubble;
+export default ChatBubble;

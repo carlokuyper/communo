@@ -1,55 +1,130 @@
 import React, { useRef, useState, useEffect, PropsWithChildren } from 'react';
 import { Animated, Image, StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import colors from '../constants/colors';
-import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
-import uuid from 'react-native-uuid';
-import * as Clipboard from 'expo-clipboard';
-import { Feather, FontAwesome } from '@expo/vector-icons';
-import { starMessage } from '../utils/actions/chatActions';
 import { useSelector } from 'react-redux';
+import { AntDesign } from '@expo/vector-icons'; 
+import { ImageBackground } from 'react-native';
+import backgroundImage from "../assets/images/MaskGroup.png";
+import Tone from './Tone';
 
-// type FadeInViewProps = PropsWithChildren<{style: ViewStyle}>;
 
-const FadeInView = props => {
-    const startValue = useRef(new Animated.Value(0)).current;
-    const endValue = 150;
-    const duration = 1000;
+function formatAmPm(dateString) {
+  const date = new Date(dateString);
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  return hours + ':' + minutes + ' ' + ampm;
+}
 
-  useEffect(() => {
-    Animated.timing(startValue, {
-        toValue: endValue,
-        duration: duration,
-        useNativeDriver: true,
-      }).start();
-    }, [startValue]);
-
-  return (
-    <Animated.View // Special animatable View
-      style={{
-        ...props.style,
-        transform: [
-            {
-              translateX: startValue,
-            },
-          ], // Bind opacity to animated value
-      }}>
-      {/* {props.children} */}
-      <Text>sadasdasd</Text>
-    </Animated.View>
-  );
-};
 
 const MSGInfo = props => {
-    const userData = useSelector(state => state.auth.userData);
-    // console.log(userData);
-    console.log("adasdas " + props.data)
+  const selectedMessage = useSelector(state => state.analysis.selectedMessage);
+  console.log(selectedMessage);
 
-    return (
-        <View style={{backgroundColor:'red', width:'100%', height:'100%',margin:'3%', position:'absolute', zIndex:99, alignSelf:'stretch'}}>
-            <Text>asdasd </Text>
-            {/* <Text>{props.data.text}</Text> */}
-        </View>
-    )
+  const {type} = props;
+  const dateString = selectedMessage.date && formatAmPm(selectedMessage.date);
+
+  let messageType = null
+  if (selectedMessage.type == 'myMessage') {
+    messageType = true
+  } if (selectedMessage.type == 'theirMessage') {
+    messageType = false
+  }
+
+  const handleSinglePress = () => {
+    props.onDoublePress && props.onDoublePress();
+  };
+
+
+  const lastPress = useRef(null);
+
+  const handleDoublePress = () => {
+    const time = new Date().getTime();
+    const delta = time - (lastPress.current || 0);
+    if (delta < 200) {
+      // Double press detected
+      props.onDoublePress && props.onDoublePress();
+    }
+    lastPress.current = time;
+  };
+
+  const translateXAnim = useRef(new Animated.Value(100)).current;
+  useEffect(() => {
+    Animated.spring(
+      translateXAnim,
+      {
+        toValue: 0, // Slide in to the original position
+        friction: 10, // Adjust the friction value to reduce bounciness
+        tension: 40,
+        useNativeDriver: true,
+      }
+    ).start();
+  }, [translateXAnim]);
+ 
+  return (
+    <TouchableWithoutFeedback  onPress={handleDoublePress} style={{backgroundColor:'blue'}}>
+      <View style={{...props.style}} >
+        
+          <Animated.View 
+          style={{
+            transform: [{ translateX: translateXAnim }],  // Bind opacity to animated value
+          }}> 
+          
+            <View style={{backgroundColor:'white', width:'85%', height:'100%', marginLeft:'15%'}}>
+              <ImageBackground 
+                source={backgroundImage}
+                style={{flex: 1,  width:'100%', height:'100%'}}
+                imageStyle={{resizeMode: "contain", marginLeft:-39, marginTop:0, width:'150%',
+                height:'120%'}}>
+                  
+                <View style={{ flexDirection: 'row', alignItems: 'center', margin:'10%', marginLeft:'5%'}} onPress={handleSinglePress}>
+                  <AntDesign name="arrowleft" size={24} color="black" onPress={handleSinglePress} style={{marginRight:'5%'}}/>
+                  <Text style={{ fontFamily: 'bold', fontSize: 20 }} onPress={handleSinglePress}>Message Breakdown</Text>
+                </View>
+
+                {/* ChatBubble */}
+                <Text style={{ fontFamily: 'bold', fontSize: 18,marginBottom:10, marginLeft:'5%',}} onPress={handleSinglePress}> {messageType ? 'Your Message' : 'Their Message'}</Text>
+
+                <View style={{marginBottom:10, marginLeft:'5%', }}>    
+                    
+                    <View style={messageType ? styles.myBubbleStyle : styles.thereBubbleStyle}>
+                      <View style={{width:'90%', marginLeft:'2.5%', padding:5,}} >
+                          <Text style={messageType ? {color:'white'} : {color:'black'}}>{selectedMessage.text}</Text>
+                      </View>
+
+                      {
+                        dateString && type !== "info" && 
+                        <View style={styles.timeContainer}>
+                          <Text style={[styles.time, messageType ? {color: colors.lightGrey} : {color: colors.grey}]}>{dateString}</Text>
+                        </View>
+                      }
+                    </View>
+                </View>
+
+                {/* Tones  */}
+                <Text style={{ fontFamily: 'bold', fontSize: 18, marginBottom:10, marginTop:15, marginLeft:'5%'}} onPress={handleSinglePress}> The Tone of the Message is:</Text>
+                <View style={{flexDirection: 'row', marginLeft:'5%', width:'85%'}}>
+                  <Tone text={selectedMessage.activeTone1} color={selectedMessage.toneColor1} />
+                  <Tone text={selectedMessage.activeTone2} color={selectedMessage.toneColor2} />
+                  <Tone text={selectedMessage.activeTone3} color={selectedMessage.toneColor3} />
+                </View>
+
+                {/* Explain */}
+                <View style={{width:'85%', marginBottom:15, marginTop:15, marginLeft:'6%',}}>
+                  <Text>{selectedMessage.currentExplain}</Text>
+                </View>
+
+              </ImageBackground>
+            </View>
+            
+          </Animated.View>  
+        
+      </View>
+      </TouchableWithoutFeedback>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -97,6 +172,49 @@ const styles = StyleSheet.create({
         marginBottom: 1,
         borderRadius:25,
         width:'99.5%',
+    },
+    myBubbleStyle:{
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.22,
+      shadowRadius: 2.22,
+
+      elevation: 3,
+
+      backgroundColor: '#303030',
+      borderRadius: 15,
+      borderBottomRightRadius: 1,
+      minWidth: '60%',
+      maxWidth: '90%',
+      marginTop: 15,
+    },
+    thereBubbleStyle:{
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.22,
+      shadowRadius: 2.22,
+
+      elevation: 3,
+
+      backgroundColor: '#E7E7E7',
+      borderRadius: 15,
+      borderBottomLeftRadius: 1,
+      minWidth: '60%',
+      maxWidth: '90%',
+      marginTop: 15,
+    }, time: {
+      fontFamily: 'regular',
+      letterSpacing: 0.3,
+      color: colors.lightGrey,
+      fontSize: 12,
+      marginLeft:'5%', 
+      paddingBottom:5
     }
 })
 
