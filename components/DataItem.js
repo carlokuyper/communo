@@ -14,7 +14,7 @@ const DataItem = props => {
 
     return (
         <TouchableWithoutFeedback onPress={props.onPress}>
-            <View style={styles.container}>
+            <View style={{...styles.container, ...props.style}}>
 
                 {
                     !icon && !hideImage &&

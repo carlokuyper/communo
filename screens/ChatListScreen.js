@@ -17,19 +17,16 @@ const ChatListScreen = props => {
     const chatName = props.route?.params?.chatName;
 
     const userData = useSelector(state => state.auth.userData);
-    const dasdas = useSelector(state => state.auth);
-    // console.log('userData');
-    // console.log(userData);
+
     const storedUsers = useSelector(state => state.users.storedUsers);
     const userChats = useSelector(state => {
         const chatsData = state.chats.chatsData;
-        return Object.values(chatsData).sort((a, b) => {
-            return new Date(b.updatedAt) - new Date(a.updatedAt);
-        });
+        return Object.values(chatsData)
+            .filter(chat => chat.users.includes(userData.userId)) // Add this line
+            .sort((a, b) => {
+                return new Date(b.updatedAt) - new Date(a.updatedAt);
+            });
     });
-
-    // console.log('userChats');
-    // console.log(userChats);
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -81,6 +78,7 @@ const ChatListScreen = props => {
     return  <ImageBackground
     source={backgroundImage} style={styles.backgroundImage} 
     imageStyle={{resizeMode: "contain",  marginLeft: -180, marginTop: -250, width:'150%', height:'150%',}}>
+        
         {/* <View>
             <TouchableOpacity onPress={() => props.navigation.navigate("NewChat", { isGroupChat: true })}>
                 <Text style={styles.newGroupText}>New Group</Text>
@@ -114,11 +112,12 @@ const ChatListScreen = props => {
                 }
 
                 return <DataItem
-                            title={title}
-                            subTitle={subTitle}
-                            image={image}
-                            onPress={() => props.navigation.navigate("ChatScreen", { chatId })}
-                        />
+                    title={title}
+                    subTitle={subTitle}
+                    image={image}
+                    onPress={() => props.navigation.navigate("ChatScreen", { chatId })}
+                    style={{margin:5}} // Pass your style here
+            />
             }}  
         />
     </ImageBackground>

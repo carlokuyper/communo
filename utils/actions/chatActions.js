@@ -157,6 +157,32 @@ export const removeUserFromChat = async (userLoggedInData, userToRemoveData, cha
     await sendInfoMessage(chatData.key, userLoggedInData.userId, messageText);
 }
 
+
+const generateMessageData = (userLoggedInData, newUsers, userAddedName) => {
+    const moreUsersMessage = newUsers.length > 1 ? `and ${newUsers.length - 1} others ` : '';
+    const messageText = `${userLoggedInData.firstName} ${userLoggedInData.lastName} added ${userAddedName} ${moreUsersMessage}to the chat`;
+
+    // Replace 'some value' with the actual values or logic to generate these values
+    const toneColor1 = 'some value';
+    const toneColor2 = 'some value';
+    const toneColor3 = 'some value';
+    const activeTone1 = 'some value';
+    const activeTone2 = 'some value';
+    const activeTone3 = 'some value';
+    const currentExplain = 'some value';
+
+    return {
+        messageText,
+        toneColor1,
+        toneColor2,
+        toneColor3,
+        activeTone1,
+        activeTone2,
+        activeTone3,
+        currentExplain
+    };
+}
+
 export const addUsersToChat = async (userLoggedInData, usersToAddData, chatData) => {
     const existingUsers = Object.values(chatData.users);
     const newUsers = [];
@@ -181,8 +207,7 @@ export const addUsersToChat = async (userLoggedInData, usersToAddData, chatData)
 
     await updateChatData(chatData.key, userLoggedInData.userId, { users: existingUsers.concat(newUsers) })
 
-    const moreUsersMessage = newUsers.length > 1 ? `and ${newUsers.length - 1} others ` : '';
-    const messageText = `${userLoggedInData.firstName} ${userLoggedInData.lastName} added ${userAddedName} ${moreUsersMessage}to the chat`;
-    await sendInfoMessage(chatData.key, userLoggedInData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain,);
+    const messageData = generateMessageData(userLoggedInData, newUsers, userAddedName);
 
+    await sendInfoMessage(chatData.key, userLoggedInData.userId, messageData.messageText, messageData.toneColor1, messageData.toneColor2, messageData.toneColor3, messageData.activeTone1, messageData.activeTone2, messageData.activeTone3, messageData.currentExplain);
 }

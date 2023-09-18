@@ -140,22 +140,25 @@ const NewChatScreen = props => {
                         keyExtractor={item => item}
                         contentContainerStyle={{ alignItems: 'center' }}
                         ref={ref => selectedUsersFlatList.current = ref}
-                        onContentSizeChange={() => selectedUsersFlatList.current.scrollToEnd()}
+                        onContentSizeChange={() => {
+                            if (selectedUsers.length > 0) {
+                                flatListRef.current.scrollToIndex({index: selectedUsers.length - 1});
+                            }
+                        }}
                         renderItem={itemData => {
                             const userId = itemData.item;
                             const userData = storedUsers[userId];
                             return <ProfileImage
-                                        style={styles.selectedUserStyle}
-                                        size={40}
-                                        uri={userData.profilePicture}
-                                        onPress={() => userPressed(userId)}
-                                        showRemoveButton={true}
-                                    />
+                                style={styles.selectedUserStyle}
+                                size={40}
+                                uri={userData.profilePicture}
+                                onPress={() => userPressed(userId)}
+                                showRemoveButton={true}
+                            />
                         }}
                     />
                 </View>
             }
-
 
         <View style={styles.searchContainer}>
             <FontAwesome name="search" size={15} color={colors.lightGrey} />
@@ -187,13 +190,13 @@ const NewChatScreen = props => {
                     }
 
                     return <DataItem
-                                title={`${userData.firstName} ${userData.lastName}`}
-                                subTitle={userData.about}
-                                image={userData.profilePicture}
-                                onPress={() => userPressed(userId)}
-                                type={isGroupChat ? "checkbox" : ""}
-                                isChecked={selectedUsers.includes(userId)}
-                            />
+                        title={`${userData.firstName} ${userData.lastName}`}
+                        subTitle={userData.about}
+                        image={userData.profilePicture}
+                        onPress={() => userPressed(userId)}
+                        type={isGroupChat ? "checkbox" : ""}
+                        isChecked={selectedUsers.includes(userId)}
+                    />
                 }}
             />
         }

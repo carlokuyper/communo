@@ -356,8 +356,6 @@ const ChatScreen = (props) => {
               data={chatMessages}
               renderItem={(itemData) => {
                 const message = itemData.item;
-                // console.log(message.text);
-                // AsyncStorage.setItem("testing", message.text)
 
                 const isOwnMessage = message.sentBy === userData.userId;
 
@@ -406,7 +404,6 @@ const ChatScreen = (props) => {
             />
           } 
 
-          
         </View>
 
         {
@@ -417,7 +414,6 @@ const ChatScreen = (props) => {
             onCancel={() => setReplyingTo(null)}
           />
         }
-
 
       <View style={styles.toneMainContainer}>
           <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
