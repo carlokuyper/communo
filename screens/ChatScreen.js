@@ -129,89 +129,101 @@ const ChatScreen = (props) => {
   let [activeTone3, setActiveTone3] = useState();
   let [currentExplain, setCurrentExplain] = useState();
   
+  const debounceTimer = useRef();
+
+  const [APIisLoading, setAPIIsLoading] = useState(false);
+  
   const runNLP = e => {
     // console.log("test nlpRequest");  
     
     setMessageText(e.target.value)
 
-    clearTimeout(timer)
-
-    // API config 
-    const config = {
-      headers:{
+    clearTimeout(debounceTimer.current)
+    setAPIIsLoading(true);
+    debounceTimer.current = setTimeout(() => {
+      
+      // API config 
+      const config = {
+        headers:{
           Authorization: "Bearer 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",
-      }
-    };
+        }
+      };
 
-    const newTimer = setTimeout (()=> {
-      let msg = props.msg
-      
-      //Explain the tone of the message
-      let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
-      let tonesPayload = {
-        model: "text-davinci-003",
-        prompt: msgTone,
-        temperature: 0,
-        max_tokens: 60,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0
-      }
-
-      axios.post('https://api.openai.com/v1/completions', tonesPayload, config)
-      .then((res)=> {
-        // console.log(res);
-
-        let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
-        console.log(tone);  
-
-        let msgColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-        console.log(msgColor);
-
-        let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-        console.log(activeMsgTone);
-
-        //Main Tone  
-        setActiveTone1(activeMsgTone[0])                
-        setToneColor1(msgColor[0])
-        setActiveTone2(activeMsgTone[1])                
-        setToneColor2(msgColor[1])
-        setActiveTone3(activeMsgTone[2])                
-        setToneColor3(msgColor[2])
+      const newTimer = setTimeout (()=> {
+        let msg = props.msg
         
-      })
-      .catch(function (error) {
-          console.log(error);
-      });
+        //Explain the tone of the message
+        let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also. Explain how the message will be understood keep it to two sentence" + "\nMessage:" + messageText 
+        let tonesPayload = {
+          model: "gpt-4",
+          prompt: msgTone,
+          temperature: 1,
+          max_tokens: 256,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0
+        }
 
-      //Explain the user message
-      let explainInput = "Explain how the message will be understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
-      let explainPayload = {
-        model: "text-davinci-003",
-        prompt: explainInput,
-        temperature: 0,
-        max_tokens: 60,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0
+        axios.post('https://api.openai.com/v1/completions', tonesPayload, config)
+        .then((res)=> {
+
+          console.log('res.data ');
+          console.log(res.data);
+
+          let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
+          console.log(tone);  
+
+          let msgColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+          console.log(msgColor);
+
+          let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+          console.log(activeMsgTone);
+
+          //Main Tone  
+          setActiveTone1(activeMsgTone[0])                
+          setToneColor1(msgColor[0])
+          setActiveTone2(activeMsgTone[1])                
+          setToneColor2(msgColor[1])
+          setActiveTone3(activeMsgTone[2])                
+          setToneColor3(msgColor[2])
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+        //Explain the user message
+        let explainInput = "Explain how the message will be understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
+        let explainPayload = {
+          model: "text-davinci-003",
+          prompt: explainInput,
+          temperature: 0,
+          max_tokens: 60,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0
+        }
+
+        axios.post('https://api.openai.com/v1/completions', explainPayload, config)
+        .then((res)=> {
+            let tone = res.data.choices[0].text       
+            let newText = tone.replace('\n', '');   
+            setCurrentExplain(newText)  
+            console.log(newText);  
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+      })
+
+      if (currentExplain !== null && activeTone1 !== null){
+        setAPIIsLoading(false);
+        console.log("loading done currentExplain");
       }
-
-      axios.post('https://api.openai.com/v1/completions', explainPayload, config)
-      .then((res)=> {
-          // console.log(res);
-          
-          let tone = res.data.choices[0].text 
-          // console.log(tone);           
-          let newText = tone.replace('\n', '');   
-          setCurrentExplain(newText)  
-          console.log(newText);  
-      })
-      .catch(function (error) {
-          console.log(error);
-      });
+     
       
-    }, 2000)
-    setTimer(newTimer)
+    }, 2000);
+
   }
 
   const sendMessage = useCallback(async () => {
@@ -275,7 +287,6 @@ const ChatScreen = (props) => {
 
       await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key)
       setReplyingTo(null);
-      
       setTimeout(() => setTempImageUri(""), 500);
       
     } catch (error) {
@@ -325,8 +336,8 @@ const ChatScreen = (props) => {
         source={backgroundImage}
         style={styles.backgroundImage}
         imageStyle={{resizeMode: "contain",  marginLeft: -120, marginTop:-200, width:'120%',
-        height:'120%'}}
-      >
+        height:'120%'}}>
+
         {activeMsg && 
           <MSGInfo onDoublePress={onDoublePressChat} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)',}}/>
         }
@@ -347,23 +358,15 @@ const ChatScreen = (props) => {
               ref={(ref) => flatList.current = ref}
               onContentSizeChange={() => flatList.current.scrollToEnd({ animated: false })}
               onLayout={() => flatList.current.scrollToEnd({ animated: false })}
-
-              // onContentSizeChange={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
-              // onLayout={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
-
-              // onContentSizeChange={() => selectedUsers.length > 0 && selectedUsersFlatList.current.scrollToEnd() }
-
               data={chatMessages}
               renderItem={(itemData) => {
                 const message = itemData.item;
-
                 const isOwnMessage = message.sentBy === userData.userId;
 
                 let messageType;
                 if (message.type && message.type === "info") {
                   messageType = "info";
-                } 
-                  
+                }  
                 else if (isOwnMessage) {
                   messageType = "myMessage";
                 }
@@ -371,16 +374,13 @@ const ChatScreen = (props) => {
                   messageType = "theirMessage";
                 } 
                 
-
                 const sender = message.sentBy && storedUsers[message.sentBy];
                 const name = sender && `${sender.firstName} ${sender.lastName}`;
 
-                return <View onStartShouldSetResponder={() => onDoublePress()}  dispatch={dispatch}>
+                return <View onStartShouldSetResponder={() => onDoublePress()} dispatch={dispatch}>
                   <ChatBubble 
-                    onDoublePress={() => onDoublePressChat()}
-                    onClick={(e) => handleClick(e)}
-
-                    // {setActiveMsg('asddas')}
+                      onDoublePress={() => onDoublePressChat()}
+                      onClick={(e) => handleClick(e)}
                       type={messageType}
                       text={message.text}
                       toneColor1={message.toneColor1}
@@ -416,11 +416,13 @@ const ChatScreen = (props) => {
         }
 
       <View style={styles.toneMainContainer}>
+      {APIisLoading && <ActivityIndicator size="large" color="#0000ff" />}
           <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
             {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
             <Image source={robot} style={styles.robot}/>
           </View>
-            {messageText && activeTone1 &&<View style={styles.toneContainer}>
+            {currentExplain && <View style={styles.toneContainer}>
+            
             <Tone text={activeTone1} color={toneColor1} />
             <Tone text={activeTone2} color={toneColor2} />
             <Tone text={activeTone3} color={toneColor3} />

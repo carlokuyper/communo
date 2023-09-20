@@ -126,7 +126,6 @@ const ChatBubble = props => {
             bubbleStyle.minWidth = '60%';
             bubbleStyle.maxWidth = '90%';
             bubbleStyle.marginTop = 15;
-
             textStyle.marginLeft = 5;
 
             Container = TouchableWithoutFeedback;

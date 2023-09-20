@@ -63,7 +63,7 @@ const MSGInfo = props => {
       }
     ).start();
   }, [translateXAnim]);
- 
+
   return (
     <TouchableWithoutFeedback  onPress={handleDoublePress} style={{backgroundColor:'blue'}}>
       <View style={{...props.style}} >
@@ -81,7 +81,7 @@ const MSGInfo = props => {
                 height:'120%'}}>
                   
                 <View style={{ flexDirection: 'row', alignItems: 'center', margin:'10%', marginLeft:'5%'}} onPress={handleSinglePress}>
-                  <AntDesign name="arrowleft" size={24} color="black" onPress={handleSinglePress} style={{marginRight:'5%'}}/>
+                  <AntDesign name="close" size={24} color="black" onPress={handleSinglePress} style={{marginRight:'5%'}}/>
                   <Text style={{ fontFamily: 'bold', fontSize: 20 }} onPress={handleSinglePress}>Message Breakdown</Text>
                 </View>
 

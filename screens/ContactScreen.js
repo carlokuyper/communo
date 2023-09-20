@@ -76,13 +76,11 @@ const ContactScreen = props => {
          
             let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
             // console.log(tone);  
-    
             let msgColour = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
             // console.log(msgColour);
-    
             let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
             // console.log(activeMsgTone);
-    
+            
             // //Main Tone  
             setActiveTone1(activeMsgTone[0])
             setToneColor1(msgColour[0])
@@ -90,7 +88,6 @@ const ContactScreen = props => {
             setToneColor2(msgColour[1])
             setActiveTone3(activeMsgTone[2])                
             setToneColor3(msgColour[2]) 
-    
         })
         .catch(function (error) {
             console.log(error);
@@ -116,23 +113,19 @@ const ContactScreen = props => {
     
         axios.post('https://api.openai.com/v1/completions', explainPayloadExplain, configExplain)
         .then((res)=> {
-            // console.log(res);
-
             //Main Tone
             let tone = res.data.choices[0].text 
             // console.log(tone);           
             let newText = tone.replace('\n', '');   
             setExplainTone(newText)  
             // console.log(newText); 
-    
         })
         .catch(function (error) {
             console.log(error);
         });
-    
+
     }, [])
   
-    
     let [explainTone, setExplainTone] = useState();
  
     const removeFromChat = useCallback(async () => {
@@ -158,7 +151,6 @@ const ContactScreen = props => {
                     size={125}
                     style={{ marginBottom: 20 }}
                 />
-
                 <Text style={styles.titleText} >{currentUser.firstName} {currentUser.lastName}</Text>
             </View>
            
@@ -172,9 +164,8 @@ const ContactScreen = props => {
                     <Tone text={activeTone2} color={toneColor2} />
                     <Tone text={activeTone3} color={toneColor3} />
                 </View>
-                
+
             </View>
-            {/* <Text  style={{color:'white'}}>{chatMessages}</Text> */}
             {
                 currentUser.about &&
                     <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>
@@ -260,7 +251,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width:'100%',
     },
-    
 });
 
 export default ContactScreen;
