@@ -14,6 +14,11 @@ import axios from 'axios';
 import Tone from '../components/Tone';
 import { useNavigation } from '@react-navigation/native';
 
+import LottieView from 'lottie-react-native';
+import loadingAnimation from '../assets/lottie/loading.json';
+
+import { Animated } from 'react-native';
+
 const ContactScreen = props => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -43,6 +48,11 @@ const ContactScreen = props => {
     let [activeTone2, setActiveTone2] = useState();
     let [activeTone3, setActiveTone3] = useState();
 
+    const [APIisLoading, setAPIIsLoading] = useState(false);
+    const [APIRan, setAPIRan] = useState(false);
+    
+    const [fadeAnim] = useState(new Animated.Value(0));  // Initial value for opacity: 0
+
     useEffect(() => {
         return navigation.addListener('blur', () => {
         dispatch(setUser1Chats([]));
@@ -51,7 +61,9 @@ const ContactScreen = props => {
     }, [navigation]);
     
     useEffect(() => {
-        
+        setAPIIsLoading(true);
+        setAPIRan(true)
+
         const configTone = {
             headers:{
                 Authorization: "Bearer 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",
@@ -73,13 +85,12 @@ const ContactScreen = props => {
         axios.post('https://api.openai.com/v1/completions', explainPayloadTone, configTone)
         .then((res)=> {
             // console.log(res);
-         
             let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
             // console.log(tone);  
             let msgColour = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
             // console.log(msgColour);
             let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-            // console.log(activeMsgTone);
+            console.log(activeMsgTone);
             
             // //Main Tone  
             setActiveTone1(activeMsgTone[0])
@@ -88,9 +99,18 @@ const ContactScreen = props => {
             setToneColor2(msgColour[1])
             setActiveTone3(activeMsgTone[2])                
             setToneColor3(msgColour[2]) 
+
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: true
+            }).start();
+
+            setAPIIsLoading(false);
         })
         .catch(function (error) {
             console.log(error);
+            setAPIIsLoading(false);
         });
 
         const configExplain = {
@@ -100,7 +120,7 @@ const ContactScreen = props => {
           };
     
         //Explain the user message
-        let explainInputExplain = "Analyse the messages between individuals in this conversation and provide an overview of the general emotions, atmosphere, and tone of the conversation, but keep it to about lines . /The conversation includes the following messages:  " + userData.firstLast + " expressed " + user1msg + " while " + currentUser.firstName + " " + currentUser.lastName + " conveyed " + user2msg
+        let explainInputExplain = "Analyse the following conversation between two individuals and provide an overview of the general emotions, atmosphere, and tone. Limit your analysis to about three lines. The conversation is as follows: " + userData.firstLast + " expressed: " + user1msg.join(' ') + ". Meanwhile, " + currentUser.firstName + " " + currentUser.lastName + " conveyed: " + user2msg.join(' ');
         let explainPayloadExplain = {
             model: "text-davinci-003",
             prompt: explainInputExplain,
@@ -119,9 +139,12 @@ const ContactScreen = props => {
             let newText = tone.replace('\n', '');   
             setExplainTone(newText)  
             // console.log(newText); 
+            setAPIIsLoading(false);
+            setAPIRan(false)
         })
         .catch(function (error) {
             console.log(error);
+            setAPIIsLoading(false);
         });
 
     }, [])
@@ -153,19 +176,24 @@ const ContactScreen = props => {
                 />
                 <Text style={styles.titleText} >{currentUser.firstName} {currentUser.lastName}</Text>
             </View>
-           
-            <View >
-                <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
-                <Text style={styles.explainResponse}>{explainTone}</Text>
-                <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
+         
+              <View style={{width:'100%', height:'30%'}}>
+              {APIisLoading && APIRan&& <LottieView  style={{width:'100%', height:'100%', marginLeft:'22%', marginTop:'-5%'}} source={loadingAnimation} autoPlay loop />}
+              {!APIisLoading && !APIRan &&
+                <Animated.View style={{opacity: fadeAnim}}>
+                    <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
+                    <Text style={styles.explainResponse}>{explainTone}</Text>
+                    <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
+                    
+                    <View style={styles.toneContainer}>
+                        <Tone text={activeTone1} color={toneColor1} />
+                        <Tone text={activeTone2} color={toneColor2} />
+                        <Tone text={activeTone3} color={toneColor3} />
+                    </View>
+                </Animated.View>}
                 
-                <View style={styles.toneContainer}>
-                    <Tone text={activeTone1} color={toneColor1} />
-                    <Tone text={activeTone2} color={toneColor2} />
-                    <Tone text={activeTone3} color={toneColor3} />
-                </View>
-
             </View>
+
             {
                 currentUser.about &&
                     <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>

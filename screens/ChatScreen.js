@@ -40,6 +40,9 @@ import { AsyncStorage } from 'react-native';
 import { Swipeable } from "react-native-gesture-handler";
 import { clearAnalysis, setSelectedMessage, setUser1Chats, setUser2Chats } from "../store/analysisSlice";
 
+import LottieView from 'lottie-react-native';
+import loadingAnimation from '../assets/lottie/loading.json';
+
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
   const [messageText, setMessageText] = useState("");
@@ -132,14 +135,15 @@ const ChatScreen = (props) => {
   const debounceTimer = useRef();
 
   const [APIisLoading, setAPIIsLoading] = useState(false);
+  const [APIisLoadingDone, setAPIIsLoadingDone] = useState(false);
+  const [APIRan, setAPIRan] = useState(false);
   
   const runNLP = e => {
-    // console.log("test nlpRequest");  
-    
     setMessageText(e.target.value)
 
     clearTimeout(debounceTimer.current)
     setAPIIsLoading(true);
+    setAPIRan(true)
     debounceTimer.current = setTimeout(() => {
       
       // API config 
@@ -148,17 +152,14 @@ const ChatScreen = (props) => {
           Authorization: "Bearer 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",
         }
       };
-
-      const newTimer = setTimeout (()=> {
-        let msg = props.msg
         
         //Explain the tone of the message
-        let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also. Explain how the message will be understood keep it to two sentence" + "\nMessage:" + messageText 
+        let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
         let tonesPayload = {
-          model: "gpt-4",
+          model: "text-davinci-003",
           prompt: msgTone,
-          temperature: 1,
-          max_tokens: 256,
+          temperature: 0,
+          max_tokens: 60,
           top_p: 1,
           frequency_penalty: 0,
           presence_penalty: 0
@@ -186,7 +187,6 @@ const ChatScreen = (props) => {
           setToneColor2(msgColor[1])
           setActiveTone3(activeMsgTone[2])                
           setToneColor3(msgColor[2])
-
         })
         .catch(function (error) {
             console.log(error);
@@ -214,39 +214,48 @@ const ChatScreen = (props) => {
         .catch(function (error) {
             console.log(error);
         });
-      })
 
       if (currentExplain !== null && activeTone1 !== null){
         setAPIIsLoading(false);
+        setAPIIsLoadingDone(true)
+        
         console.log("loading done currentExplain");
       }
-     
-      
     }, 2000);
-
   }
 
   const sendMessage = useCallback(async () => {
 
-    try {
-      let id = chatId;
-      if (!id) {
-        // No chat Id. Create the chat
-        id = await createChat(userData.userId, props.route.params.newChatData);
-        setChatId(id);
-      }
+    console.log(APIisLoadingDone);
+    if(APIisLoadingDone){
+      try {
+        let id = chatId;
+        if (!id) {
+          // No chat Id. Create the chat
+          id = await createChat(userData.userId, props.route.params.newChatData);
+          setChatId(id);
+        }
+        await sendTextMessage(id, userData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, replyingTo && replyingTo.key);
 
-      await sendTextMessage(id, userData.userId, messageText, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain, replyingTo && replyingTo.key);
-
-      setMessageText("");
-      setReplyingTo(null);
-    } catch (error) {
-      console.log(error);
-      setErrorBannerText("Message failed to send");
-      setTimeout(() => setErrorBannerText(""), 5000);
+        setMessageText("");
+        setReplyingTo(null);
+        setToneColor1(null); // Clear toneColor1
+        setToneColor2(null); // Clear toneColor2
+        setToneColor3(null); // Clear toneColor3
+        setCurrentExplain(); // Clear currentExplain
+        setAPIRan(false)
+        setAPIIsLoading(false)
+        setAPIIsLoadingDone(false)
+      } catch (error) {
+        console.log(error);
+        setErrorBannerText("Message failed to send");
+        setTimeout(() => setErrorBannerText(""), 5000);
+      } 
+      
+    } else {
+      console.log("API is still loading. Please wait.");
     }
   }, [messageText, chatId, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain,]);
-
 
   const pickImage = useCallback(async () => {
     try {
@@ -272,9 +281,7 @@ const ChatScreen = (props) => {
 
   const uploadImage = useCallback(async () => {
     setIsLoading(true);
-
     try {
-
       let id = chatId;
       if (!id) {
         // No chat Id. Create the chat
@@ -288,10 +295,9 @@ const ChatScreen = (props) => {
       await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key)
       setReplyingTo(null);
       setTimeout(() => setTempImageUri(""), 500);
-      
+
     } catch (error) {
       console.log(error);
-      
     }
   }, [isLoading, tempImageUri, chatId])
 
@@ -305,29 +311,22 @@ const ChatScreen = (props) => {
 
     if (delta < DOUBLE_PRESS_DELAY) {
       // Success double press
-      if (activeMsg == true) {
-        console.log("double press from chatScreen: " + activeMsg); 
-        setActiveMsg(false)          
-      }
-      if (activeMsg == false) {
-        console.log("double press from chatScreen: " + activeMsg); 
-        setActiveMsg(true)
-      }
+      setActiveMsg(prevActiveMsg => !prevActiveMsg);
     }
     lastPress = time;
   };
 
   const onDoublePressChat = () => {
-    if (activeMsg == true) {
+    if (activeMsg === true) {
       console.log("double press from other components: " + activeMsg);
-      setActiveMsg(false)
+      setActiveMsg(false);
     }
-    if (activeMsg == false) {
+    if (activeMsg === false) {
       console.log("double press from other components: " + activeMsg);
       dispatch(clearAnalysis());
-      setActiveMsg(true)
+      setActiveMsg(true);
     }
-  }
+  };
 
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
@@ -377,9 +376,9 @@ const ChatScreen = (props) => {
                 const sender = message.sentBy && storedUsers[message.sentBy];
                 const name = sender && `${sender.firstName} ${sender.lastName}`;
 
-                return <View onStartShouldSetResponder={() => onDoublePress()} dispatch={dispatch}>
+                return <View onStartShouldSetResponder={onDoublePress}>
                   <ChatBubble 
-                      onDoublePress={() => onDoublePressChat()}
+                      onDoublePress={onDoublePressChat}
                       onClick={(e) => handleClick(e)}
                       type={messageType}
                       text={message.text}
@@ -416,20 +415,31 @@ const ChatScreen = (props) => {
         }
 
       <View style={styles.toneMainContainer}>
-      {APIisLoading && <ActivityIndicator size="large" color="#0000ff" />}
-          <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
-            {messageText && currentExplain && <Text style={styles.explainText} >{currentExplain}</Text>}
-            <Image source={robot} style={styles.robot}/>
-          </View>
-            {currentExplain && <View style={styles.toneContainer}>
+        <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
+          {!APIRan && <Image source={robot} style={styles.robot}/>}
+          {APIisLoading && <LottieView source={loadingAnimation} autoPlay loop />}
+        </View>
+        {APIRan && !APIisLoading && <View style={styles.toneMainContainerActive}>
+          <View style={{flexDirection: 'row', paddingBottom:10, paddingTop:10, paddingLeft:5}}>
+            <Image source={robot} style={styles.robotExplain}/>
             
+            <View style={{width:'70%', flexDirection: 'column'}}>
+              <Text style={{margin: 1, marginLeft:10, marginRight:10, marginTop:5, fontFamily: 'semiBold', fontSize: 18,}}>The tone</Text>
+              <Text style={{margin: 1, marginLeft:10, marginRight:10, fontFamily: 'medium', fontSize: 14,}}>of the message is:</Text>
+            </View>
+          </View>
+            <Text style={{margin: 1, marginLeft:10, marginRight:10,  width:'100%', paddingLeft:5}} >{currentExplain}</Text>
+
+          <View style={styles.toneContainer}>
             <Tone text={activeTone1} color={toneColor1} />
             <Tone text={activeTone2} color={toneColor2} />
             <Tone text={activeTone3} color={toneColor3} />
-          </View>}
-        </View>
-      
+          </View>
+        </View>}
+      </View>
 
+        
+      
       <View style={styles.inputContainer}>
         <TouchableOpacity
           style={styles.mediaButton}
@@ -439,7 +449,8 @@ const ChatScreen = (props) => {
         </TouchableOpacity>
 
         <TextInput
-          style={styles.textbox}
+          multiline={true}
+          style={styles.textBox}
           placeholderTextColor="grey"
           placeholder="Type here..."
           value={messageText}
@@ -460,11 +471,12 @@ const ChatScreen = (props) => {
         {messageText !== "" && (
           <TouchableOpacity
             style={{ ...styles.mediaButton, ...styles.sendButton }}
-            onPress={sendMessage}
+            onPress={APIisLoading ? undefined : sendMessage}
           >
-            <Feather name="send" size={20} color={"white"} />
+            <Feather name="send" size={20} color={APIisLoading ? "grey" : "white"} />
           </TouchableOpacity>
         )}
+        
           <AwesomeAlert
             show={tempImageUri !== ""}
             title='Send image?'
@@ -515,18 +527,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 8,
     paddingHorizontal: 10,
-    height: 50,
+    minHeight: 50,
     backgroundColor: colors.background,
-    
   },
-  textbox: {
+  textBox: {
     flex: 1,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: colors.lightGrey,
     marginHorizontal: 15,
     paddingHorizontal: 12,
-    color:"white"
+    color:"white",
   },
   mediaButton: {
     alignItems: "center",
@@ -545,18 +556,18 @@ const styles = StyleSheet.create({
   },
   toneMainContainer:{
     width:'100%',
-    // height:60,
-    // backgroundColor: 'rgba(250, 52, 52, 0.)',
     marginBottom:'1%',
   },
   toneContainer:{
-    flexDirection: 'row'
+    flexDirection: 'row',
+    margin:5,
   },
   explainText: {
     backgroundColor: "white",
     borderRadius:20,
     padding:10,
     marginBottom:'2%',
+    marginLeft:'18%',
     width:'82%'
   },
   robot:{
@@ -566,11 +577,33 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom:'1%',
     marginBottom:'2%',
-    right:'1.5%',
+    left:'1.5%',
     alignItems:'center',
     backgroundColor:'#393B3C',
     padding:5,
     borderRadius:10
+  },
+  robotExplain:{
+    width: '15%',
+    height: 55, 
+    backgroundColor:'#393B3C',
+    padding:5,
+    borderRadius:10,
+    marginLeft:10,
+  },
+  toneMainContainerActive:{
+    width: '95%', 
+    marginLeft:'2.5%', 
+    borderRadius:15, 
+    backgroundColor:'#F9F9F9',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   }
 });
 
