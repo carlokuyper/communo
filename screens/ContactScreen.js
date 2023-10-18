@@ -3,13 +3,10 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DataItem from '../components/DataItem';
 import PageContainer from '../components/PageContainer';
-import PageTitle from '../components/PageTitle';
 import ProfileImage from '../components/ProfileImage';
 import SubmitButton from '../components/SubmitButton';
 import colors from '../constants/colors';
 import { removeUserFromChat } from '../utils/actions/chatActions';
-import { getUserChats } from '../utils/actions/userActions';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Tone from '../components/Tone';
 import { useNavigation } from '@react-navigation/native';
@@ -130,13 +127,15 @@ const ContactScreen = props => {
             frequency_penalty: 0,
             presence_penalty: 0
         }
-    
+        function removeNewlines(str) {
+            return str.replace(/\n/g, '');
+          }
         axios.post('https://api.openai.com/v1/completions', explainPayloadExplain, configExplain)
         .then((res)=> {
             //Main Tone
             let tone = res.data.choices[0].text 
             // console.log(tone);           
-            let newText = tone.replace('\n', '');   
+            let newText = removeNewlines(tone);  
             setExplainTone(newText)  
             // console.log(newText); 
             setAPIIsLoading(false);
@@ -171,20 +170,27 @@ const ContactScreen = props => {
             <View style={styles.topContainer}>
                 <ProfileImage
                     uri={currentUser.profilePicture}
-                    size={125}
-                    style={{ marginBottom: 20 }}
+                    width={'95%'}
+                    height={200}
+                    style={{ marginBottom: '7.5%' }}
                 />
                 <Text style={styles.titleText} >{currentUser.firstName} {currentUser.lastName}</Text>
             </View>
-         
-              <View style={{width:'100%', height:'30%'}}>
+            { currentUser.about &&
+                <View style={{marginLeft:'5%'}}>
+                    <Text style={styles.heading}>About</Text>
+                    <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>
+                </View>
+            }
+
+              <View style={{width:'90%', height:'30%', marginTop:'5%', marginLeft:'5%'}}>
               {APIisLoading && APIRan&& <LottieView  style={{width:'100%', height:'100%', marginLeft:'22%', marginTop:'-5%'}} source={loadingAnimation} autoPlay loop />}
               {!APIisLoading && !APIRan &&
                 <Animated.View style={{opacity: fadeAnim}}>
                     <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
                     <Text style={styles.explainResponse}>{explainTone}</Text>
+
                     <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
-                    
                     <View style={styles.toneContainer}>
                         <Tone text={activeTone1} color={toneColor1} />
                         <Tone text={activeTone2} color={toneColor2} />
@@ -194,10 +200,7 @@ const ContactScreen = props => {
                 
             </View>
 
-            {
-                currentUser.about &&
-                    <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>
-            }
+            
         </View>
 
         {
@@ -240,40 +243,39 @@ const styles = StyleSheet.create({
     titleText: {
         fontSize: 28,
         color: colors.darkBlue,
-        fontFamily: 'bold',
+        fontFamily: 'semiBold',
         letterSpacing: 0.3
     },
     topContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 20
+        marginVertical: 20,
+        marginLeft:'5%'
     },
     about: {
-        fontFamily: 'medium',
+        fontFamily: 'regular',
         fontSize: 16,
         letterSpacing: 0.3,
-        color: colors.grey
     },
     heading: {
-        fontFamily: 'bold',
+        fontFamily: 'semiBold',
         letterSpacing: 0.3,
         color: colors.textColor,
-        marginVertical: 8
     },
     explainTitle1: {
         color: colors.darkBlue,
-        fontFamily: 'bold',
+        fontFamily: 'semiBold',
         textAlign:'left',
+        marginBottom:0
     },
     explainTitle2: {
         color: colors.darkBlue,
-        fontFamily: 'bold',
+        fontFamily: 'semiBold',
         textAlign:'left',
         marginTop:'2%',
         marginBottom:'2%'
     },
     explainResponse: {
         color: colors.darkBlue, 
+        marginTop:'2%',
     },
     toneContainer:{
         flexDirection: 'row',

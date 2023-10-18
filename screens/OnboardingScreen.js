@@ -71,13 +71,13 @@ const OnboardingScreen = () => {
             pages={[
                 {
                 backgroundColor: 'white',
-                image: <LottieView style={{height: 200, marginBottom:-100, marginTop:-50}} source={require('../assets/lottie/animation_llcdd350.json')} autoPlay loop />,
+                image:  <Image source={require('../assets/gif/Loader.gif')} style={{ height: 100, marginTop:-50,   resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}] }} />,
                 title: 'Welcome To Comuno',
                 subtitle: 'Comuno is more than just a messaging application; it facilitates seamless and effective communication. Whether youre communicating with friends, family, or coworkers, Comuno equips you with the means to convey yourself eloquently and connect in a meaningful way.'
                 },
                 {
                 backgroundColor: 'white',
-                image: <LottieView style={{height: 200, marginBottom:-100, marginTop:-50}} source={require('../assets/lottie/animation_llcdd350.json')} />,
+                image: <Image source={require('../assets/gif/MSGTyping.gif')} style={{ height: 100, marginTop:-50,   resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}] }} />,
                 title: 'AI-Powered Clarity',
                 subtitle: 'Comuno leverages the power of artificial intelligence to enhance your communication experience. Our advanced technology breaks down your messages, providing insights into how your words will be interpreted by the recipient. This feature ensures that your intentions are crystal plain, thereby reducing the likelihood of misunderstanding.',
                 },

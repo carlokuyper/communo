@@ -14,7 +14,7 @@ const Input = props => {
     }
 
     return <View style={styles.container}>
-        <Text  marginVertical={props.marVertical} style={styles.label}>{props.label}</Text>
+        <Text  marginVertical={props.marVertical} marginTop={props.marTop} marginBottom={props.marBottom}  style={styles.label}>{props.label}</Text>
 
         <View style={styles.inputContainer}>
             {
@@ -45,7 +45,9 @@ const styles = StyleSheet.create({
     },
     label: {
         marginVertical: 4,
-        fontFamily: 'bold',
+        marginTop:5,
+        marginBottom:5,
+        fontFamily: 'semiBold',
         letterSpacing: 0.3,
         color: colors.backgroundColor
     },

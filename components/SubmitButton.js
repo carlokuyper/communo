@@ -8,13 +8,15 @@ const SubmitButton = props => {
     const disabledBgColor = colors.lightGrey;
     const bgColor = props.disabled ? disabledBgColor : enabledBgColor;
 
+    const textColor = props.textColor || 'white';
+
     return <TouchableOpacity
             onPress={props.disabled ? () => {} : props.onPress}
             style={{
                 ...styles.button,
                 ...props.style,
                 ...{ backgroundColor: bgColor }}}>
-        <Text style={{ color: props.disabled ? colors.grey : 'white' }}>
+        <Text style={{ color: props.disabled ? colors.grey : textColor }}>
             { props.title }
         </Text>
     </TouchableOpacity>
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
 
-        elevation: 3,
+        elevation: 2,
     }
 });
 

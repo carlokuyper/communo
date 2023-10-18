@@ -20,7 +20,8 @@ const DataItem = props => {
                     !icon && !hideImage &&
                     <ProfileImage 
                         uri={image}
-                        size={imageSize}
+                        height={imageSize}
+                        width={imageSize}
                     />
                 }
 
@@ -36,7 +37,7 @@ const DataItem = props => {
 
                     <Text
                         numberOfLines={1}
-                        style={{ ...styles.title, ...{ color: type === "button" ? colors.blue : colors.darkBlue } }}>
+                        style={{ ...styles.title, ...{ color: type === "button" ? colors.blue || color: type === "link" ? colors.white : colors.darkBlue } }}>
                         {title}
                     </Text>
 
@@ -62,7 +63,7 @@ const DataItem = props => {
                 {
                     type === "link" &&
                     <View>
-                        <Ionicons name="chevron-forward-outline" size={18} color={colors.blue} />
+                        <Ionicons name="chevron-forward-outline" size={18} color={colors.white} />
                     </View>
                 }
 
@@ -75,25 +76,24 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         paddingVertical: 7,
-
-        margin:15,
+        marginTop: '5%',
 
         color:'white',
         backgroundColor:colors.white,
         alignItems: 'center',
         minHeight: 60,
         padding:10,
-        borderRadius:15,
+        borderRadius:10,
 
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 1,
         },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.00,
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
 
-        elevation: 1,
+        elevation: 2,
     },
     textContainer: {
         marginLeft: 14,

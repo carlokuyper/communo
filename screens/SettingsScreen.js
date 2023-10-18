@@ -94,23 +94,27 @@ const SettingsScreen = props => {
             currentValues.about != about;
     }
 
-    const marVerticalSize = 10
+    const marTopSize = '10%'
+    const marBottomSize = '4%'
 
     return <PageContainer>
 
         <ScrollView contentContainerStyle={styles.formContainer}>
 
             <ProfileImage
-                size={80}
+                width={'100%'}
+                height={200}
                 userId={userData.userId}
                 uri={userData.profilePicture}
-                showEditButton={true} />
-
+                showEditButton={true} 
+                style={{ marginBottom: '2%',}}/>
+                
             <Input
                 id="firstName"
                 label="First name"
-                icon="user-o"
-                marVertical={marVerticalSize}
+                icon="user-o" 
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
@@ -121,6 +125,8 @@ const SettingsScreen = props => {
                 id="lastName"
                 label="Last name"
                 icon="user-o"
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
@@ -131,7 +137,8 @@ const SettingsScreen = props => {
                 id="email"
                 label="Email"
                 icon="mail"
-                marVertical={marVerticalSize}
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={Feather}
                 onInputChanged={inputChangedHandler}
                 keyboardType="email-address"
@@ -143,14 +150,23 @@ const SettingsScreen = props => {
                 id="about"
                 label="About"
                 icon="user-o"
-                marVertical={marVerticalSize}
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
                 errorText={formState.inputValidities["about"]}
                 initialValue={userData.about} />
+            
+            <DataItem
+                type={"link"}
+                title="Starred messages"
+                hideImage={true}
+                style={{ backgroundColor:colors.darkBlue}}
+                onPress={() => props.navigation.navigate("DataList", { title: "Starred messages", data: sortedStarredMessages, type: "messages" })}
+            />
 
-            <View style={{ marginTop: 20 }}>
+            <View style={{ marginTop: 5 }}>
                 {
                     showSuccessMessage && <Text>Saved!</Text>
                 }
@@ -161,22 +177,18 @@ const SettingsScreen = props => {
                 hasChanges() && <SubmitButton
                     title="Save"
                     onPress={saveHandler}
-                    style={{ marginTop: 20 }}
+                    style={{ marginTop: '10%'}}
+                    textColor='black'
                     disabled={!formState.formIsValid} />
             }
             </View>
 
-            <DataItem
-                type={"link"}
-                title="Starred messages"
-                hideImage={true}
-                onPress={() => props.navigation.navigate("DataList", { title: "Starred messages", data: sortedStarredMessages, type: "messages" })}
-            />
+           
 
             <SubmitButton
                 title="Logout"
                 onPress={() => dispatch(userLogout()) }
-                style={{ marginTop: 20 }}
+                style={{ marginTop: '10%'}}
                 color={colors.red}
             />
             
@@ -197,10 +209,11 @@ const styles = StyleSheet.create({
         backgroundColor:'white'
     },
     formContainer: { 
-        alignItems: 'center',
+        width:'95%',
         marginTop:20,
         marginBottom:20,
-        paddingBottom:50
+        paddingBottom:50,
+        marginLeft:5
     }
 })
 

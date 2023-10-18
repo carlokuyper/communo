@@ -29,9 +29,9 @@ export const validateString = (id, value) => {
 
     if (value !== "") {
         constraints.format = {
-            pattern: "[a-z]+",
+            pattern: "[a-z ]+",
             flags: "i",
-            message: "value can only contain letters"
+            message: "value can only contain letters and spaces"
         }
     }
 
@@ -46,7 +46,8 @@ export const validateEmail = (id, value) => {
     };
 
     if (value !== "") {
-        constraints.email = true
+        value = value.trimEnd(); // Remove spaces at the end of the email
+        constraints.email = true;
     }
 
     const validationResult = validate({ [id]: value }, { [id]: constraints });

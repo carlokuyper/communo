@@ -50,10 +50,10 @@ const SignUpForm = props => {
             setIsLoading(true);
 
             const action = signUp(
-                formState.inputValues.firstName,
-                formState.inputValues.lastName,
-                formState.inputValues.email,
-                formState.inputValues.password,
+                formState.inputValues.firstName.trimEnd(),
+                formState.inputValues.lastName.trimEnd(),
+                formState.inputValues.email.trimEnd(),
+                formState.inputValues.password.trimEnd(),
             );
             setError(null);
             await dispatch(action);

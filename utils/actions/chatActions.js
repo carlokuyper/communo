@@ -34,7 +34,7 @@ export const sendInfoMessage = async (chatId, senderId, messageText, toneColor1,
 }
 
 export const sendImage = async (chatId, senderId, imageUrl, replyTo) => {
-    await sendMessage(chatId, senderId, '#ffffff', '#ffffff', '#ffffff', 'Image', 'Image', 'Image', 'Image', 'Image', imageUrl, replyTo, null);
+    await sendMessage(chatId, senderId, '', '#ffffff', '#ffffff', 'Image', 'Image', 'Image', 'Image', 'Image', imageUrl, replyTo, null);
 }
 
 export const updateChatData = async (chatId, userId, chatData) => {
