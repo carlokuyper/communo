@@ -6,11 +6,12 @@ import PageContainer from '../components/PageContainer';
 import { FontAwesome } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import commonStyles from '../constants/commonStyles';
-import { searchUsers } from '../utils/actions/userActions';
 import DataItem from '../components/DataItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStoredUsers } from '../store/userSlice';
 import ProfileImage from '../components/ProfileImage';
+
+import { fetchAllUsers, searchUsers } from '../utils/actions/userActions';
 
 const NewChatScreen = props => {
 
@@ -68,31 +69,39 @@ const NewChatScreen = props => {
     }, [chatName, selectedUsers]);
 
     useEffect(() => {
-        const delaySearch = setTimeout(async () => {
-            if (!searchTerm || searchTerm === "") {
-                setUsers();
-                setNoResultsFound(false);
-                return;
-            }
-
+        const fetchUsers = async () => {
             setIsLoading(true);
-
-            const usersResult = await searchUsers(searchTerm);
+    
+            let usersResult;
+            if (!searchTerm || searchTerm === "") {
+                // Fetch all users when component mounts
+                usersResult = await fetchAllUsers();
+            } else {
+                // Search users when searchTerm changes
+                usersResult = await searchUsers(searchTerm);
+            }
+    
+            // Sort users alphabetically by firstName
+            usersResult = Object.entries(usersResult)
+                .sort(([,a], [,b]) => a.firstName.localeCompare(b.firstName))
+                .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+    
             delete usersResult[userData.userId];
             setUsers(usersResult);
-
+    
             if (Object.keys(usersResult).length === 0) {
                 setNoResultsFound(true);
             }
             else {
                 setNoResultsFound(false);
-
                 dispatch(setStoredUsers({ newUsers: usersResult }))
             }
-
+    
             setIsLoading(false);
-        }, 500);
-
+        };
+    
+        const delaySearch = setTimeout(fetchUsers, 500);
+    
         return () => clearTimeout(delaySearch);
     }, [searchTerm]);
 
@@ -179,7 +188,7 @@ const NewChatScreen = props => {
 
         {
             !isLoading && !noResultsFound && users &&
-            <FlatList
+            <FlatList 
                 data={Object.keys(users)}
                 renderItem={(itemData) => {
                     const userId = itemData.item;
@@ -196,6 +205,7 @@ const NewChatScreen = props => {
                         onPress={() => userPressed(userId)}
                         type={isGroupChat ? "checkbox" : ""}
                         isChecked={selectedUsers.includes(userId)}
+                        style={{margin:5}}
                     />
                 }}
             />
@@ -283,7 +293,7 @@ const styles = StyleSheet.create({
     selectedUserStyle: {
         marginRight: 10,
         marginBottom: 10
-    }
+    },
 })
 
 export default NewChatScreen;

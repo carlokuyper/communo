@@ -10,7 +10,7 @@ import ProfileImage from '../components/ProfileImage';
 import SubmitButton from '../components/SubmitButton';
 import colors from '../constants/colors';
 import { updateLoggedInUserData } from '../store/authSlice';
-import { reset, updateSignedInUserData, userLogout } from '../utils/actions/authActions';
+import { updateSignedInUserData, userLogout, userReset } from '../utils/actions/authActions';
 import { validateInput } from '../utils/actions/formActions';
 import { reducer } from '../utils/reducers/formReducer';
 
@@ -155,37 +155,44 @@ const SettingsScreen = props => {
                     showSuccessMessage && <Text>Saved!</Text>
                 }
 
-            {
-                isLoading ? 
-                <ActivityIndicator size={'small'} color={colors.primary} style={{ marginTop: 10 }} /> :
-                hasChanges() && <SubmitButton
-                    title="Save"
-                    onPress={saveHandler}
-                    style={{ marginTop: 20 }}
-                    disabled={!formState.formIsValid} />
-            }
             </View>
 
             <DataItem
                 type={"link"}
                 title="Starred messages"
                 hideImage={true}
+                titleStyle={{ color: 'white'}} // Add your custom color here
+                style={{ backgroundColor:colors.darkBlue, margin:0}}
+                iconColor='white'
                 onPress={() => props.navigation.navigate("DataList", { title: "Starred messages", data: sortedStarredMessages, type: "messages" })}
             />
 
-            <SubmitButton
-                title="Logout"
-                onPress={() => dispatch(userLogout()) }
-                style={{ marginTop: 20 }}
-                color={colors.red}
-            />
-            
-            {/* <SubmitButton
-                title="Reset"
-                onPress={() => dispatch(reset()) }
-                style={{ marginTop: 20 }}
-                color={colors.red}
-            /> */}
+            {
+                isLoading ? 
+                <ActivityIndicator size={'small'} color={colors.primary} style={{ marginTop: 10}} /> :
+                hasChanges() && <SubmitButton
+                    title="Save"
+                    onPress={saveHandler}
+                    style={{width:110}}
+                    color={'blue'}
+                    disabled={!formState.formIsValid} />
+            }
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <SubmitButton
+                    title="Logout"
+                    onPress={() => dispatch(userLogout())}
+                    style={{ marginTop: 20, }}
+                    color={'#E87B3D'}
+                />
+
+                <SubmitButton
+                    title="Reset"
+                    onPress={() => dispatch(userReset())}
+                    style={{ marginTop: 20, marginLeft:'10%'}}
+                    color={colors.red}
+                />
+            </View>
 
         </ScrollView>   
     </PageContainer>

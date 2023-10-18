@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     },
     label: {
         marginVertical: 4,
-        fontFamily: 'bold',
+        fontFamily: 'semiBold',
         letterSpacing: 0.3,
         color: colors.backgroundColor
     },

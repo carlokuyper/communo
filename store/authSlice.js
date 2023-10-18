@@ -25,7 +25,12 @@ const authSlice = createSlice({
             state.token = null;
             state.userData = null;
             state.didTryAutoLogin = false;
-            // state.firstLaunch= false;
+        },
+        reset: (state, action) => {
+            state.token = null;
+            state.userData = null;
+            state.didTryAutoLogin = false;
+            state.firstLaunch= false;
         },
         updateLoggedInUserData: (state, action) => {
             state.userData = { ...state.userData, ...action.payload.newData }
@@ -37,4 +42,5 @@ export const setFirstLaunch = authSlice.actions.setFirstLaunch;
 export const authenticate = authSlice.actions.authenticate;
 export const updateLoggedInUserData = authSlice.actions.updateLoggedInUserData;
 export const logout = authSlice.actions.logout;
+export const reset = authSlice.actions.reset;
 export default authSlice.reducer;

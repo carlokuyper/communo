@@ -34,11 +34,15 @@ const DataItem = props => {
 
                 <View style={styles.textContainer}>
 
-                    <Text
-                        numberOfLines={1}
-                        style={{ ...styles.title, ...{ color: type === "button" ? colors.blue : colors.darkBlue } }}>
-                        {title}
-                    </Text>
+                <Text
+                    numberOfLines={1}
+                    style={{ 
+                        ...styles.title, 
+                        ...{ color: type === "button" ? colors.blue : colors.darkBlue }, 
+                        ...props.titleStyle // Add this line
+                    }}>
+                    {title}
+                </Text>
 
                     {
                         subTitle &&
@@ -62,7 +66,7 @@ const DataItem = props => {
                 {
                     type === "link" &&
                     <View>
-                        <Ionicons name="chevron-forward-outline" size={18} color={colors.blue} />
+                        <Ionicons name="chevron-forward-outline" size={18} color={props.iconColor ||colors.blue} />
                     </View>
                 }
 

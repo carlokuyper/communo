@@ -1,7 +1,7 @@
 import { getFirebaseApp } from '../firebaseHelper';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { child, getDatabase, ref, set, update } from 'firebase/database';
-import { authenticate, logout } from '../../store/authSlice';
+import { authenticate, logout, reset } from '../../store/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserData } from './userActions';
 import { setItem } from '../async';
@@ -90,12 +90,12 @@ export const userLogout = () => {
     }
 }
 
-export const reset = () => {
+export const userReset = () => {
     return async dispatch => {
         setItem('onboard', 'null')
         AsyncStorage.clear();
         clearTimeout(timer);
-        dispatch(logout());
+        dispatch(reset());
         
     }
     

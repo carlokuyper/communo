@@ -75,3 +75,24 @@ export const searchUsers = async (queryText) => {
         throw error;
     }
 }
+
+export const fetchAllUsers = async () => {
+    try {
+        const app = getFirebaseApp();
+        const dbRef = ref(getDatabase(app));
+        const userRef = child(dbRef, 'users');
+
+        const queryRef = query(userRef, orderByChild('firstLast'));
+
+        const snapshot = await get(queryRef);
+
+        if (snapshot.exists()) {
+            return snapshot.val();
+        }
+
+        return {};
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

@@ -57,7 +57,7 @@ const FadeInView = props => {
           ], // Bind opacity to animated value
       }}>
       {props.children}
-      
+
     </Animated.View>
   );
 };
