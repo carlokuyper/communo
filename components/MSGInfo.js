@@ -35,22 +35,9 @@ const MSGInfo = props => {
   }
 
   const handleSinglePress = () => {
-    props.onDoublePress && props.onDoublePress();
+    props.onPress && props.onPress();
   };
-
-
-  const lastPress = useRef(null);
-
-  const handleDoublePress = () => {
-    const time = new Date().getTime();
-    const delta = time - (lastPress.current || 0);
-    if (delta < 200) {
-      // Double press detected
-      props.onDoublePress && props.onDoublePress();
-    }
-    lastPress.current = time;
-  };
-
+ 
   const translateXAnim = useRef(new Animated.Value(100)).current;
   useEffect(() => {
     Animated.spring(
@@ -65,7 +52,7 @@ const MSGInfo = props => {
   }, [translateXAnim]);
 
   return (
-    <TouchableWithoutFeedback  onPress={handleDoublePress} style={{backgroundColor:'blue'}}>
+    <TouchableWithoutFeedback  onPress={handleSinglePress} style={{backgroundColor:'blue'}}>
       <View style={{...props.style}} >
         
           <Animated.View 
@@ -80,10 +67,10 @@ const MSGInfo = props => {
                 imageStyle={{resizeMode: "contain", marginLeft:-39, marginTop:0, width:'150%',
                 height:'120%'}}>
                   
-                <View style={{ flexDirection: 'row', alignItems: 'center', margin:'10%', marginLeft:'5%'}} onPress={handleSinglePress}>
-                  <AntDesign name="close" size={24} color="black" onPress={handleSinglePress} style={{marginRight:'5%'}}/>
-                  <Text style={{ fontFamily: 'bold', fontSize: 20 }} onPress={handleSinglePress}>Message Breakdown</Text>
-                </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', margin:'10%', marginLeft:'5%'}}>
+    <AntDesign name="close" size={24} color="black" onPress={handleSinglePress} style={{marginRight:'5%'}}/>
+    <Text style={{ fontFamily: 'bold', fontSize: 20 }} onPress={handleSinglePress}>Message Breakdown</Text>
+  </View>
 
                 {/* ChatBubble */}
                 <Text style={{ fontFamily: 'bold', fontSize: 18,marginBottom:10, marginLeft:'5%',}} onPress={handleSinglePress}> {messageType ? 'Your Message' : 'Their Message'}</Text>

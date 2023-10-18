@@ -96,9 +96,7 @@ export const userReset = () => {
         AsyncStorage.clear();
         clearTimeout(timer);
         dispatch(reset());
-        
     }
-    
 }
 
 export const updateSignedInUserData = async (userId, newData) => {

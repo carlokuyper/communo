@@ -57,7 +57,7 @@ const FadeInView = props => {
           ], // Bind opacity to animated value
       }}>
       {props.children}
-
+      
     </Animated.View>
   );
 };
@@ -182,9 +182,9 @@ const ChatBubble = props => {
                 <Container onPress={handleDoublePress} onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
                     <View style={bubbleStyle}>
                             <View style={{width:'100%'}} >
-                                <Text style={textStyle}>
+                                { !imageUrl && <Text style={textStyle}>
                                     {text}
-                                </Text>
+                                </Text>}
                             </View>
                         {
                             imageUrl &&
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
         height: 300,
         marginTop: 1,
         marginBottom: 1,
-        borderRadius:25,
+        borderRadius:7.5,
         width:'99.5%',
     }
 })

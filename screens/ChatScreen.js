@@ -304,19 +304,29 @@ const ChatScreen = (props) => {
   let lastPress = 0;
   let [activeMsg, setActiveMsg] = useState(false);
 
-  const onDoublePress = () => {
+  const onDoublePress = (messageText) => {
     const time = new Date().getTime();
     const delta = time - lastPress;
     const DOUBLE_PRESS_DELAY = 400;
-
+  
     if (delta < DOUBLE_PRESS_DELAY) {
+      // Check if the messageText is null or an empty string
+      if (!messageText) {
+        console.log("Double press is disabled for images");
+        return;
+      }
       // Success double press
       setActiveMsg(prevActiveMsg => !prevActiveMsg);
     }
     lastPress = time;
   };
-
-  const onDoublePressChat = () => {
+  
+  const onDoublePressChat = (messageText) => {
+    // Check if the messageText is null or an empty string
+    if (!messageText) {
+      console.log("Double press is disabled for images");
+      return;
+    }
     if (activeMsg === true) {
       console.log("double press from other components: " + activeMsg);
       setActiveMsg(false);
@@ -337,9 +347,9 @@ const ChatScreen = (props) => {
         imageStyle={{resizeMode: "contain",  marginLeft: -120, marginTop:-200, width:'120%',
         height:'120%'}}>
 
-        {activeMsg && 
-          <MSGInfo onDoublePress={onDoublePressChat} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)',}}/>
-        }
+{activeMsg && 
+  <MSGInfo onPress={() => setActiveMsg(false)} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)',}}/>
+}
 
         <View style={{ paddingLeft: 20, flex: 1,}}>
           
@@ -376,9 +386,8 @@ const ChatScreen = (props) => {
                 const sender = message.sentBy && storedUsers[message.sentBy];
                 const name = sender && `${sender.firstName} ${sender.lastName}`;
 
-                return <View onStartShouldSetResponder={onDoublePress}>
-                  <ChatBubble 
-                      onDoublePress={onDoublePressChat}
+                return <ChatBubble 
+                      onDoublePress={() => onDoublePressChat(message.text)}
                       onClick={(e) => handleClick(e)}
                       type={messageType}
                       text={message.text}
@@ -398,7 +407,7 @@ const ChatScreen = (props) => {
                       replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
                       imageUrl={message.imageUrl}
                     />
-                  </View>
+
               }}
             />
           } 

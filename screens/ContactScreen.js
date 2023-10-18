@@ -3,13 +3,10 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DataItem from '../components/DataItem';
 import PageContainer from '../components/PageContainer';
-import PageTitle from '../components/PageTitle';
 import ProfileImage from '../components/ProfileImage';
 import SubmitButton from '../components/SubmitButton';
 import colors from '../constants/colors';
 import { removeUserFromChat } from '../utils/actions/chatActions';
-import { getUserChats } from '../utils/actions/userActions';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Tone from '../components/Tone';
 import { useNavigation } from '@react-navigation/native';
@@ -55,8 +52,8 @@ const ContactScreen = props => {
 
     useEffect(() => {
         return navigation.addListener('blur', () => {
-            dispatch(setUser1Chats([]));
-            dispatch(setUser2Chats([]));
+        dispatch(setUser1Chats([]));
+        dispatch(setUser2Chats([]));
         });
     }, [navigation]);
     
@@ -130,13 +127,15 @@ const ContactScreen = props => {
             frequency_penalty: 0,
             presence_penalty: 0
         }
-    
+        function removeNewlines(str) {
+            return str.replace(/\n/g, '');
+          }
         axios.post('https://api.openai.com/v1/completions', explainPayloadExplain, configExplain)
         .then((res)=> {
             //Main Tone
             let tone = res.data.choices[0].text 
             // console.log(tone);           
-            let newText = tone.replace('\n', '');   
+            let newText = removeNewlines(tone);  
             setExplainTone(newText)  
             // console.log(newText); 
             setAPIIsLoading(false);
@@ -146,6 +145,7 @@ const ContactScreen = props => {
             console.log(error);
             setAPIIsLoading(false);
         });
+
     }, [])
   
     let [explainTone, setExplainTone] = useState();
@@ -167,40 +167,40 @@ const ContactScreen = props => {
 
     return <PageContainer>
         <View>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop:'7%', marginBottom:'3%'}}>
+            <View style={styles.topContainer}>
                 <ProfileImage
                     uri={currentUser.profilePicture}
-                    size={125}
-                    style={{ marginRight: 10 }}
+                    width={'95%'}
+                    height={200}
+                    style={{ marginBottom: '7.5%' }}
                 />
-                <View>
-                    <Text style={styles.titleText}>{currentUser.firstName} {currentUser.lastName}</Text>
-                    {
-                        currentUser.about &&
-                        <>
-                            <Text style={styles.about} numberOfLines={2}>About:</Text>
-                            <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>
-                        </>
-                    }
+                <Text style={styles.titleText} >{currentUser.firstName} {currentUser.lastName}</Text>
+            </View>
+            { currentUser.about &&
+                <View style={{marginLeft:'5%'}}>
+                    <Text style={styles.heading}>About</Text>
+                    <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>
                 </View>
+            }
+
+              <View style={{width:'90%', height:'30%', marginTop:'5%', marginLeft:'5%'}}>
+              {APIisLoading && APIRan&& <LottieView  style={{width:'100%', height:'100%', marginLeft:'22%', marginTop:'-5%'}} source={loadingAnimation} autoPlay loop />}
+              {!APIisLoading && !APIRan &&
+                <Animated.View style={{opacity: fadeAnim}}>
+                    <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
+                    <Text style={styles.explainResponse}>{explainTone}</Text>
+
+                    <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
+                    <View style={styles.toneContainer}>
+                        <Tone text={activeTone1} color={toneColor1} />
+                        <Tone text={activeTone2} color={toneColor2} />
+                        <Tone text={activeTone3} color={toneColor3} />
+                    </View>
+                </Animated.View>}
+                
             </View>
+
             
-            <View style={{width:'100%', height:'30%'}}>
-                {APIisLoading && APIRan&& <LottieView  style={{width:'100%', height:'100%', marginLeft:'22%',}} source={loadingAnimation} autoPlay loop />}
-                {!APIisLoading && !APIRan &&
-                    <Animated.View style={{opacity: fadeAnim}}>
-                        <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
-                        <Text style={styles.explainResponse}>{explainTone} </Text>
-                        <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
-                        
-                        <View style={styles.toneContainer}>
-                            <Tone text={activeTone1} color={toneColor1} />
-                            <Tone text={activeTone2} color={toneColor2} />
-                            <Tone text={activeTone3} color={toneColor3} />
-                        </View>
-                    </Animated.View>
-                }
-            </View>
         </View>
 
         {
@@ -241,52 +241,45 @@ const ContactScreen = props => {
 
 const styles = StyleSheet.create({
     titleText: {
-        fontSize: 20,
+        fontSize: 28,
         color: colors.darkBlue,
         fontFamily: 'semiBold',
-        letterSpacing: 0.3,
-        marginLeft:'5%',
-        marginTop:0
-    },
-    about: {
-        marginBottom:'3%',
-        fontFamily: 'medium',
-        fontSize: 16,
-        letterSpacing: 0.3,
-        color: colors.darkBlue,
-        marginLeft:'5%',
+        letterSpacing: 0.3
     },
     topContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 20
+        marginVertical: 20,
+        marginLeft:'5%'
+    },
+    about: {
+        fontFamily: 'regular',
+        fontSize: 16,
+        letterSpacing: 0.3,
     },
     heading: {
-        fontFamily: 'bold',
+        fontFamily: 'semiBold',
         letterSpacing: 0.3,
         color: colors.textColor,
-        marginVertical: 8
     },
     explainTitle1: {
         color: colors.darkBlue,
         fontFamily: 'semiBold',
         textAlign:'left',
-        marginTop:'5%',
+        marginBottom:0
     },
     explainTitle2: {
         color: colors.darkBlue,
         fontFamily: 'semiBold',
         textAlign:'left',
-        marginTop:'5%',
+        marginTop:'2%',
+        marginBottom:'2%'
     },
     explainResponse: {
         color: colors.darkBlue, 
-        // marginTop:'5%',
+        marginTop:'2%',
     },
     toneContainer:{
         flexDirection: 'row',
         width:'100%',
-        marginTop:'3%',
     },
 });
 

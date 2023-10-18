@@ -10,7 +10,7 @@ import ProfileImage from '../components/ProfileImage';
 import SubmitButton from '../components/SubmitButton';
 import colors from '../constants/colors';
 import { updateLoggedInUserData } from '../store/authSlice';
-import { updateSignedInUserData, userLogout, userReset } from '../utils/actions/authActions';
+import { reset, updateSignedInUserData, userLogout, userReset } from '../utils/actions/authActions';
 import { validateInput } from '../utils/actions/formActions';
 import { reducer } from '../utils/reducers/formReducer';
 
@@ -94,23 +94,27 @@ const SettingsScreen = props => {
             currentValues.about != about;
     }
 
-    const marVerticalSize = 10
+    const marTopSize = '10%'
+    const marBottomSize = '4%'
 
     return <PageContainer>
 
         <ScrollView contentContainerStyle={styles.formContainer}>
 
             <ProfileImage
-                size={80}
+                width={'100%'}
+                height={200}
                 userId={userData.userId}
                 uri={userData.profilePicture}
-                showEditButton={true} />
-
+                showEditButton={true} 
+                style={{ marginBottom: '2%',}}/>
+                
             <Input
                 id="firstName"
                 label="First name"
-                icon="user-o"
-                marVertical={marVerticalSize}
+                icon="user-o" 
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
@@ -121,6 +125,8 @@ const SettingsScreen = props => {
                 id="lastName"
                 label="Last name"
                 icon="user-o"
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
@@ -131,7 +137,8 @@ const SettingsScreen = props => {
                 id="email"
                 label="Email"
                 icon="mail"
-                marVertical={marVerticalSize}
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={Feather}
                 onInputChanged={inputChangedHandler}
                 keyboardType="email-address"
@@ -143,42 +150,41 @@ const SettingsScreen = props => {
                 id="about"
                 label="About"
                 icon="user-o"
-                marVertical={marVerticalSize}
+                marTop={marTopSize}
+                marBottom={marBottomSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
                 autoCapitalize="none"
                 errorText={formState.inputValidities["about"]}
                 initialValue={userData.about} />
 
-            <View style={{ marginTop: 20 }}>
+            <View style={{ marginTop: 5 }}>
                 {
                     showSuccessMessage && <Text>Saved!</Text>
                 }
+                <DataItem
+                    type={"link"}
+                    title="Starred messages"
+                    hideImage={true}
+                    titleStyle={{ color: 'white'}} // Add your custom color here
+                    style={{ backgroundColor:colors.darkBlue, margin:0}}
+                    iconColor='white'
+                    onPress={() => props.navigation.navigate("DataList", { title: "Starred messages", data: sortedStarredMessages, type: "messages" })}
+                />
 
+                {
+                    isLoading ? 
+                    <ActivityIndicator size={'small'} color={colors.primary} style={{ marginTop: 10 }} /> :
+                    hasChanges() && <SubmitButton
+                        title="Save"
+                        onPress={saveHandler}
+                        style={{ marginTop: '10%'}}
+                        textColor='black'
+                        disabled={!formState.formIsValid} />
+                }
             </View>
 
-            <DataItem
-                type={"link"}
-                title="Starred messages"
-                hideImage={true}
-                titleStyle={{ color: 'white'}} // Add your custom color here
-                style={{ backgroundColor:colors.darkBlue, margin:0}}
-                iconColor='white'
-                onPress={() => props.navigation.navigate("DataList", { title: "Starred messages", data: sortedStarredMessages, type: "messages" })}
-            />
-
-            {
-                isLoading ? 
-                <ActivityIndicator size={'small'} color={colors.primary} style={{ marginTop: 10}} /> :
-                hasChanges() && <SubmitButton
-                    title="Save"
-                    onPress={saveHandler}
-                    style={{width:110}}
-                    color={'blue'}
-                    disabled={!formState.formIsValid} />
-            }
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <SubmitButton
                     title="Logout"
                     onPress={() => dispatch(userLogout())}
@@ -204,10 +210,11 @@ const styles = StyleSheet.create({
         backgroundColor:'white'
     },
     formContainer: { 
-        alignItems: 'center',
+        width:'95%',
         marginTop:20,
         marginBottom:20,
-        paddingBottom:50
+        paddingBottom:50,
+        marginLeft:5
     }
 })
 

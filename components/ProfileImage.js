@@ -70,7 +70,7 @@ const ProfileImage = props => {
                     <ActivityIndicator size={'small'} color={colors.primary} />
                 </View> :
                 <Image
-                    style={{ ...styles.image, ...{ width: props.size, height: props.size } }}
+                    style={{ ...styles.image, ...{ width: props.width, height: props.height } }}
                     source={image}/>
             }
 
@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
     image: {
         borderRadius: 10,
         borderColor: colors.lightGrey,
-        borderWidth: 0.25
+        borderWidth: 0.25,
     },
     editIconContainer: {
         position: 'absolute',
-        bottom: 0,
-        right: 0,
+        bottom: '5%',
+        right: '5%',
         backgroundColor: colors.lightGrey,
         borderRadius: 20,
         padding: 8

@@ -6,12 +6,12 @@ import PageContainer from '../components/PageContainer';
 import { FontAwesome } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import commonStyles from '../constants/commonStyles';
+import {fetchAllUsers, searchUsers } from '../utils/actions/userActions';
 import DataItem from '../components/DataItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStoredUsers } from '../store/userSlice';
-import ProfileImage from '../components/ProfileImage';
 
-import { fetchAllUsers, searchUsers } from '../utils/actions/userActions';
+import ProfileImage from '../components/ProfileImage';
 
 const NewChatScreen = props => {
 
@@ -188,7 +188,7 @@ const NewChatScreen = props => {
 
         {
             !isLoading && !noResultsFound && users &&
-            <FlatList 
+            <FlatList
                 data={Object.keys(users)}
                 renderItem={(itemData) => {
                     const userId = itemData.item;
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     selectedUserStyle: {
         marginRight: 10,
         marginBottom: 10
-    },
+    }
 })
 
 export default NewChatScreen;
