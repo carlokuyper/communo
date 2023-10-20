@@ -82,9 +82,9 @@ const OnboardingScreen = () => {
                 subtitle: 'Comuno leverages the power of artificial intelligence to enhance your communication experience. Our advanced technology breaks down your messages, providing insights into how your words will be interpreted by the recipient. This feature ensures that your intentions are crystal plain, thereby reducing the likelihood of misunderstanding.',
                 },
                 {
-                backgroundColor: 'white',
-                image: <LottieView style={{height: 200, marginBottom:-100, marginTop:-50}} source={require('../assets/lottie/animation_llcdd350.json')} />,
-                title: 'Enriched Conversations',
+                backgroundColor: 'white', 
+                image: <Image source={require('../assets/gif/DoubleClick.gif')} style={{ height: 100, paddingTop:20, marginTop:-50, marginBottom:50,  resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}]}} />,
+                title: 'Enriched Conversations', 
                 subtitle: "Comuno generates an affective context for each message. Comuno adds substance to your interactions by identifying the underlying emotions in a conversation. By acknowledging and addressing the emotions behind the words, you will not only communicate effectively, but also cultivate deeper connections.",
                 },
             ]}

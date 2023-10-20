@@ -68,12 +68,12 @@ const MSGInfo = props => {
                 height:'120%'}}>
                   
                   <View style={{ flexDirection: 'row', alignItems: 'center', margin:'10%', marginLeft:'5%'}}>
-    <AntDesign name="close" size={24} color="black" onPress={handleSinglePress} style={{marginRight:'5%'}}/>
-    <Text style={{ fontFamily: 'bold', fontSize: 20 }} onPress={handleSinglePress}>Message Breakdown</Text>
-  </View>
+                    <AntDesign name="close" size={24} color="black" onPress={handleSinglePress} style={{marginRight:'5%'}}/>
+                    <Text style={{ fontFamily: 'semiBold', fontSize: 20 }} onPress={handleSinglePress}>Message Breakdown</Text>
+                  </View>
 
                 {/* ChatBubble */}
-                <Text style={{ fontFamily: 'bold', fontSize: 18,marginBottom:10, marginLeft:'5%',}} onPress={handleSinglePress}> {messageType ? 'Your Message' : 'Their Message'}</Text>
+                <Text style={{ fontFamily: 'semiBold', fontSize: 18,marginBottom:10, marginLeft:'5%',}} onPress={handleSinglePress}> {messageType ? 'Your Message' : 'Their Message'}</Text>
 
                 <View style={{marginBottom:10, marginLeft:'5%', }}>    
                     
@@ -92,7 +92,7 @@ const MSGInfo = props => {
                 </View>
 
                 {/* Tones  */}
-                <Text style={{ fontFamily: 'bold', fontSize: 18, marginBottom:10, marginTop:15, marginLeft:'5%'}} onPress={handleSinglePress}> The Tone of the Message is:</Text>
+                <Text style={{ fontFamily: 'semiBold', fontSize: 18, marginBottom:10, marginTop:15, marginLeft:'5%'}} onPress={handleSinglePress}> The Tone of the Message is:</Text>
                 <View style={{flexDirection: 'row', marginLeft:'5%', width:'85%'}}>
                   <Tone text={selectedMessage.activeTone1} color={selectedMessage.toneColor1} />
                   <Tone text={selectedMessage.activeTone2} color={selectedMessage.toneColor2} />
