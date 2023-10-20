@@ -3,10 +3,13 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DataItem from '../components/DataItem';
 import PageContainer from '../components/PageContainer';
+import PageTitle from '../components/PageTitle';
 import ProfileImage from '../components/ProfileImage';
 import SubmitButton from '../components/SubmitButton';
 import colors from '../constants/colors';
 import { removeUserFromChat } from '../utils/actions/chatActions';
+import { getUserChats } from '../utils/actions/userActions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Tone from '../components/Tone';
 import { useNavigation } from '@react-navigation/native';
@@ -47,20 +50,23 @@ const ContactScreen = props => {
 
     const [APIisLoading, setAPIIsLoading] = useState(false);
     const [APIRan, setAPIRan] = useState(false);
+    const [enoughMSG, setEnoughMSG] = useState(false);
     
     const [fadeAnim] = useState(new Animated.Value(0));  // Initial value for opacity: 0
 
     useEffect(() => {
         return navigation.addListener('blur', () => {
-        dispatch(setUser1Chats([]));
-        dispatch(setUser2Chats([]));
+            dispatch(setUser1Chats([]));
+            dispatch(setUser2Chats([]));
         });
     }, [navigation]);
     
     useEffect(() => {
-        setAPIIsLoading(true);
-        setAPIRan(true)
-
+        // Check if there are at least 5 messages from either user
+        if (user1msg.length >= 5 || user2msg.length >= 5) {
+            setAPIIsLoading(true);
+            setAPIRan(true)
+            setEnoughMSG(true)
         const configTone = {
             headers:{
                 Authorization: "Bearer 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",
@@ -127,15 +133,13 @@ const ContactScreen = props => {
             frequency_penalty: 0,
             presence_penalty: 0
         }
-        function removeNewlines(str) {
-            return str.replace(/\n/g, '');
-          }
+    
         axios.post('https://api.openai.com/v1/completions', explainPayloadExplain, configExplain)
         .then((res)=> {
             //Main Tone
             let tone = res.data.choices[0].text 
             // console.log(tone);           
-            let newText = removeNewlines(tone);  
+            let newText = tone.replace('\n', '');   
             setExplainTone(newText)  
             // console.log(newText); 
             setAPIIsLoading(false);
@@ -145,8 +149,13 @@ const ContactScreen = props => {
             console.log(error);
             setAPIIsLoading(false);
         });
-
-    }, [])
+        
+    } else {
+        // If there are less than 5 messages, you can show a message to the user or handle this case as needed
+        setEnoughMSG(false);
+        console.log("Not enough messages to analyze the conversation.");
+    }
+}, [enoughMSG]); // Add user1msg and user2msg as dependencies
   
     let [explainTone, setExplainTone] = useState();
  
@@ -167,40 +176,51 @@ const ContactScreen = props => {
 
     return <PageContainer>
         <View>
-            <View style={styles.topContainer}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop:'7%', marginBottom:'3%'}}>
                 <ProfileImage
                     uri={currentUser.profilePicture}
-                    width={'95%'}
-                    height={200}
-                    style={{ marginBottom: '7.5%' }}
+                    width={125}
+                    height={125}
+                    style={{ marginRight: 10 }}
                 />
-                <Text style={styles.titleText} >{currentUser.firstName} {currentUser.lastName}</Text>
-            </View>
-            { currentUser.about &&
-                <View style={{marginLeft:'5%'}}>
-                    <Text style={styles.heading}>About</Text>
-                    <Text style={styles.about} numberOfLines={2}>{currentUser.about}</Text>
+                <View style={{width:'62%', marginLeft:'1%'}}>
+                    <Text style={styles.titleText}>{currentUser.firstName} {currentUser.lastName}</Text>
+                    {
+                        currentUser.about &&
+                        <>
+                            <Text style={[styles.about, {fontFamily: 'medium', marginTop:'1%', fontSize: 16,}]} numberOfLines={2}>About:</Text>
+                            <Text style={styles.about}>{currentUser.about}</Text>
+                        </>
+                    }
                 </View>
-            }
-
-              <View style={{width:'90%', height:'30%', marginTop:'5%', marginLeft:'5%'}}>
-              {APIisLoading && APIRan&& <LottieView  style={{width:'100%', height:'100%', marginLeft:'22%', marginTop:'-5%'}} source={loadingAnimation} autoPlay loop />}
-              {!APIisLoading && !APIRan &&
-                <Animated.View style={{opacity: fadeAnim}}>
-                    <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
-                    <Text style={styles.explainResponse}>{explainTone}</Text>
-
-                    <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
-                    <View style={styles.toneContainer}>
-                        <Tone text={activeTone1} color={toneColor1} />
-                        <Tone text={activeTone2} color={toneColor2} />
-                        <Tone text={activeTone3} color={toneColor3} />
-                    </View>
-                </Animated.View>}
-                
             </View>
-
             
+           
+
+            <View style={{width:'100%', height:'30%'}}>
+                {!enoughMSG && 
+                    <>
+                        <Text style={{fontFamily:'semiBold', fontSize:16, letterSpacing: 0.3,marginBottom:'1%'}}>Cant run AI</Text>
+                        <Text style={{fontSize:14, letterSpacing: 0.3, marginBottom:'1%'}}>There needs to be more than 5 messages between you and {currentUser.firstName} before you can analyse the conversation</Text>
+                    </>
+                }
+                
+                {APIisLoading && APIRan&& <LottieView  style={{width:'100%', height:'100%', marginLeft:'22%',}} source={loadingAnimation} autoPlay loop />}
+                
+                {!APIisLoading && !APIRan &&
+                    <Animated.View style={{opacity: fadeAnim}}>
+                        <Text style={styles.explainTitle1}>Overall theme of the conversation:</Text>
+                        <Text style={styles.explainResponse}>{explainTone} </Text>
+                        <Text style={styles.explainTitle2}>Overall tone of conversation </Text>
+                        
+                        <View style={styles.toneContainer}>
+                            <Tone text={activeTone1} color={toneColor1} />
+                            <Tone text={activeTone2} color={toneColor2} />
+                            <Tone text={activeTone3} color={toneColor3} />
+                        </View>
+                    </Animated.View>
+                }
+            </View>
         </View>
 
         {
@@ -241,45 +261,50 @@ const ContactScreen = props => {
 
 const styles = StyleSheet.create({
     titleText: {
-        fontSize: 28,
+        fontSize: 16,
         color: colors.darkBlue,
         fontFamily: 'semiBold',
-        letterSpacing: 0.3
-    },
-    topContainer: {
-        marginVertical: 20,
-        marginLeft:'5%'
+        letterSpacing: 0.3,
+        marginTop:0
     },
     about: {
+        marginBottom:'3%',
         fontFamily: 'regular',
-        fontSize: 16,
+        fontSize: 14,
         letterSpacing: 0.3,
+        color: colors.darkBlue,
+    },
+    topContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 20
     },
     heading: {
-        fontFamily: 'semiBold',
+        fontFamily: 'bold',
         letterSpacing: 0.3,
         color: colors.textColor,
+        marginVertical: 8
     },
     explainTitle1: {
         color: colors.darkBlue,
         fontFamily: 'semiBold',
         textAlign:'left',
-        marginBottom:0
+        marginTop:'5%',
     },
     explainTitle2: {
         color: colors.darkBlue,
         fontFamily: 'semiBold',
         textAlign:'left',
-        marginTop:'2%',
-        marginBottom:'2%'
+        marginTop:'5%',
     },
     explainResponse: {
         color: colors.darkBlue, 
-        marginTop:'2%',
+        // marginTop:'5%',
     },
     toneContainer:{
         flexDirection: 'row',
         width:'100%',
+        marginTop:'3%',
     },
 });
 

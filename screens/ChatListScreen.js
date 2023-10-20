@@ -6,6 +6,7 @@ import CustomHeaderButton from '../components/CustomHeaderButton';
 import DataItem from '../components/DataItem';
 import PageContainer from '../components/PageContainer';
 import colors from '../constants/colors';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 import backgroundImage from "../assets/images/chatScreen.png";
 import { ImageBackground } from 'react-native';
@@ -28,18 +29,18 @@ const ChatListScreen = props => {
             });
     });
 
-    useEffect(() => {
-        props.navigation.setOptions({
-            headerRight: () => {
-                return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                    <Item
-                        title="New chat"
-                        iconName="create-outline"
-                        onPress={() => props.navigation.navigate("NewChat")}/>
-                </HeaderButtons>
-            }
-        })
-    }, []);
+    // useEffect(() => {
+    //     props.navigation.setOptions({
+    //         headerRight: () => {
+    //             return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+    //                 <Item
+    //                     title="New chat"
+    //                     iconName="create-outline"
+    //                     onPress={() => props.navigation.navigate("                                               `")}/>
+    //             </HeaderButtons>
+    //         }
+    //     })
+    // }, []);
 
     useEffect(() => {
 
@@ -116,12 +117,19 @@ const ChatListScreen = props => {
                     subTitle={subTitle}
                     image={image}
                     onPress={() => props.navigation.navigate("ChatScreen", { chatId })}
-                    style={{margin:5}} // Pass your style here
+                    style={{marginTop:'2.5%', marginLeft: '5%', width:'90%'}} // Pass your style here
             />
             }}  
         />
+
+        <TouchableOpacity
+            onPress={() => props.navigation.navigate("NewChat")}
+            style={styles.startMsg}
+        >
+            <MaterialCommunityIcons name="message-bulleted" size={24} color="white" />
+            <Text style={{ color: 'white', textAlign: 'center', marginLeft: '10%' }}>Start Chat</Text>
+        </TouchableOpacity>
     </ImageBackground>
-        
 };
 
 const styles = StyleSheet.create({
@@ -140,6 +148,28 @@ const styles = StyleSheet.create({
     },
     space:{
         marginTop:7.5
+    },
+    startMsg: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,
+
+        elevation: 2,
+
+        position: 'absolute', // Add this line
+        bottom: '5%', // Adjust this as needed
+        right: '5%', 
+        backgroundColor: colors.darkBlue, 
+        borderRadius: 15, 
+        width:'35%', 
+        padding: 15,
+ 
+        alignSelf: 'flex-end', 
+        flexDirection: 'row', 
     }
 })
 

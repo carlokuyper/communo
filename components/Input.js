@@ -13,10 +13,16 @@ const Input = props => {
         props.onInputChanged(props.id, text);
     }
 
-    return <View style={styles.container}>
-        <Text  marginVertical={props.marVertical} style={styles.label}>{props.label}</Text>
-
-        <View style={styles.inputContainer}>
+    return <View style={styles.container}  
+        marginTop={props.marTop} 
+        marginBottom={props.marBottom}>
+        <Text 
+            marginVertical={props.marVertical} 
+            style={[styles.label, !props.label && { color: 'transparent' }]}
+        >
+            {props.label}
+        </Text>
+        <View style={[styles.inputContainer, props.inputContainerStyle]}>
             {
                 props.icon && <props.iconPack
                     name={props.icon}
@@ -27,15 +33,9 @@ const Input = props => {
                 { ...props }
                 style={styles.input}
                 onChangeText={onChangeText}
-                value={value}/>
+                value={value}
+            />
         </View>
-        {
-            props.errorText &&
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{props.errorText[0]}</Text>
-            </View>
-        }
-
     </View>
 };
 
@@ -44,16 +44,16 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     label: {
-        marginVertical: 4,
+        marginVertical: 6,
+        // marginBottom:'2%',
         fontFamily: 'semiBold',
         letterSpacing: 0.3,
-        color: colors.backgroundColor
+        color: colors.backgroundColor,
     },
     inputContainer: {
         width: '100%',
-        backgroundColor: 'red',
         paddingHorizontal: 10,
-        paddingVertical: 15,
+        paddingVertical: 10,
         borderRadius: 15,
         backgroundColor: colors.nearlyWhite,
         flexDirection: 'row',

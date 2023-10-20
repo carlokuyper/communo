@@ -23,6 +23,16 @@ const SettingsScreen = props => {
     const userData = useSelector(state => state.auth.userData);
     const starredMessages = useSelector(state => state.messages.starredMessages ?? {});
 
+    const [aboutLength, setAboutLength] = useState(0);
+
+    const [isAboutChanged, setIsAboutChanged] = useState(false);
+
+    const handleAboutInputChange = (inputId, inputValue) => {
+        setAboutLength(inputValue.length);
+        setIsAboutChanged(true);
+        inputChangedHandler(inputId, inputValue);
+    };
+
     const sortedStarredMessages = useMemo(() => {
         let result = [];
 
@@ -94,7 +104,7 @@ const SettingsScreen = props => {
             currentValues.about != about;
     }
 
-    const marTopSize = '10%'
+    const marTopSize = 0
     const marBottomSize = '4%'
 
     return <PageContainer>
@@ -113,7 +123,7 @@ const SettingsScreen = props => {
                 id="firstName"
                 label="First name"
                 icon="user-o" 
-                marTop={marTopSize}
+                marTop={'5%'}
                 marBottom={marBottomSize}
                 iconPack={FontAwesome}
                 onInputChanged={inputChangedHandler}
@@ -133,30 +143,43 @@ const SettingsScreen = props => {
                 errorText={formState.inputValidities["lastName"]}
                 initialValue={userData.lastName} />
 
-            <Input
-                id="email"
-                label="Email"
-                icon="mail"
-                marTop={marTopSize}
-                marBottom={marBottomSize}
-                iconPack={Feather}
-                onInputChanged={inputChangedHandler}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                errorText={formState.inputValidities["email"]}
-                initialValue={userData.email} />
+                <Input
+                    id="email"
+                    label="Email"
+                    icon="mail"
+                    marTop={marTopSize}
+                    marBottom={marBottomSize}
+                    iconPack={Feather}
+                    onInputChanged={inputChangedHandler}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    errorText={formState.inputValidities["email"]}
+                    initialValue={userData.email}
+                    editable={false} // This disables the input field
+                    inputContainerStyle={{opacity: 0.7}}  // This makes the input field appear disabled
+                />
 
-            <Input
-                id="about"
-                label="About"
-                icon="user-o"
-                marTop={marTopSize}
-                marBottom={marBottomSize}
-                iconPack={FontAwesome}
-                onInputChanged={inputChangedHandler}
-                autoCapitalize="none"
-                errorText={formState.inputValidities["about"]}
-                initialValue={userData.about} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{marginTop:'5%', fontFamily:'semiBold', fontSize:16}}>About: </Text>
+                   {isAboutChanged && <Text style={{marginTop:'5%',fontFamily:'thinItalic'}}>{100 - aboutLength} characters remaining</Text>}           
+                </View>
+                <Input
+                    id="about"
+                    icon="user-o"
+                    inputContainerStyle={{paddingVertical:0}}
+                    // marTop={marTopSize}
+                    marBottom={marBottomSize}
+                    iconPack={FontAwesome}
+                    onInputChanged={handleAboutInputChange}
+                    autoCapitalize="none"
+                    errorText={formState.inputValidities["about"]}
+                    initialValue={userData.about}
+                    maxLength={100}
+                    multiline={true}
+                    // marVertical={2}
+                    numberOfLines={4} // Adjust this to control the initial height of the TextInput
+                />
+                            
 
             <View style={{ marginTop: 5 }}>
                 {
@@ -215,7 +238,7 @@ const styles = StyleSheet.create({
         marginBottom:20,
         paddingBottom:50,
         marginLeft:5
-    }
+    },
 })
 
 export default SettingsScreen;

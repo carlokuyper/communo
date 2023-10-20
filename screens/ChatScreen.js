@@ -62,7 +62,7 @@ const ChatScreen = (props) => {
   
   const chatMessages = useSelector(state => {
     if (!chatId) return [];
-
+    
     const chatMessagesData = state.messages.messagesData[chatId];
 
     if (!chatMessagesData) return [];
@@ -70,7 +70,7 @@ const ChatScreen = (props) => {
     const messageList = [];
     for (const key in chatMessagesData) {
       const message = chatMessagesData[key];
-
+      
       messageList.push({
         key,
         ...message
@@ -81,6 +81,7 @@ const ChatScreen = (props) => {
   });
 
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData || {};
+
 
   const getChatTitleFromName = () => {
     const otherUserId = chatUsers.find(uid => uid !== userData.userId);
@@ -105,16 +106,15 @@ const ChatScreen = (props) => {
       },
       headerRight: () => {
         return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-          {
-            chatId && 
+         
             <Item
               title="Chat settings"
-              iconName="settings-outline"
+              iconName="information-circle-outline"
               onPress={() => chatData.isGroupChat ?
                 props.navigation.navigate("ChatSettings", { chatId }) :
                 props.navigation.navigate("Contact", { uid: chatUsers.find(uid => uid !== userData.userId) })}
             />
-          }
+          
         </HeaderButtons>
       }
     })
@@ -137,6 +137,29 @@ const ChatScreen = (props) => {
   const [APIisLoading, setAPIIsLoading] = useState(false);
   const [APIisLoadingDone, setAPIIsLoadingDone] = useState(false);
   const [APIRan, setAPIRan] = useState(false);
+  const [inputFull, setInputFull] = useState(false);
+
+    // Check if the TextInput is empty
+    const isTextInputEmpty = messageText.trim() === "";
+
+    useEffect(() => {
+      if (isTextInputEmpty) {
+        // TextInput is empty
+        console.log("TextInput is empty");
+        setInputFull(false);
+        
+        setAPIIsLoading(false);
+        setAPIRan(false)
+        setToneColor1(null); // Clear toneColor1
+        setToneColor2(null); // Clear toneColor2
+        setToneColor3(null); // Clear toneColor3
+        setCurrentExplain();
+      } else {
+        // TextInput is not empty
+        console.log("TextInput is not empty");
+        setInputFull(true);
+      }
+    }, [messageText]);
   
   const runNLP = e => {
     setMessageText(e.target.value)
@@ -145,81 +168,81 @@ const ChatScreen = (props) => {
     setAPIIsLoading(true);
     setAPIRan(true)
     debounceTimer.current = setTimeout(() => {
-      
-      // API config 
-      const config = {
-        headers:{
-          Authorization: "Bearer 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",
+      if(inputFull == true){
+        // API config 
+        const config = {
+          headers:{
+            Authorization: "Bearer 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",
+          }
+        };
+          
+          //Explain the tone of the message
+          let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
+          let tonesPayload = {
+            model: "text-davinci-003",
+            prompt: msgTone,
+            temperature: 0,
+            max_tokens: 60,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+          }
+          
+          axios.post('https://api.openai.com/v1/completions', tonesPayload, config)
+          .then((res)=> {
+
+            console.log('res.data ');
+            console.log(res.data);
+
+            let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
+            console.log(tone);  
+
+            let msgColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+            console.log(msgColor);
+
+            let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
+            console.log(activeMsgTone);
+
+            //Main Tone  
+            setActiveTone1(activeMsgTone[0])                
+            setToneColor1(msgColor[0])
+            setActiveTone2(activeMsgTone[1])                
+            setToneColor2(msgColor[1])
+            setActiveTone3(activeMsgTone[2])                
+            setToneColor3(msgColor[2])
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+
+          //Explain the user message
+          let explainInput = "Explain how the message will be understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
+          let explainPayload = {
+            model: "text-davinci-003",
+            prompt: explainInput,
+            temperature: 0,
+            max_tokens: 60,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+          }
+
+          axios.post('https://api.openai.com/v1/completions', explainPayload, config)
+          .then((res)=> {
+              let tone = res.data.choices[0].text       
+              let newText = tone.replace('\n', '');   
+              setCurrentExplain(newText)  
+              console.log(newText);  
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+
+        if (currentExplain !== null && activeTone1 !== null){
+          setAPIIsLoading(false);
+          setAPIIsLoadingDone(true)
+          console.log("loading done currentExplain");
         }
-      };
-        
-        //Explain the tone of the message
-        let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
-        let tonesPayload = {
-          model: "text-davinci-003",
-          prompt: msgTone,
-          temperature: 0,
-          max_tokens: 60,
-          top_p: 1,
-          frequency_penalty: 0,
-          presence_penalty: 0
-        }
-
-        axios.post('https://api.openai.com/v1/completions', tonesPayload, config)
-        .then((res)=> {
-
-          console.log('res.data ');
-          console.log(res.data);
-
-          let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
-          console.log(tone);  
-
-          let msgColor = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-          console.log(msgColor);
-
-          let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-          console.log(activeMsgTone);
-
-          //Main Tone  
-          setActiveTone1(activeMsgTone[0])                
-          setToneColor1(msgColor[0])
-          setActiveTone2(activeMsgTone[1])                
-          setToneColor2(msgColor[1])
-          setActiveTone3(activeMsgTone[2])                
-          setToneColor3(msgColor[2])
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-
-        //Explain the user message
-        let explainInput = "Explain how the message will be understood keep it to two sentence \n\nMessage:" + messageText + "\nTone:\n"
-        let explainPayload = {
-          model: "text-davinci-003",
-          prompt: explainInput,
-          temperature: 0,
-          max_tokens: 60,
-          top_p: 1,
-          frequency_penalty: 0,
-          presence_penalty: 0
-        }
-
-        axios.post('https://api.openai.com/v1/completions', explainPayload, config)
-        .then((res)=> {
-            let tone = res.data.choices[0].text       
-            let newText = tone.replace('\n', '');   
-            setCurrentExplain(newText)  
-            console.log(newText);  
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-
-      if (currentExplain !== null && activeTone1 !== null){
-        setAPIIsLoading(false);
-        setAPIIsLoadingDone(true)
-        
-        console.log("loading done currentExplain");
       }
     }, 2000);
   }
@@ -347,9 +370,9 @@ const ChatScreen = (props) => {
         imageStyle={{resizeMode: "contain",  marginLeft: -120, marginTop:-200, width:'120%',
         height:'120%'}}>
 
-{activeMsg && 
-  <MSGInfo onPress={() => setActiveMsg(false)} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)',}}/>
-}
+        {activeMsg && 
+          <MSGInfo onPress={() => setActiveMsg(false)} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)',}}/>
+        }
 
         <View style={{ paddingLeft: 20, flex: 1,}}>
           
@@ -424,9 +447,11 @@ const ChatScreen = (props) => {
         }
 
       <View style={styles.toneMainContainer}>
-        <View style={{ width: '100%', minHeight:80, flexDirection: 'row'}}>
+        <View style={{ width: '100%', minHeight:80, flexDirection: 'row',  position: 'absolute',  bottom: '1%', left: '1.5%'}}>
           {!APIRan && <Image source={robot} style={styles.robot}/>}
-          {APIisLoading && <LottieView source={loadingAnimation} autoPlay loop />}
+          {APIisLoading && <View style={[styles.toneMainContainerActive , {width: '96%', marginLeft:0}] }>
+              <LottieView source={loadingAnimation} autoPlay loop />
+            </View>}
         </View>
         {APIRan && !APIisLoading && <View style={styles.toneMainContainerActive}>
           <View style={{flexDirection: 'row', paddingBottom:10, paddingTop:10, paddingLeft:5}}>
@@ -437,7 +462,7 @@ const ChatScreen = (props) => {
               <Text style={{margin: 1, marginLeft:10, marginRight:10, fontFamily: 'medium', fontSize: 14,}}>of the message is:</Text>
             </View>
           </View>
-            <Text style={{margin: 1, marginLeft:10, marginRight:10,  width:'100%', paddingLeft:5}} >{currentExplain}</Text>
+            <Text style={{margin: 1, marginLeft:10, marginRight:10,  width:'95%', paddingLeft:5}} >{currentExplain}</Text>
 
           <View style={styles.toneContainer}>
             <Tone text={activeTone1} color={toneColor1} />
@@ -580,7 +605,6 @@ const styles = StyleSheet.create({
     width:'82%'
   },
   robot:{
-    flex:1,
     width: '15%',
     height: 60, 
     position: 'absolute',

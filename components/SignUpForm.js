@@ -63,7 +63,7 @@ const SignUpForm = props => {
         }
     }, [dispatch, formState]);
 
-    const marVerticalSize = 4
+    const marVerticalSize = 0
 
     return (
             <>
@@ -71,8 +71,8 @@ const SignUpForm = props => {
                     id="firstName"
                     // label="First name"
                     icon="user-o"
-                    iconSize={20}
-                    marVertical={marVerticalSize}
+                    iconSize={18}
+                    marTop={0}
                     iconPack={FontAwesome}
                     placeholder="First Name"
                     onInputChanged={inputChangedHandler}
@@ -83,8 +83,8 @@ const SignUpForm = props => {
                     id="lastName"
                     // label="Last name"
                     icon="user-o"
-                    iconSize={20}
-                    marVertical={marVerticalSize}
+                    iconSize={18}
+                    marTop={marVerticalSize}
                     iconPack={FontAwesome}
                     placeholder="Last Name"
                     onInputChanged={inputChangedHandler}
@@ -95,8 +95,8 @@ const SignUpForm = props => {
                     id="email"
                     // label="Email"
                     icon="mail"
-                    iconSize={20}
-                    marVertical={marVerticalSize}
+                    iconSize={18}
+                    marTop={marVerticalSize}
                     iconPack={Feather}
                     placeholder="Name@mail.com"
                     onInputChanged={inputChangedHandler}
@@ -108,8 +108,8 @@ const SignUpForm = props => {
                     id="password"
                     // label="Password"
                     icon="lock"
-                    iconSize={20}
-                    marVertical={marVerticalSize}
+                    iconSize={18}
+                    marTop={marVerticalSize}
                     autoCapitalize="none"
                     placeholder="Password"
                     secureTextEntry

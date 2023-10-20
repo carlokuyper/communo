@@ -68,7 +68,8 @@ const SignInForm = props => {
                     icon="mail"
                     iconPack={Feather}
                     iconSize={20}
-                    marVertical={marVerticalSize}
+                    marTop={0}
+                    marBottom={0}
                     autoCapitalize="none"
                     placeholder="Name@mail.com"
                     keyboardType="email-address"
@@ -79,11 +80,11 @@ const SignInForm = props => {
                 <Input
                     id="password"
                     // label="Password"
-                    marginVertical={0}
                     icon="lock"
                     iconPack={Feather}
                     iconSize={20}
-                    marVertical={marVerticalSize}
+                    marTop={0}
+                    marBottom={0}
                     autoCapitalize="none"
                     placeholder="Password"
                     secureTextEntry

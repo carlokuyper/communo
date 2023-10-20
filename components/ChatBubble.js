@@ -94,6 +94,7 @@ const ChatBubble = props => {
             break;
         case "myMessage":
             wrapperStyle.justifyContent = 'flex-end';
+            wrapperStyle.marginRight = '5%';
 
             bubbleStyle.shadowColor= "#000",
             bubbleStyle.shadowOffset= { width: 0, height: 1, }
@@ -103,6 +104,7 @@ const ChatBubble = props => {
             bubbleStyle.elevation= 3,
             bubbleStyle.backgroundColor = '#303030';
             bubbleStyle.borderRadius=15;
+            bubbleStyle.borderBottomRightRadius=5;
             bubbleStyle.minWidth = '60%';
             bubbleStyle.maxWidth = '90%';
             bubbleStyle.marginTop = 15;
@@ -115,6 +117,7 @@ const ChatBubble = props => {
             break;
         case "theirMessage":
             wrapperStyle.justifyContent = 'flex-start';
+            // wrapperStyle.marginLeft = '3%';
             
             bubbleStyle.shadowColor= "#000",
             bubbleStyle.shadowOffset= { width: 0, height: 1, }
@@ -123,6 +126,7 @@ const ChatBubble = props => {
             bubbleStyle.elevation= 3,
             bubbleStyle.backgroundColor = '#E7E7E7';
             bubbleStyle.borderRadius=15;
+            bubbleStyle.borderBottomLeftRadius=5;
             bubbleStyle.minWidth = '60%';
             bubbleStyle.maxWidth = '90%';
             bubbleStyle.marginTop = 15;
@@ -171,10 +175,12 @@ const ChatBubble = props => {
             dispatch(setSelectedMessage(selectedMessage));
         }
         lastPress.current = time;
-    };    const handleClick = (e) => {
-        e.stopPropagation();
-        setActiveMsg(true);
-    }
+    };   
+
+    //  const handleClick = (e) => {
+    //     e.stopPropagation();
+    //     setActiveMsg(true);
+    // }
 
     return (
 
@@ -193,9 +199,9 @@ const ChatBubble = props => {
 
                         {
                             dateString && type !== "info" && <View style={styles.timeContainer}>
-                                { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
-                                <Text style={styles.time}>{dateString}</Text>
-                            </View>
+                            <Text style={styles.time}>{dateString}  {isStarred && <FontAwesome name='star' size={14} color={colors.white} style={{ marginLeft: 5 }} />}</Text>
+                           
+                        </View>
                         }
 
                         <Menu name={id.current} ref={menuRef}>
@@ -248,6 +254,7 @@ const styles = StyleSheet.create({
         color: colors.grey,
         fontSize: 12,
         marginLeft: 5,
+        marginTop:5
     },
     name: {
         fontFamily: 'medium',
