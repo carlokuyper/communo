@@ -70,7 +70,7 @@ const ChatScreen = (props) => {
     const messageList = [];
     for (const key in chatMessagesData) {
       const message = chatMessagesData[key];
-      
+
       messageList.push({
         key,
         ...message
@@ -79,9 +79,8 @@ const ChatScreen = (props) => {
 
     return messageList;
   });
-
+  // console.log(chatMessages);
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData || {};
-
 
   const getChatTitleFromName = () => {
     const otherUserId = chatUsers.find(uid => uid !== userData.userId);
@@ -175,7 +174,7 @@ const ChatScreen = (props) => {
             Authorization: "Bearer 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",
           }
         };
-          
+
           //Explain the tone of the message
           let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
           let tonesPayload = {

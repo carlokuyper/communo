@@ -28,17 +28,45 @@ const ContactScreen = props => {
     const userData = useSelector(state => state.auth.userData);
     const currentUser = storedUsers[props.route.params.uid];
 
-    const storedChats = useSelector(state => state.chats.chatsData);
+    const storedChats = useSelector(state => state.chats.chatsData);   
+
     const [commonChats, setCommonChats] = useState([]);
 
-    const chatId = useSelector(state => state.auth.userData.userId)
+    const currentUserId = userData.userId;
+    const contactId = props.route.params.uid;
+
+    const chatId = Object.keys(storedChats).find(id => {
+      const chat = storedChats[id];
+      return chat.users.includes(currentUserId) && chat.users.includes(contactId);
+    });
+
+    const chatMessages = useSelector(state => {
+      if (!chatId) return [];
+      
+      const chatMessagesData = state.messages.messagesData[chatId];
+
+      if (!chatMessagesData) return [];
+
+      const messageList = [];
+      for (const key in chatMessagesData) {
+        const message = chatMessagesData[key];
+        
+        messageList.push({
+          key,
+          ...message
+        });
+      }
+
+      return messageList;
+    });
+
+    const userAMessages = chatMessages.filter(message => message.sentBy === currentUserId);
+    const userBMessages = chatMessages.filter(message => message.sentBy === contactId);
+
     const chatData = chatId && storedChats[chatId];
 
-    const user1Chats = useSelector(state => state.analysis.user1Chats);
-    const user2Chats = useSelector(state => state.analysis.user2Chats);
-
-    let user1msg = user1Chats.map(message => message.text);
-    let user2msg = user2Chats.map(message => message.text);
+    let user1msg = userAMessages.map(message => message.text);
+    let user2msg = userBMessages.map(message => message.text);
     
     const [toneColor1, setToneColor1] = useState();
     const [toneColor2, setToneColor2] = useState();
@@ -87,14 +115,10 @@ const ContactScreen = props => {
     
         axios.post('https://api.openai.com/v1/completions', explainPayloadTone, configTone)
         .then((res)=> {
-            // console.log(res);
             let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
-            // console.log(tone);  
             let msgColour = tone.filter((colour) => colour.startsWith("#")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-            // console.log(msgColour);
             let activeMsgTone = tone.filter((colour) => colour.startsWith("*")).map((item) => item.replace(/[*_"_'_:_;_._{_}_(_)]/g,''));
-            console.log(activeMsgTone);
-            
+
             // //Main Tone  
             setActiveTone1(activeMsgTone[0])
             setToneColor1(msgColour[0])
@@ -123,7 +147,7 @@ const ContactScreen = props => {
           };
     
         //Explain the user message
-        let explainInputExplain = "Analyse the following conversation between two individuals and provide an overview of the general emotions, atmosphere, and tone. Limit your analysis to about three lines. The conversation is as follows: " + userData.firstLast + " expressed: " + user1msg.join(' ') + ". Meanwhile, " + currentUser.firstName + " " + currentUser.lastName + " conveyed: " + user2msg.join(' ');
+        let explainInputExplain = "Analyse the following conversation between " + userData.firstName + " and " + currentUser.firstName + ". Provide an overview of the general emotions, atmosphere, and tone. Limit your analysis to about three lines. The information will be passed in as an array. " + userData.firstName + " sent " + user1msg.join(' ') + " and " + currentUser.firstName + " sent " + user2msg.join(' ');
         let explainPayloadExplain = {
             model: "text-davinci-003",
             prompt: explainInputExplain,
@@ -193,9 +217,7 @@ const ContactScreen = props => {
                         </>
                     }
                 </View>
-            </View>
-            
-           
+            </View>           
 
             <View style={{width:'100%', height:'30%'}}>
                 {!enoughMSG && 
@@ -255,7 +277,6 @@ const ContactScreen = props => {
                 />
             )
         }
-
     </PageContainer>
 }
 
