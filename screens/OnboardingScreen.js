@@ -64,28 +64,42 @@ const OnboardingScreen = () => {
             bottomBarHighlight ={false}
             bottomBarHeight={height=200}
             
-            skipToPage={2}
+            skipToPage={3}
             
             onDone={handleDone}
-        
+            
+            // Make text Width smaller
+            
             pages={[
                 {
-                backgroundColor: 'white',
-                image:  <Image source={require('../assets/gif/Loader.gif')} style={{ height: 100, marginTop:-50,   resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}] }} />,
-                title: 'Welcome To Comuno',
-                subtitle: 'Comuno is more than just a messaging application; it facilitates seamless and effective communication. Whether youre communicating with friends, family, or coworkers, Comuno equips you with the means to convey yourself eloquently and connect in a meaningful way.'
+                    backgroundColor: 'white',
+                    // Make the msg in the gif bigger
+                    image:  <Image source={require('../assets/gif/Intro.gif')} autoPlay loop style={{ height: 100, marginTop:-50, marginBottom:20, resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}] }} />,
+                    title: 'Welcome To Comuno',
+                    subtitle: `Communo is more than a messaging app—it streamlines communication. Comuno helps you communicate clearly and meaningfully with friends, family, and coworkers.`,
+                    subTitleStyles: { paddingLeft:15, paddingRight:15 },
                 },
                 {
-                backgroundColor: 'white',
-                image: <Image source={require('../assets/gif/MSGTyping.gif')} style={{ height: 100, marginTop:-50,   resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}] }} />,
-                title: 'AI-Powered Clarity',
-                subtitle: 'Comuno leverages the power of artificial intelligence to enhance your communication experience. Our advanced technology breaks down your messages, providing insights into how your words will be interpreted by the recipient. This feature ensures that your intentions are crystal plain, thereby reducing the likelihood of misunderstanding.',
+                    backgroundColor: 'white',
+                    image: <Image source={require('../assets/gif/MSGTyping.gif')} autoPlay loop style={{ height: 100, marginTop:-50,   resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}] }} />,
+                    title: 'AI-Powered Clarity',
+                    // add Double Click 
+                    subtitle: 'Communo leverages the power of artificial intelligence to enhance your communication experience. Our cutting-edge technology deconstructs your messages and offers information on how the recipient will interpret your words. This feature ensures that your intentions are crystal clear, thereby reducing the likelihood of misunderstanding.',
+                    subTitleStyles: { paddingLeft:15, paddingRight:15 },
                 },
                 {
-                backgroundColor: 'white', 
-                image: <Image source={require('../assets/gif/DoubleClick.gif')} style={{ height: 100, paddingTop:20, marginTop:-50, marginBottom:50,  resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}]}} />,
-                title: 'Enriched Conversations', 
-                subtitle: "Comuno generates an affective context for each message. Comuno adds substance to your interactions by identifying the underlying emotions in a conversation. By acknowledging and addressing the emotions behind the words, you will not only communicate effectively, but also cultivate deeper connections.",
+                    backgroundColor: 'white', 
+                    image: <Image source={require('../assets/gif/DoubleClick.gif')} autoPlay loop style={{ height: 100, paddingTop:20, marginTop:-50, marginBottom:50,  resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}]}} />,
+                    title: 'Enriched Conversations', 
+                    subtitle: "Communo generates an affective context for each message. Comuno adds substance to your interactions by identifying the underlying emotions in a conversation. By acknowledging and addressing the emotions behind the words, you will not only communicate effectively but also cultivate deeper connections.",
+                    subTitleStyles: { paddingLeft:15, paddingRight:15 },
+                },
+                {
+                    backgroundColor: 'white', 
+                    image: <Image source={require('../assets/gif/contactScreen.gif')} autoPlay loop style={{ height: 100, paddingTop:20, marginTop:-50, marginBottom:50,  resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center', transform: [{ scale: 3}]}} />,
+                    title: 'Chat Overview', 
+                    subtitle: "Comuno offers an additional feature that allows you to view a summary of the conversation.",
+                    subTitleStyles: { paddingLeft:15, paddingRight:15 },
                 },
             ]}
         />

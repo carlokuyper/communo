@@ -155,7 +155,7 @@ const ChatScreen = (props) => {
         setCurrentExplain();
       } else {
         // TextInput is not empty
-        console.log("TextInput is not empty");
+        // console.log("TextInput is not empty");
         setInputFull(true);
       }
     }, [messageText]);
@@ -343,6 +343,10 @@ const ChatScreen = (props) => {
     lastPress = time;
   };
   
+  // Add comuno cant anlyse images
+
+  // Descriptive user explaning the system
+
   const onDoublePressChat = (messageText) => {
     // Check if the messageText is null or an empty string
     if (!messageText) {
@@ -408,6 +412,7 @@ const ChatScreen = (props) => {
                 const sender = message.sentBy && storedUsers[message.sentBy];
                 const name = sender && `${sender.firstName} ${sender.lastName}`;
 
+                // Indecate the double click function
                 return <ChatBubble 
                       onDoublePress={() => onDoublePressChat(message.text)}
                       onClick={(e) => handleClick(e)}
@@ -455,7 +460,13 @@ const ChatScreen = (props) => {
         {APIRan && !APIisLoading && <View style={styles.toneMainContainerActive}>
           <View style={{flexDirection: 'row', paddingBottom:10, paddingTop:10, paddingLeft:5}}>
             <Image source={robot} style={styles.robotExplain}/>
+            {/* Make the bot a button to decibe what it does.
             
+            Let the tone buttons select the primary emotaions. 
+            Or make it more muted colours
+
+            Add space between the text with the explanation section
+            */}
             <View style={{width:'70%', flexDirection: 'column'}}>
               <Text style={{margin: 1, marginLeft:10, marginRight:10, marginTop:5, fontFamily: 'semiBold', fontSize: 18,}}>The tone</Text>
               <Text style={{margin: 1, marginLeft:10, marginRight:10, fontFamily: 'medium', fontSize: 14,}}>of the message is:</Text>
