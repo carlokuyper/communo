@@ -158,7 +158,7 @@ const ChatScreen = (props) => {
         // TextInput is empty
         console.log("TextInput is empty");
         setInputFull(false);
-        
+        setBotClicked(false)
         setAPIIsLoading(false);
         setAPIRan(false)
         setToneColor1(null); // Clear toneColor1
@@ -177,6 +177,8 @@ const ChatScreen = (props) => {
 
     clearTimeout(debounceTimer.current)
     setAPIIsLoading(true);
+    console.log(APIisLoading);
+    setBotClicked(false)
     setAPIRan(true)
     debounceTimer.current = setTimeout(() => {
       if(inputFull == true){
@@ -251,6 +253,7 @@ const ChatScreen = (props) => {
 
         if (currentExplain !== null && activeTone1 !== null){
           setAPIIsLoading(false);
+          setBotClicked(false)
           setAPIIsLoadingDone(true)
           console.log("loading done currentExplain");
         }
@@ -261,6 +264,7 @@ const ChatScreen = (props) => {
   const sendMessage = useCallback(async () => {
 
     console.log(APIisLoadingDone);
+    setBotClicked(false)
     if(APIisLoadingDone){
       try {
         let id = chatId;
@@ -278,6 +282,7 @@ const ChatScreen = (props) => {
         setToneColor3(null); // Clear toneColor3
         setCurrentExplain(); // Clear currentExplain
         setAPIRan(false)
+        setBotClicked(false)
         setAPIIsLoading(false)
         setAPIIsLoadingDone(false)
       } catch (error) {
@@ -470,10 +475,11 @@ const ChatScreen = (props) => {
                 <Image source={robot} style={styles.robot}/>
               </TouchableOpacity>
             }
-            {!botClicked && <View style={styles.botClickedCon}><Text style={{textAlign:'center', }}>Hey I am your AI friend. </Text></View>}
+            {botClicked && <View style={styles.botClickedCon}><Text style={{textAlign:'center', marginTop:'3%',}}>Hey I am your AI friend. </Text></View>}
           </View>
           {APIisLoading && <View style={[styles.toneMainContainerActive , {width: '96%', marginLeft:0}] }>
-              <LottieView source={loadingAnimation} autoPlay loop />
+              <Text>asdasdadasdswsw</Text>
+              {/* <LottieView source={loadingAnimation} autoPlay loop /> */}
             </View>}
         </View>
         {APIRan && !APIisLoading && <View style={styles.toneMainContainerActive}>
@@ -676,12 +682,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   botClickedCon:{
-    width: '80%', 
-    height: 65, 
-    marginRight:'2.5%', 
-    marginTop:'1.5%',
+    width: '78%', 
+    height: 40, 
+    marginRight:'4%', 
+    marginTop:'2%',
     right:0, 
     borderRadius:15, 
+    borderBottomLeftRadius:3,
     backgroundColor:'#F9F9F9',
     shadowColor: "#000",
     shadowOffset: {
