@@ -190,7 +190,7 @@ const ChatScreen = (props) => {
         };
 
           //Explain the tone of the message
-          let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
+          let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones (keep it muted colours) in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
           let tonesPayload = {
             model: "text-davinci-003",
             prompt: msgTone,
@@ -253,7 +253,6 @@ const ChatScreen = (props) => {
 
         if (currentExplain !== null && activeTone1 !== null){
           setAPIIsLoading(false);
-          setBotClicked(false)
           setAPIIsLoadingDone(true)
           console.log("loading done currentExplain");
         }
@@ -264,7 +263,6 @@ const ChatScreen = (props) => {
   const sendMessage = useCallback(async () => {
 
     console.log(APIisLoadingDone);
-    setBotClicked(false)
     if(APIisLoadingDone){
       try {
         let id = chatId;
@@ -282,7 +280,6 @@ const ChatScreen = (props) => {
         setToneColor3(null); // Clear toneColor3
         setCurrentExplain(); // Clear currentExplain
         setAPIRan(false)
-        setBotClicked(false)
         setAPIIsLoading(false)
         setAPIIsLoadingDone(false)
       } catch (error) {
@@ -469,24 +466,25 @@ const ChatScreen = (props) => {
 
       <View style={styles.toneMainContainer}>
         <View style={{ width: '100%', minHeight:80, flexDirection: 'row',  position: 'absolute',  bottom: '1%', left: '1.5%'}}>
-          <View style={{width:'100%', alignItems:"flex-end",}}> 
-            {!APIRan &&
-              <TouchableOpacity style={styles.robotContainer} onPress={robotClick}>
-                <Image source={robot} style={styles.robot}/>
-              </TouchableOpacity>
-            }
-            {botClicked && <View style={styles.botClickedCon}><Text style={{textAlign:'center', marginTop:'3%',}}>Hey I am your AI friend. </Text></View>}
-          </View>
-          {APIisLoading && <View style={[styles.toneMainContainerActive , {width: '96%', marginLeft:0}] }>
-              <Text>asdasdadasdswsw</Text>
-              {/* <LottieView source={loadingAnimation} autoPlay loop /> */}
+          
+            {APIisLoading && <View style={[styles.toneMainContainerActive , {width: '96%', marginLeft:0}] }>
+              <LottieView source={loadingAnimation} autoPlay loop />
             </View>}
+
+            <View style={{width:'100%', alignItems:"flex-end",}}> 
+              {!APIRan &&
+                <TouchableOpacity style={styles.robotContainer} onPress={robotClick}>
+                  <Image source={robot} style={styles.robot}/>
+                </TouchableOpacity>
+              }
+              {botClicked && <Text style={styles.botClickedCon}>Hey I am your AI friend.{'\n'}Why not write a message?</Text>}
+            </View>
         </View>
         {APIRan && !APIisLoading && <View style={styles.toneMainContainerActive}>
           <View style={{flexDirection: 'row', paddingBottom:10, paddingTop:10, paddingLeft:5}}>
             <Image source={robot} style={styles.robotExplain}/>
-            {/* Make the bot a button to decibe what it does.
-            
+            {/* 
+
             Let the tone buttons select the primary emotaions. 
             Or make it more muted colours
 
@@ -641,7 +639,7 @@ const styles = StyleSheet.create({
   },
   robotContainer:{
     width: '15%',
-    height: 60, 
+    height: 55, 
     position: 'absolute',
     bottom:'1%',
     marginBottom:'2%',
@@ -656,7 +654,7 @@ const styles = StyleSheet.create({
     height: 65, 
     position: 'absolute',
     bottom:'1%',
-    marginBottom:'2%',
+    marginBottom:-3,
     alignItems:'center',
   },
   robotExplain:{
@@ -683,9 +681,10 @@ const styles = StyleSheet.create({
   },
   botClickedCon:{
     width: '78%', 
-    height: 40, 
+    minHeight: 40, 
     marginRight:'4%', 
     marginTop:'2%',
+    padding:10,
     right:0, 
     borderRadius:15, 
     borderBottomLeftRadius:3,
