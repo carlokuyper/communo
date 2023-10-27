@@ -51,6 +51,8 @@ const ChatScreen = (props) => {
   const [replyingTo, setReplyingTo] = useState();
   const [tempImageUri, setTempImageUri] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  
+  const [botClicked, setBotClicked] = useState(false);
 
   const flatList = useRef();
 
@@ -87,6 +89,16 @@ const ChatScreen = (props) => {
     const otherUserData = storedUsers[otherUserId];
 
     return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
+  }
+  
+  const robotClick = () => {
+    if(botClicked == true){
+      setBotClicked(false)
+    }
+    if(botClicked == false){
+      setBotClicked(true)
+    }
+    console.log(botClicked);
   }
 
   const user1Chats = chatMessages.filter(message => message.sentBy === userData.userId);
@@ -452,7 +464,14 @@ const ChatScreen = (props) => {
 
       <View style={styles.toneMainContainer}>
         <View style={{ width: '100%', minHeight:80, flexDirection: 'row',  position: 'absolute',  bottom: '1%', left: '1.5%'}}>
-          {!APIRan && <Image source={robot} style={styles.robot}/>}
+          <View style={{width:'100%', alignItems:"flex-end",}}> 
+            {!APIRan &&
+              <TouchableOpacity style={styles.robotContainer} onPress={robotClick}>
+                <Image source={robot} style={styles.robot}/>
+              </TouchableOpacity>
+            }
+            {!botClicked && <View style={styles.botClickedCon}><Text style={{textAlign:'center', }}>Hey I am your AI friend. </Text></View>}
+          </View>
           {APIisLoading && <View style={[styles.toneMainContainerActive , {width: '96%', marginLeft:0}] }>
               <LottieView source={loadingAnimation} autoPlay loop />
             </View>}
@@ -614,7 +633,7 @@ const styles = StyleSheet.create({
     marginLeft:'18%',
     width:'82%'
   },
-  robot:{
+  robotContainer:{
     width: '15%',
     height: 60, 
     position: 'absolute',
@@ -625,6 +644,14 @@ const styles = StyleSheet.create({
     backgroundColor:'#393B3C',
     padding:5,
     borderRadius:10
+  },
+  robot:{
+    width: '120%',
+    height: 65, 
+    position: 'absolute',
+    bottom:'1%',
+    marginBottom:'2%',
+    alignItems:'center',
   },
   robotExplain:{
     width: '15%',
@@ -637,6 +664,23 @@ const styles = StyleSheet.create({
   toneMainContainerActive:{
     width: '95%', 
     marginLeft:'2.5%', 
+    borderRadius:15, 
+    backgroundColor:'#F9F9F9',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  botClickedCon:{
+    width: '80%', 
+    height: 65, 
+    marginRight:'2.5%', 
+    marginTop:'1.5%',
+    right:0, 
     borderRadius:15, 
     backgroundColor:'#F9F9F9',
     shadowColor: "#000",
