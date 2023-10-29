@@ -53,12 +53,14 @@ const ChatScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   
   const [botClicked, setBotClicked] = useState(false);
+  const [hasFirstMSG, setHasFirstMSG] = useState(false);
 
   const flatList = useRef();
 
   const userData = useSelector(state => state.auth.userData);
   const storedUsers = useSelector(state => state.users.storedUsers);
   const storedChats = useSelector(state => state.chats.chatsData);
+  
 
   const dispatch = useDispatch();
   
@@ -66,7 +68,7 @@ const ChatScreen = (props) => {
     if (!chatId) return [];
     
     const chatMessagesData = state.messages.messagesData[chatId];
-
+    
     if (!chatMessagesData) return [];
 
     const messageList = [];
@@ -81,6 +83,7 @@ const ChatScreen = (props) => {
 
     return messageList;
   });
+  console.log(chatMessages);
   // console.log(chatMessages);
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData || {};
 
@@ -188,9 +191,9 @@ const ChatScreen = (props) => {
             Authorization: "Bearer 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",
           }
         };
-
+        
           //Explain the tone of the message
-          let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones (keep it muted colours) in the message and add a * at the beginning of each tone. Use the same theory to determine the associated colour and provide it in hex values also" + "\nMessage:" + messageText 
+          let msgTone = "Use Plutchik's Psycho-evolutionary Theory of Emotion to determine the three tones in the message and add a * at the beginning of each tone. Determine the associated but keep it low saturation or chrome (muted) color's and provide it in hex values." + "\nMessage:" + messageText 
           let tonesPayload = {
             model: "text-davinci-003",
             prompt: msgTone,
@@ -261,7 +264,7 @@ const ChatScreen = (props) => {
   }
 
   const sendMessage = useCallback(async () => {
-
+    
     console.log(APIisLoadingDone);
     if(APIisLoadingDone){
       try {
@@ -282,6 +285,7 @@ const ChatScreen = (props) => {
         setAPIRan(false)
         setAPIIsLoading(false)
         setAPIIsLoadingDone(false)
+        
       } catch (error) {
         console.log(error);
         setErrorBannerText("Message failed to send");
@@ -291,9 +295,11 @@ const ChatScreen = (props) => {
     } else {
       console.log("API is still loading. Please wait.");
     }
+    
   }, [messageText, chatId, toneColor1, toneColor2, toneColor3, activeTone1, activeTone2, activeTone3, currentExplain,]);
 
   const pickImage = useCallback(async () => {
+    setBotClicked(false)
     try {
       const tempUri = await launchImagePicker();
       if (!tempUri) return;
@@ -305,6 +311,7 @@ const ChatScreen = (props) => {
   }, [tempImageUri]);
 
   const takePhoto = useCallback(async () => {
+    setBotClicked(false)
     try {
       const tempUri = await openCamera();
       if (!tempUri) return;
@@ -316,6 +323,7 @@ const ChatScreen = (props) => {
   }, [tempImageUri]);
 
   const uploadImage = useCallback(async () => {
+    setBotClicked(false)
     setIsLoading(true);
     try {
       let id = chatId;
@@ -362,6 +370,7 @@ const ChatScreen = (props) => {
   // Descriptive user explaning the system
 
   const onDoublePressChat = (messageText) => {
+    setBotClicked(false)
     // Check if the messageText is null or an empty string
     if (!messageText) {
       console.log("Double press is disabled for images");
@@ -477,19 +486,16 @@ const ChatScreen = (props) => {
                   <Image source={robot} style={styles.robot}/>
                 </TouchableOpacity>
               }
-              {botClicked && <Text style={styles.botClickedCon}>Hey I am your AI friend.{'\n'}Why not write a message?</Text>}
+              {botClicked && <View style={styles.botClickedCon}>
+                  <Text >Hey I am your AI friend.{'\n'}Why not write a message?</Text>
+                  {chatMessages.length > 0 && <Text >{'\n'}Remember you can double tap a message to see a breakdown</Text>}
+                </View>}
             </View>
         </View>
         {APIRan && !APIisLoading && <View style={styles.toneMainContainerActive}>
           <View style={{flexDirection: 'row', paddingBottom:10, paddingTop:10, paddingLeft:5}}>
             <Image source={robot} style={styles.robotExplain}/>
-            {/* 
 
-            Let the tone buttons select the primary emotaions. 
-            Or make it more muted colours
-
-            Add space between the text with the explanation section
-            */}
             <View style={{width:'70%', flexDirection: 'column'}}>
               <Text style={{margin: 1, marginLeft:10, marginRight:10, marginTop:5, fontFamily: 'semiBold', fontSize: 18,}}>The tone</Text>
               <Text style={{margin: 1, marginLeft:10, marginRight:10, fontFamily: 'medium', fontSize: 14,}}>of the message is:</Text>
@@ -498,9 +504,9 @@ const ChatScreen = (props) => {
             <Text style={{margin: 1, marginLeft:10, marginRight:10,  width:'95%', paddingLeft:5}} >{currentExplain}</Text>
 
           <View style={styles.toneContainer}>
-            <Tone text={activeTone1} color={toneColor1} />
-            <Tone text={activeTone2} color={toneColor2} />
-            <Tone text={activeTone3} color={toneColor3} />
+            <Tone text={activeTone1} color={toneColor1} style={{ backgroundColor:'rgba(0,0,0,0.5)'}} />
+            <Tone text={activeTone2} color={toneColor2} style={{ backgroundColor:'rgba(0,0,0,0.5)'}} />
+            <Tone text={activeTone3} color={toneColor3} style={{ backgroundColor:'rgba(0,0,0,0.5)'}} />
           </View>
         </View>}
       </View>

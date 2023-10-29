@@ -104,7 +104,6 @@ const SignUpForm = props => {
                     autoCapitalize="none"
                     errorText={formState.inputValidities["email"]} />
                 
-                {/* Password error not showing */}
                 <Input
                     id="password"
                     // label="Password"

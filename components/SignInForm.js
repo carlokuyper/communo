@@ -64,7 +64,7 @@ const SignInForm = props => {
             <>
                 <Input
                     id="email"
-                    // label="Email"
+                    label="Email"
                     icon="mail"
                     iconPack={Feather}
                     iconSize={20}
@@ -79,7 +79,7 @@ const SignInForm = props => {
 
                 <Input
                     id="password"
-                    // label="Password"
+                    label="Password"
                     icon="lock"
                     iconPack={Feather}
                     iconSize={20}

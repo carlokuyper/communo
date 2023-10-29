@@ -74,14 +74,14 @@ const OnboardingScreen = () => {
                 {
                     backgroundColor: 'white',
                     // Make the msg in the gif bigger
-                    image:  <Image source={require('../assets/gif/Intro.gif')} autoPlay loop style={{height: '45%', marginTop:250, marginBottom:-50, resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center',transform: [{ scale: 1.5}] }} />,
+                    image:  <Image source={require('../assets/gif/Intro.gif')} autoPlay loop style={{height: '45%', marginTop:250, marginBottom:-50, resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center',transform: [{ scale: 1.3}] }} />,
                     title: 'Welcome To Communo',
-                    subtitle: `Communo is a messaging app designed to streamline communication with its all powerful  AI!`,
+                    subtitle: 'Communo is a messaging app designed to streamline communication with the use of powerful AI!',
                     subTitleStyles: {height:'53%', paddingLeft:20, paddingRight:20, },
                 },
                 {
                     backgroundColor: 'white',
-                    image: <Image source={require('../assets/gif/MSGTyping.gif')} autoPlay loop style={{ height: '45%', marginTop:250, marginBottom:-50, resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center',transform: [{ scale: 1.5}] }} />,
+                    image: <Image source={require('../assets/gif/MSGTyping.gif')} autoPlay loop style={{ height: '45%', marginTop:250, marginBottom:-50, resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center',transform: [{ scale: 1.3}] }} />,
                     title: 'AI-Powered Clarity',
                     subtitle: 'Concerned about how your message might sound? Communo is here for you! Giving you life feedback about your message.',
                     subTitleStyles: {height:'53%', paddingLeft:20, paddingRight:20, },
@@ -98,7 +98,7 @@ const OnboardingScreen = () => {
                     backgroundColor: 'white', 
                     image: <Image source={require('../assets/gif/contactScreen.gif')} autoPlay loop style={{ height: '45%',  marginTop:250, marginBottom:-50, resizeMode: 'contain', aspectRatio: 1, alignSelf: 'center',transform: [{ scale: 1.5}] }} />,
                     title: 'Chat Overview', 
-                    subtitle: "Comuno offers an additional feature that allows you to view a summary of the conversation.",
+                    subtitle: "Communo offers an additional feature that allows you to view a summary of your conversation.",
                     subTitleStyles: {height:'53%', paddingLeft:20, paddingRight:20, },
                 },
             ]}
