@@ -181,18 +181,13 @@ summary. This sequential approach ensured that each stage was rigorously tested 
 ### Future Implementation
 <!-- stipulate functionality and improvements that can be implemented in the future. -->
 
-* Import Contacts
-  Allowing users to directly import their contacts. Currently, the system is set up where you can see all users that have an account. Will also add privacy
+* Import Contactsa llowing users to directly import their contacts. Currently, the system is set up where you can see all users that have an account. Will also add privacy
 
-* Additional Animation and Gesture 
-  This will improve user experience.
+* Additional Animation and Gesture. This will improve user experience.
 
-* Additional Inputs
-  Voice recognition translates spoken words into text.
-  Active face recognition enables the user to influence their tone of voice with factual expression. 
+* Additional Inputs like voice recognition translates spoken words into text. Active face recognition enables the user to influence their tone of voice with factual expression. 
 
-* Backend Improvements  
-  Adding machine learning algorithms to learn the user writing style will better analyses the data and provide greater insight.  
+* Adding machine learning algorithms to learn the user writing style will better analyses the data and provide greater insight.  
 
 
 ### Conclusion
@@ -210,8 +205,10 @@ exploring new ways to facilitate meaningful conversations and foster genuine con
 ## Final Outcome
 
 ### Demonstration Video
-  <a href="https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4">View Demo!</a>
 
+  https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4
+  
+  <a href="https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4">View Demo!</a>
 
 <!-- AUTHORS -->
 ## Authors
