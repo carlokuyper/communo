@@ -105,7 +105,7 @@ Run the following in the command-line to clone the project:
    npm i
    ```
 
-4. After the installation is complete run the following comands   </br>
+4. After the installation is complete run the following commands   </br>
    In the terminal run:
    ```sh
    npm start
@@ -118,14 +118,14 @@ Run the following in the command-line to clone the project:
 <!-- You can add the links to all of your imagery at the bottom of the file as references -->
 ## Features and Functionality
 
-<!-- note how you can use your gitHub link. Just make a path to your assets folder -->
+<!-- note how you can use your GitHub link. Just make a path to your assets folder -->
 ![image2](https://github.com/carlokuyper/comuno/blob/main/readme/mockup/801.png)
 
 ### Input Field
 
-The entire website is build to help the user. It features multiple aspects to enhance text-based communication. 
+The entire website is built to help the user. It features multiple aspects to enhance text-based communication. 
 
-The input field is one of the primary features and arguably the most important, it is the key that starts the entire process of adding nuances to each conversation. As soon as a user started to type, the text analysis would start. The text analysis employed NLP and Sentiment Analysis techniques, such as delimiters, tokenizers, stemmers, and taggers, to breakdown and understand the message’s structure and context. The breakdown and analysis are two of the most important features of the application, as they provide the user with real-time feedback on how a message will be interpreted by other users. This is what activates all other app features, such as the message bubble and conversation summary. 
+The input field is one of the primary features and arguably the most important, it is the key that starts the entire process of adding nuances to each conversation. As soon as a user started to type, the text analysis would start. The text analysis employed NLP and Sentiment Analysis techniques, such as delimiters, tokenizers, stemmers, and taggers, to break down and understand the message’s structure and context. The breakdown and analysis are two of the most important features of the application, as they provide the user with real-time feedback on how a message will be interpreted by other users. This is what activates all other app features, such as the message bubble and conversation summary. 
 
 ![image3](https://github.com/carlokuyper/comuno/blob/main/readme/mockup/P6YSG411.png)
 
@@ -147,15 +147,15 @@ Design System
 
 ![image6](https://github.com/carlokuyper/comuno/blob/main/readme/QRCodes/DesignSystem.png)
 
-### Low Fidelity Wireframe
+### Low-Fidelity Wireframe
 
 Initial Wireframe
 
 ![image7](https://github.com/carlokuyper/comuno/blob/main/readme/QRCodes/LowFedelityWireframe.png)
 
-### High Fedelity Wireframe
+### High-Fidelity Wireframe
 
-Final  Wireframe
+Final Wireframe
 
 ![image8](https://github.com/carlokuyper/comuno/blob/main/readme/QRCodes/HighFedelityWireframe.png)
 
@@ -171,41 +171,35 @@ compatibility with both Android and iOS devices, reducing development time and e
 <!-- stipulate all of the functionality you included in the project -->
 <!-- This is your time to shine, explain the technical nuances of your project, how did you achieve the final outcome!-->
 
-The development of the app used a sequential approach, where the communication app was first created to allow for seamless communication between individuals, 
-similar to that of WhatsApp. Afterwards, the implementation of NLP and Sentemitn Analysis was added. This approach ensured that the core features and functionality were in place before integrating more advanced elements such as NLP and 
-Sentiment Analysis.
+The development of the app used a sequential approach, where the communication app was first created to allow for seamless communication between individuals, similar to that of WhatsApp. Afterwards, the implementation of NLP and Sentemitn Analysis was added. This approach ensured that the core features and functionality were in place before integrating more advanced elements such as NLP and Sentiment Analysis.
 
-The implementation of the input field was the first step in the implementation of the additional features, as it is the primary component. After it was implemented, the text bubbles were modified to visually convey to the user the additional nuances. Last but not least, the summary screen was included to let people view the conversation 
-summary. This sequential approach ensured that each stage was rigorously tested and refined before proceeding to the next. 
+The implementation of the input field was the first step in the implementation of the additional features, as it is the primary component. After it was implemented, the text bubbles were modified to visually convey to the user the additional nuances. Last but not least, the summary screen was included to let people view the conversation summary. This sequential approach ensured that each stage was rigorously tested and refined before proceeding to the next.
 
 ### Future Implementation
 <!-- stipulate functionality and improvements that can be implemented in the future. -->
 
-* Import Contactsa llowing users to directly import their contacts. Currently, the system is set up where you can see all users that have an account. Will also add privacy
+* Import Contacts allows users to directly import their contacts. Currently, the system is set up where you can see all users that have an account. Will also add privacy
 
 * Additional Animation and Gesture. This will improve user experience.
 
-* Additional Inputs like voice recognition translates spoken words into text. Active face recognition enables the user to influence their tone of voice with factual expression. 
+* Additional Inputs like voice recognition translate spoken words into text. Active face recognition enables the user to influence their tone of voice with factual expression. 
 
-* Adding machine learning algorithms to learn the user writing style will better analyses the data and provide greater insight.  
+* Adding machine learning algorithms to learn the user writing style will better analyse the data and provide greater insight.  
 
 
 ### Conclusion
 <!-- stipulate functionality and improvements that can be implemented in the future. -->
 
-The development of Communo and the incorporation of NLP and Sentiment Analysis was a 
-profound learning experiences. Throughout the duration of this project, I delved into the realm of digital communication, examining the challenges posed by text-based conversations, which led to a deeper understanding of the role of emotions and nuances in interpersonal 
+The development of Communo and the incorporation of NLP and Sentiment Analysis were a profound learning experience. Throughout the duration of this project, I delved into the realm of digital communication, examining the challenges posed by text-based conversations, which led to a deeper understanding of the role of emotions and nuances in interpersonal 
 relationships. Communo, with its fusion of NLP and Sentiment Analysis, demonstrates the 
 transformative power of technology in making our conversations richer and more emotionally resonant.
 
-In the future, Communo can serve as a starting point for additional applications and studies aimed at enhancing digital interaction. Communo aims to disrupt the conventions of digital communication by bridging the gap between technology and human connection. By 
-exploring new ways to facilitate meaningful conversations and foster genuine connections, Communo paves the way for a more authentic and engaging online experience. This innovative project opens doors for future advancements in communication technology, ultimately striving to create a harmonious balance between the convenience of technology and the richness of human connection.  
+In the future, Communo can serve as a starting point for additional applications and studies aimed at enhancing digital interaction. Communo aims to disrupt the conventions of digital communication by bridging the gap between technology and human connection. By exploring new ways to facilitate meaningful conversations and foster genuine connections, Communo paves the way for a more authentic and engaging online experience. This innovative project opens doors for future advancements in communication technology, ultimately striving to create a harmonious balance between the convenience of technology and the richness of human connection.  
 
 <!-- MOCKUPS -->
 ## Final Outcome
 
 ### Demonstration Video
-[<img src="https://img.youtube.com/vi/<VIDEO_ID>/hqdefault.jpg" width="600" height="300"/>](https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4)
 
   <a href="https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4">View Demo!</a>
 
