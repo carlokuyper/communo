@@ -205,9 +205,8 @@ exploring new ways to facilitate meaningful conversations and foster genuine con
 ## Final Outcome
 
 ### Demonstration Video
+[<img src="https://img.youtube.com/vi/<VIDEO_ID>/hqdefault.jpg" width="600" height="300"/>](https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4)
 
-  https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4
-  
   <a href="https://github.com/carlokuyper/comuno/blob/main/readme/demonstrationVideo.mp4">View Demo!</a>
 
 <!-- AUTHORS -->
