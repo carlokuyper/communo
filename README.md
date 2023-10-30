@@ -141,19 +141,19 @@ The conversation summary panel was the very last feature that was added to the a
 
 ![image5](https://github.com/carlokuyper/comuno/blob/main/readme/mockup/8.png)
 
-### Inspiration
+### Design System
 
-Initial Wireframe
+Design System
 
 ![image6](https://github.com/carlokuyper/comuno/blob/main/readme/QRCodes/DesignSystem.png)
 
-### Inspiration
+### Low Fidelity Wireframe
 
 Initial Wireframe
 
 ![image7](https://github.com/carlokuyper/comuno/blob/main/readme/QRCodes/LowFedelityWireframe.png)
 
-### Final UI
+### High Fedelity Wireframe
 
 Final  Wireframe
 
