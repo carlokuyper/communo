@@ -97,7 +97,7 @@ const ContactScreen = props => {
             setEnoughMSG(true)
         const configTone = {
             headers:{
-                Authorization: "Bearer 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",
+                Authorization: "Bearer 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",
             }
           };
 
@@ -142,7 +142,7 @@ const ContactScreen = props => {
 
         const configExplain = {
             headers:{
-                Authorization: "Bearer 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",
+                Authorization: "Bearer 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",
             }
           };
     

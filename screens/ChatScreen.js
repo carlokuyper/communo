@@ -83,7 +83,7 @@ const ChatScreen = (props) => {
 
     return messageList;
   });
-  console.log(chatMessages);
+  // console.log(chatMessages);
   // console.log(chatMessages);
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData || {};
 
@@ -101,7 +101,7 @@ const ChatScreen = (props) => {
     if(botClicked == false){
       setBotClicked(true)
     }
-    console.log(botClicked);
+    // console.log(botClicked);
   }
 
   const user1Chats = chatMessages.filter(message => message.sentBy === userData.userId);
@@ -180,7 +180,7 @@ const ChatScreen = (props) => {
 
     clearTimeout(debounceTimer.current)
     setAPIIsLoading(true);
-    console.log(APIisLoading);
+    // console.log(APIisLoading);
     setBotClicked(false)
     setAPIRan(true)
     debounceTimer.current = setTimeout(() => {
@@ -188,7 +188,7 @@ const ChatScreen = (props) => {
         // API config 
         const config = {
           headers:{
-            Authorization: "Bearer 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",
+            Authorization: "Bearer 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",
           }
         };
         
@@ -207,8 +207,8 @@ const ChatScreen = (props) => {
           axios.post('https://api.openai.com/v1/completions', tonesPayload, config)
           .then((res)=> {
 
-            console.log('res.data ');
-            console.log(res.data);
+            // console.log('res.data ');
+            // console.log(res.data);
 
             let tone = res.data.choices[0].text.toLowerCase().toString().split(/[\s,]+/)
             console.log(tone);  
@@ -248,7 +248,7 @@ const ChatScreen = (props) => {
               let tone = res.data.choices[0].text       
               let newText = tone.replace('\n', '');   
               setCurrentExplain(newText)  
-              console.log(newText);  
+              // console.log(newText);  
           })
           .catch(function (error) {
               console.log(error);
@@ -257,7 +257,7 @@ const ChatScreen = (props) => {
         if (currentExplain !== null && activeTone1 !== null){
           setAPIIsLoading(false);
           setAPIIsLoadingDone(true)
-          console.log("loading done currentExplain");
+          // console.log("loading done currentExplain");
         }
       }
     }, 2000);
@@ -265,7 +265,7 @@ const ChatScreen = (props) => {
 
   const sendMessage = useCallback(async () => {
     
-    console.log(APIisLoadingDone);
+    // console.log(APIisLoadingDone);
     if(APIisLoadingDone){
       try {
         let id = chatId;
@@ -373,15 +373,15 @@ const ChatScreen = (props) => {
     setBotClicked(false)
     // Check if the messageText is null or an empty string
     if (!messageText) {
-      console.log("Double press is disabled for images");
+      // console.log("Double press is disabled for images");
       return;
     }
     if (activeMsg === true) {
-      console.log("double press from other components: " + activeMsg);
+      // console.log("double press from other components: " + activeMsg);
       setActiveMsg(false);
     }
     if (activeMsg === false) {
-      console.log("double press from other components: " + activeMsg);
+      // console.log("double press from other components: " + activeMsg);
       dispatch(clearAnalysis());
       setActiveMsg(true);
     }
